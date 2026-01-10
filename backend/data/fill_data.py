@@ -1,16 +1,20 @@
 import asyncio
+import json
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.database.core import AsyncSessionLocal
-from src.models.doctors import Department, Doctor, Speciality
-from src.models.inspections import Inspection # noqa
+from src.models import Department, Doctor, Education, ExtraEducation, Speciality
 
 
 def fill_specialities(session: Session):
-    instance = Speciality(name="Врач-рентгенолог")
-    session.add(instance)
+    session.add_all(
+        [
+            Speciality(name="Врач-рентгенолог"),
+            Speciality(name="Врач ультразвуковой диагностики"),
+        ]
+    )
     session.commit()
 
 
@@ -22,17 +26,24 @@ def fill_departments(session: Session):
     session.commit()
 
 
-def fill_doctors(session: Session):
-    instance = Doctor(
-        firstname="Иван",
-        lastname="Иванов",
-        middlename="Иванович",
-        qualification="Высшая квалификационная категория",
-        experience_start=2000,
-        speciality_id=1,
-        department_id=1,
-    )
-    session.add(instance)
+def fill_doctors(session: Session, data: dict):
+    payload = [
+        Doctor(
+            firstname=doctor["firstname"],
+            lastname=doctor["lastname"],
+            middlename=doctor["middlename"],
+            qualification=doctor["qualification"],
+            experience_start=doctor["experience_start"],
+            speciality_id=doctor["speciality_id"],
+            department_id=doctor["department_id"],
+            education=[Education(title=title) for title in doctor["education"]],
+            extra_education=[
+                ExtraEducation(title=title) for title in doctor["extra_education"]
+            ],
+        )
+        for doctor in data
+    ]
+    session.add_all(payload)
     session.commit()
 
 
@@ -41,7 +52,12 @@ async def main():
         try:
             await session.run_sync(fill_departments)
             await session.run_sync(fill_specialities)
-            # await session.run_sync(fill_doctors)
+            with open("data/doctors_uzi.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+            await session.run_sync(fill_doctors, data)
+            with open("data/doctors_xray.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+            await session.run_sync(fill_doctors, data)
             print("data inserted")
         except IntegrityError:
             await session.rollback()
