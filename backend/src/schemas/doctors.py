@@ -12,6 +12,9 @@ class CreateDoctorSchema(BaseSchema):
     speciality_id: int
     department_id: int
 
+    education: list[str]
+    extra_education: list[str]
+
 
 class SimpleDoctorSchema(BaseSchema):
     id: int
@@ -19,7 +22,18 @@ class SimpleDoctorSchema(BaseSchema):
     lastname: str
     middlename: str
 
+    speciality: "SpecialitySchema | None"
+    department: "DepartmentSchema"
+
     model_config = ConfigDict(from_attributes=True)
+
+    @field_serializer("speciality")
+    def serialize_speciality(self, obj):
+        return obj.name
+
+    @field_serializer("department")
+    def serialize_department(self, obj):
+        return obj.name
 
 
 class SpecialitySchema(BaseSchema):
@@ -37,34 +51,37 @@ class DepartmentSchema(BaseSchema):
 
 
 class DoctorSchema(SimpleDoctorSchema):
-    qualification: str
-    experience: int
-    speciality: SpecialitySchema
-    department: DepartmentSchema
+    qualification: str | None
+    experience: int | None
 
     education: list["EducationSchema"]
-    extra_education: list["ExtraEducationShema"]
+    extra_education: list["ExtraEducationSchema"]
 
-    @field_serializer("speciality")
-    def serialize_speciality(self, obj):
-        return obj.name
+    @field_serializer("education")
+    def serialize_education(self, obj: list["EducationSchema"]):
+        return [row.title for row in obj]
 
-    @field_serializer("department")
-    def serialize_department(self, obj):
-        return obj.name
+    @field_serializer("extra_education")
+    def serialize_extra_education(self, obj: list["ExtraEducationSchema"]):
+        return [row.title for row in obj]
 
 
 class CreateEducationSchema(BaseSchema):
     title: str
+    doctor_id: int
 
 
 class EducationSchema(CreateEducationSchema):
     id: int
 
+    model_config = ConfigDict(from_attributes=True)
 
-class CreateExtraEducationSchema(EducationSchema):
+
+class CreateExtraEducationSchema(CreateEducationSchema):
     pass
 
 
-class ExtraEducationShema(CreateExtraEducationSchema):
-    int: int
+class ExtraEducationSchema(CreateExtraEducationSchema):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)

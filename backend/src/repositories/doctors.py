@@ -1,10 +1,10 @@
 from typing import Sequence
 
-from sqlalchemy import func, select
+from sqlalchemy import select, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload, selectinload, with_expression
 
-from src.models.doctors import Doctor
+from src.models import Doctor, Education, ExtraEducation
 from src.repositories.base import BaseRepository
 
 
@@ -28,6 +28,11 @@ class DoctorRepository(BaseRepository[Doctor]):
     async def get(self, id: int) -> Doctor | None:
         return await self.session.get(self.model, id)
 
+    async def get_all(self) -> Sequence[Doctor]:
+        statement = select(self.model).options(joinedload(self.model.speciality), joinedload(self.model.department))
+        res = await self.session.execute(statement)
+        return res.scalars().all()
+
     async def get_with_relations(self, id: int) -> Doctor | None:
         return await self.session.get(self.model, id, options=self.options)
 
@@ -36,8 +41,14 @@ class DoctorRepository(BaseRepository[Doctor]):
         res = await self.session.execute(statement)
         return res.scalars().all()
 
-    async def create(self, data: dict) -> Doctor | None:
+    async def create(
+        self, data: dict, education: list[str], extra_education: list[str]
+    ) -> Doctor | None:
         instance = self.model(**data)
+        instance.education = [Education(title=title) for title in education]
+        instance.extra_education = [
+            ExtraEducation(title=title) for title in extra_education
+        ]
         self.session.add(instance)
         try:
             await self.session.commit()

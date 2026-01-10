@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload
 
-from models.inspections import Inspection
+from src.models import Inspection
 from src.repositories.base import DefaultRepository
 
 

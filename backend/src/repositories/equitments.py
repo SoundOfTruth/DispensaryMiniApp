@@ -1,4 +1,4 @@
-from models.equipments import Equipment
+from src.models.equipments import Equipment
 from src.repositories.base import DefaultRepository
 
 
