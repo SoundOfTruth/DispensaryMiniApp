@@ -17,8 +17,8 @@ class Doctor(Base):
     firstname: Mapped[str] = mapped_column(String(50))
     lastname: Mapped[str] = mapped_column(String(50))
     middlename: Mapped[str] = mapped_column(String(50))
-    qualification: Mapped[str] = mapped_column(String(255))
-    experience_start: Mapped[int]
+    qualification: Mapped[str | None] = mapped_column(String(255))
+    experience_start: Mapped[int | None]
 
     experience = query_expression()
 
@@ -27,7 +27,9 @@ class Doctor(Base):
 
     speciality: Mapped["Speciality"] = relationship(back_populates="doctors")
     department: Mapped["Department"] = relationship(back_populates="doctors")
-    inspections: Mapped[list["Inspection"]] = relationship(back_populates="doctor")
+    inspections: Mapped[list["Inspection"]] = relationship(
+        "Inspection", back_populates="doctor"
+    )
 
     speciality_id: Mapped[int] = mapped_column(ForeignKey("specialities.id"))
     department_id: Mapped[int] = mapped_column(ForeignKey("departments.id"))
