@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     def origins(self):
         origins = ["127.0.0.1", "localhost"]
         if self.ALLOWED_HOSTS:
-            origins = self.ALLOWED_HOSTS.split(" ,")
+            origins = self.ALLOWED_HOSTS.split(", ")
         return origins
 
     @property
