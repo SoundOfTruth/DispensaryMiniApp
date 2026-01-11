@@ -12,10 +12,10 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import type { Doctor } from "../types/doctors";
+import type { SimpleDoctor } from "../types/doctors";
 
 const router = useRouter();
-const props = defineProps<{ doctor: Doctor }>();
+const props = defineProps<{ doctor: SimpleDoctor }>();
 
 const openDoctor = (doctorId: number) => {
   router.push(`doctors/${doctorId}`);
