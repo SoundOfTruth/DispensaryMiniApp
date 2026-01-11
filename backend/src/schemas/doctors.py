@@ -21,7 +21,7 @@ class SimpleDoctorSchema(BaseSchema):
     firstname: str
     lastname: str
     middlename: str
-
+    qualification: str | None
     speciality: "SpecialitySchema | None"
     department: "DepartmentSchema"
 
@@ -51,7 +51,6 @@ class DepartmentSchema(BaseSchema):
 
 
 class DoctorSchema(SimpleDoctorSchema):
-    qualification: str | None
     experience: int | None
 
     education: list["EducationSchema"]
