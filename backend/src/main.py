@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.api.exception_handlers import register_exception_handlers
 from src.api.routes import api_router
 from src.config import settings
 
@@ -15,6 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(api_router)
+register_exception_handlers(app)
 
 if __name__ == "__main__":
     import uvicorn
