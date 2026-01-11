@@ -1,9 +1,10 @@
 from typing import Sequence
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload, selectinload, with_expression
 
+from src.api.exceptions import DbIntegrityException
 from src.models import Doctor, Education, ExtraEducation
 from src.repositories.base import BaseRepository
 
@@ -29,7 +30,9 @@ class DoctorRepository(BaseRepository[Doctor]):
         return await self.session.get(self.model, id)
 
     async def get_all(self) -> Sequence[Doctor]:
-        statement = select(self.model).options(joinedload(self.model.speciality), joinedload(self.model.department))
+        statement = select(self.model).options(
+            joinedload(self.model.speciality), joinedload(self.model.department)
+        )
         res = await self.session.execute(statement)
         return res.scalars().all()
 
@@ -43,7 +46,7 @@ class DoctorRepository(BaseRepository[Doctor]):
 
     async def create(
         self, data: dict, education: list[str], extra_education: list[str]
-    ) -> Doctor | None:
+    ) -> Doctor:
         instance = self.model(**data)
         instance.education = [Education(title=title) for title in education]
         instance.extra_education = [
@@ -52,8 +55,9 @@ class DoctorRepository(BaseRepository[Doctor]):
         self.session.add(instance)
         try:
             await self.session.commit()
-        except IntegrityError:
-            return None
+        except IntegrityError as ex:
+            print(ex)
+            raise DbIntegrityException(detail="Ошибка")
         await self.session.refresh(instance)
         doctor_id = instance.id
         doctor = await self.get_with_relations(doctor_id)
