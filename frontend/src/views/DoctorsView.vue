@@ -5,10 +5,16 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import DoctorCard from "../components/DoctorCard.vue";
-import { getDoctorsJsonPayload } from "../types/doctors";
+import DoctorsApi from "../api/doctors";
+import type { SimpleDoctor } from "../types/doctors";
 
-const doctors = getDoctorsJsonPayload();
+const doctors = ref<SimpleDoctor[]>();
+
+onMounted(async () => {
+  doctors.value = await DoctorsApi.getDoctors();
+});
 </script>
 
 <style scoped lang="scss">

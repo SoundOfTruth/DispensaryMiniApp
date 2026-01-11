@@ -9,32 +9,49 @@
     </div>
     <div class="information">
       <div class="speciality" v-html="doctor?.speciality"></div>
-      <div class="expirience">
+      <div class="expirience" v-if="doctor?.experience">
         <span>Опыт работы: </span>
         <span>{{ doctor?.experience }}</span>
       </div>
-      <div class="title">Образование</div>
-      <div class="education" v-for="education in doctor?.education">
-        {{ education }}
+      <div v-if="doctor?.qualification">
+        <div class="title">Квалификация</div>
+        <span>{{ doctor?.qualification }}</span>
       </div>
-      <div class="title">Доп. образование</div>
-      <div class="education" v-for="education in doctor?.extra_education">
-        {{ education }}
+      <div v-if="doctor?.education.length">
+        <div class="title">Образование</div>
+        <div class="education">
+          <div v-for="education in doctor?.extra_education" class="text">
+            {{ education }}
+          </div>
+        </div>
+      </div>
+      <div v-if="doctor?.extra_education.length">
+        <div class="title">Доп. образование</div>
+        <div class="education">
+          <div v-for="education in doctor?.extra_education">
+            {{ education }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import DoctorsApi from "../api/doctors";
+import type { Doctor } from "../types/doctors";
 
 const route = useRoute();
-import { getDoctorsJsonPayload } from "../types/doctors";
-const doctorId = Number(route.params.doctorId) - 1;
-const doctor = getDoctorsJsonPayload()[doctorId];
+const doctor = ref<Doctor | null>(null);
+onMounted(async () => {
+  const doctorId: number = Number(route.params.doctorId);
+  doctor.value = await DoctorsApi.getDoctor(doctorId);
+});
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .doctor-img-container {
   display: grid;
   place-content: center;
@@ -50,17 +67,18 @@ const doctor = getDoctorsJsonPayload()[doctorId];
   font-size: 110%;
   color: #b1b2b4;
   line-height: 1;
+  padding-bottom: 4px;
 }
 .information {
   display: flex;
-  gap: 10px;
+  gap: 7px;
   flex-direction: column;
 }
 .education {
+  display: flex;
+  flex-direction: column;
   font-size: 90%;
-}
-.expirience {
-  font-size: 120%;
+  gap: 3px;
 }
 .fullname {
   font-size: 180%;
@@ -69,7 +87,10 @@ const doctor = getDoctorsJsonPayload()[doctorId];
 }
 .speciality {
   padding-top: 5px;
-  font-size: 130%;
+  font-size: 135%;
   color: #0d9ce3;
+}
+.expirience {
+  font-size: 115%;
 }
 </style>

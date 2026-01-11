@@ -9,9 +9,17 @@
 
 <script setup lang="ts">
 import InspectionCard from "../components/InspectionCard.vue";
-import { getInspectionsJsonPayload } from "../types/inspections";
+import { ref, onMounted } from "vue";
 
-const inspections = getInspectionsJsonPayload();
+import InspectionsApi from "../api/inspections";
+import type { Inspection } from "../types/inspections";
+
+
+const inspections = ref<Inspection[]>();
+
+onMounted(async () => {
+  inspections.value = await InspectionsApi.getInspections();
+});
 </script>
 
 <style lang="scss" scoped>
