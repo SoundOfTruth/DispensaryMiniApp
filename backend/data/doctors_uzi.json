@@ -1,7 +1,7 @@
 [
   {
-    "firstname": "Гречанов",
-    "lastname": "Николай",
+    "lastname": "Гречанов",
+    "firstname": "Николай",
     "middlename": "Лельевич",
     "qualification": "Первая квалификационная категория",
     "experience_start": 2014,
@@ -33,8 +33,8 @@
     ]
   },
   {
-    "firstname": "Дергачева",
-    "lastname": "Татьяна",
+    "lastname": "Дергачева",
+    "firstname": "Татьяна",
     "middlename": "Сергеевна",
     "qualification": "Высшая квалификационная категория",
     "experience_start": 2013,
@@ -71,8 +71,8 @@
     ]
   },
   {
-    "firstname": "Дергачева",
-    "lastname": "Татьяна",
+    "lastname": "Дергачева",
+    "firstname": "Татьяна",
     "middlename": "Сергеевна",
     "qualification": null,
     "experience_start": null,
@@ -84,8 +84,8 @@
     ]
   },
   {
-    "firstname": "Заворотняя",
-    "lastname": "Наталья",
+    "lastname": "Заворотняя",
+    "firstname": "Наталья",
     "middlename": "Леонидовна",
     "qualification": null,
     "experience_start": null,
@@ -95,8 +95,8 @@
     "extra_education": []
   },
   {
-    "firstname": "Корчагина",
-    "lastname": "Яна",
+    "lastname": "Корчагина",
+    "firstname": "Яна",
     "middlename": "Александровна",
     "qualification": null,
     "experience_start": null,
