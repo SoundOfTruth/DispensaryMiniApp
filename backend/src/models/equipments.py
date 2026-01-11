@@ -9,5 +9,5 @@ class Equipment(Base):
     __tablename__ = "equipments"
 
     id: Mapped[int_pk]
-    name: Mapped[str] = mapped_column(String(255))
+    name: Mapped[str] = mapped_column(String(255), unique=True)
     image: Mapped[str | None] = mapped_column(server_default=None)

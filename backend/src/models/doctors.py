@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, ForeignKey, String
+from sqlalchemy import CheckConstraint, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, query_expression, relationship
 
 from src.database.core import Base
@@ -20,26 +20,26 @@ class Doctor(Base):
     qualification: Mapped[str | None] = mapped_column(String(255))
     experience_start: Mapped[int | None]
 
-    experience = query_expression()
-
     education: Mapped[list["Education"]] = relationship()
     extra_education: Mapped[list["ExtraEducation"]] = relationship()
 
     speciality: Mapped["Speciality"] = relationship(back_populates="doctors")
     department: Mapped["Department"] = relationship(back_populates="doctors")
     inspections: Mapped[list["Inspection"]] = relationship(
-        "Inspection", back_populates="doctor"
+        "Inspection", secondary="doctor_inspections", back_populates="doctors"
     )
 
     speciality_id: Mapped[int] = mapped_column(ForeignKey("specialities.id"))
     department_id: Mapped[int] = mapped_column(ForeignKey("departments.id"))
 
+    experience = query_expression()
+
     __table_args__ = (
         CheckConstraint(
-            "experience_start >= 1920",
+            "experience_start >= 1920 AND experience_start <= EXTRACT(YEAR FROM CURRENT_DATE)",
             name="check_experience_start",
         ),
-    )  # for porgresql experience_start >= 1920 AND eexperience_start <= EXTRACT(YEAR FROM CURRENT_DATE)
+    )
 
 
 class Education(Base):
@@ -50,6 +50,10 @@ class Education(Base):
 
     doctor_id: Mapped[int] = mapped_column(ForeignKey(Doctor.id))
 
+    __table_args__ = (
+        UniqueConstraint(title, doctor_id, name="unique_education_for_doctor"),
+    )
+
 
 class ExtraEducation(Base):
     __tablename__ = "extra_education"
@@ -58,6 +62,10 @@ class ExtraEducation(Base):
     title: Mapped[str] = mapped_column(String(255))
 
     doctor_id: Mapped[int] = mapped_column(ForeignKey(Doctor.id))
+
+    __table_args__ = (
+        UniqueConstraint(title, doctor_id, name="unique_extra_education_for_doctor"),
+    )
 
 
 class Speciality(Base):

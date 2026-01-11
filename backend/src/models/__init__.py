@@ -1,5 +1,5 @@
 from src.models.doctors import Department, Doctor, Education, ExtraEducation, Speciality
-from src.models.inspections import Inspection
+from src.models.inspections import DoctorInspection, Inspection
 
 __all__ = [
     "Doctor",
@@ -8,4 +8,5 @@ __all__ = [
     "Speciality",
     "Department",
     "Inspection",
+    "DoctorInspection",
 ]
