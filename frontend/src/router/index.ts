@@ -13,6 +13,6 @@ export const router = createRouter({
     { path: "/doctors", component: DoctorsView },
     { path: "/doctors/:doctorId(\\d+)", component: DoctorView },
     { path: "/inspections", component: InspectionsView },
-    { path: "/inspections/:researchId(\\d+)", component: InspectionView },
+    { path: "/inspections/:inspectionId(\\d+)", component: InspectionView },
   ],
 });
