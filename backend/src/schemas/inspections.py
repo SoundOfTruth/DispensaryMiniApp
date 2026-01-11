@@ -1,23 +1,26 @@
-from pydantic import ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
-from src.schemas.base import BaseSchema
 from src.schemas.doctors import SimpleDoctorSchema
 
 
-class CreateInspectionSchema(BaseSchema):
+class CreateDoctorInspectionSchema(BaseModel):
+    id: int = Field(examples=[1])
+
+
+class CreateInspectionSchema(BaseModel):
     title: str
     description: str
     preparation: str
 
-    doctor_id: int
+    doctors: list[CreateDoctorInspectionSchema]
 
 
-class InspectionSchema(BaseSchema):
+class InspectionSchema(BaseModel):
     id: int
     title: str
     description: str
     preparation: str
 
-    doctor: SimpleDoctorSchema
+    doctors: list[SimpleDoctorSchema]
 
     model_config = ConfigDict(from_attributes=True)
