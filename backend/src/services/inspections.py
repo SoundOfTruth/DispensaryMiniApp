@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from src.api.exceptions import NotFoundException
 from src.database.core import AsyncScopedSessionDep
 from src.repositories.inspections import InspectionRepository
 from src.schemas.inspections import CreateInspectionSchema, InspectionSchema
@@ -14,7 +15,7 @@ class InspectionService:
     async def get(self, id: int):
         inspection = await self.inspetion_rep.get_with_relations(id)
         if not inspection:
-            raise
+            raise NotFoundException
         return InspectionSchema.model_validate(inspection)
 
     async def get_all(self):
@@ -25,7 +26,8 @@ class InspectionService:
 
     async def create(self, schema: CreateInspectionSchema):
         payload = schema.model_dump()
-        inspection = await self.inspetion_rep.create(payload)
+        doctors = payload.pop("doctors")
+        inspection = await self.inspetion_rep.create(payload, doctors)
         return InspectionSchema.model_validate(inspection)
 
 

@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from src.api.exceptions import NotFoundException
 from src.database.core import AsyncScopedSessionDep
 from src.repositories.doctors import DoctorRepository
 from src.schemas.doctors import CreateDoctorSchema, DoctorSchema, SimpleDoctorSchema
@@ -14,7 +15,7 @@ class DoctorsService:
     async def get(self, id: int):
         doctor = await self.doctor_repo.get_with_relations(id)
         if not doctor:
-            raise
+            raise NotFoundException
         return DoctorSchema.model_validate(doctor)
 
     async def get_all(self):
