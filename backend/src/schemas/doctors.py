@@ -1,5 +1,6 @@
 from pydantic import ConfigDict, field_serializer
 
+
 from src.schemas.base import BaseSchema
 
 
@@ -50,11 +51,20 @@ class DepartmentSchema(BaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
+class SimpleInspectionShema(BaseSchema):
+    id: int
+    title: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+
 class DoctorSchema(SimpleDoctorSchema):
     experience: int | None
 
     education: list["EducationSchema"]
     extra_education: list["ExtraEducationSchema"]
+    inspections: list[SimpleInspectionShema]
 
     @field_serializer("education")
     def serialize_education(self, obj: list["EducationSchema"]):

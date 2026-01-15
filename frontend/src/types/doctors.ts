@@ -1,5 +1,6 @@
 import doctorsJson from "../data/doctors.json";
 
+import type { SimpleInspection } from "./inspections";
 export default doctorsJson;
 
 export interface BaseDoctor {
@@ -19,6 +20,7 @@ interface InputDoctor extends InputDoctorList {
   experience: number;
   education: string[];
   extra_education: string[];
+  inspections: [SimpleInspection];
 }
 
 export interface SimpleDoctor extends BaseDoctor {
@@ -32,6 +34,7 @@ export interface Doctor extends SimpleDoctor {
   experience: string;
   education: string[];
   extra_education: string[];
+  inspections: [SimpleInspection];
 }
 
 function getYearsWord(years: number | undefined): string {

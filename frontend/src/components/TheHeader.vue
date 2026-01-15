@@ -6,7 +6,9 @@
         <span></span>
         <span></span>
       </button>
-      <h1 class="title">Клинический онкологический диспансер</h1>
+      <RouterLink to="/"
+        ><h1 class="title">Клинический онкологический диспансер</h1></RouterLink
+      >
     </div>
     <nav class="menu" :class="{ active: isMenuOpen }">
       <ul>
@@ -52,6 +54,7 @@ header .hat {
 }
 
 header .title {
+color: #222;
   font-size: 140%;
   font-weight: 500;
   margin: 0;

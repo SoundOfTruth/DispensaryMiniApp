@@ -1,5 +1,10 @@
 import type { SimpleDoctor } from "./doctors";
 
+export interface SimpleInspection {
+  id: number;
+  title: string;
+}
+
 export interface Inspection {
   id: number;
   title: string;
@@ -11,4 +16,3 @@ export interface Inspection {
 export const getInspectionsPayload = (data: Inspection[]): Inspection[] => {
   return data;
 };
-

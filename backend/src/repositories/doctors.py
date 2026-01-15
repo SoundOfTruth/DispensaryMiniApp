@@ -46,7 +46,7 @@ class DoctorRepository(BaseRepository[Doctor]):
 
     async def create(
         self, data: dict, education: list[str], extra_education: list[str]
-    ) -> Doctor:
+    ) -> Doctor | None:
         instance = self.model(**data)
         instance.education = [Education(title=title) for title in education]
         instance.extra_education = [

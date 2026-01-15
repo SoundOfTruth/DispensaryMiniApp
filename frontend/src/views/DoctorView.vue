@@ -33,6 +33,12 @@
           </div>
         </div>
       </div>
+      <div class="title">Проводимые иследования:</div>
+      <div v-for="inspection in doctor?.inspections">
+        <RouterLink :to="`/inspections/${inspection.id}`">{{
+          `${inspection.title}`
+        }}</RouterLink>
+      </div>
     </div>
   </div>
 </template>
