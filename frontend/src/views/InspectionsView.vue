@@ -14,11 +14,10 @@ import { ref, onMounted } from "vue";
 import InspectionsApi from "../api/inspections";
 import type { Inspection } from "../types/inspections";
 
-
 const inspections = ref<Inspection[]>();
 
 onMounted(async () => {
-  inspections.value = await InspectionsApi.getInspections();
+  inspections.value = await InspectionsApi.getAll();
 });
 </script>
 

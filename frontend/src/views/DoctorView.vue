@@ -53,7 +53,7 @@ const route = useRoute();
 const doctor = ref<Doctor | null>(null);
 onMounted(async () => {
   const doctorId: number = Number(route.params.doctorId);
-  doctor.value = await DoctorsApi.getDoctor(doctorId);
+  doctor.value = await DoctorsApi.get(doctorId);
 });
 </script>
 

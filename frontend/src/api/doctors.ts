@@ -7,14 +7,15 @@ class DoctorsApi {
     this.url = url;
     this.headers = headers;
   }
-  async getDoctors(): Promise<SimpleDoctor[]> {
+  async getAll(): Promise<SimpleDoctor[]> {
     let response = await fetch(`${this.url}/doctors/`);
     return getComputedDoctors(await response.json())
   }
-  async getDoctor(id: number): Promise<Doctor> {
+  async get(id: number): Promise<Doctor> {
     let response = await fetch(`${this.url}/doctors/${id}/`);
     return getComputedDoctor(await response.json());
   }
+
 }
 
 export default new DoctorsApi("http://localhost:8000/api", {

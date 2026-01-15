@@ -1,4 +1,4 @@
-import type { Inspection } from "../types/inspections";
+import type { Inspection, CreateInspection } from "../types/inspections";
 
 class InspectionsApi {
   protected url: string;
@@ -7,13 +7,25 @@ class InspectionsApi {
     this.url = url;
     this.headers = headers;
   }
-  async getInspections(): Promise<Inspection[]> {
+  async getAll(): Promise<Inspection[]> {
     let response = await fetch(`${this.url}/inspections/`);
     return (await response.json()) as Inspection[];
   }
-  async getInspection(id: number): Promise<Inspection> {
+  async get(id: number): Promise<Inspection> {
     let response = await fetch(`${this.url}/inspections/${id}/`);
     return (await response.json()) as Inspection;
+  }
+
+  async create(data: CreateInspection): Promise<Inspection[]> {
+    let payload = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    };
+    let response = await fetch(`${this.url}/inspections/`, payload);
+    return (await response.json()) as Inspection[];
   }
 }
 

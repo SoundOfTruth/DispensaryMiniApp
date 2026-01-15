@@ -13,6 +13,18 @@ export interface Inspection {
   doctors: SimpleDoctor[];
 }
 
+export interface CreateInspectionDoctor {
+  id: number;
+}
+
+export interface CreateInspection {
+  title: string;
+  description: string;
+  preparation: string;
+  doctors: CreateInspectionDoctor[];
+}
+
+
 export const getInspectionsPayload = (data: Inspection[]): Inspection[] => {
   return data;
 };

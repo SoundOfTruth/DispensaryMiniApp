@@ -13,7 +13,7 @@ import type { SimpleDoctor } from "../types/doctors";
 const doctors = ref<SimpleDoctor[]>();
 
 onMounted(async () => {
-  doctors.value = await DoctorsApi.getDoctors();
+  doctors.value = await DoctorsApi.getAll();
 });
 </script>
 

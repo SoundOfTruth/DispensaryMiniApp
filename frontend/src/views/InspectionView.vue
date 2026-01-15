@@ -4,9 +4,13 @@
       <div class="title">{{ inspection?.title }}</div>
       <div class="sub-title" v-if="inspection?.description">Описание:</div>
       <div class="text">{{ inspection?.description }}</div>
-      <div class="sub-title" v-if="inspection?.preparation">Подготовка к иследованию:</div>
+      <div class="sub-title" v-if="inspection?.preparation">
+        Подготовка к иследованию:
+      </div>
       <div class="text">{{ inspection?.preparation }}</div>
-      <div class="sub-title" v-if="inspection?.doctors.length">Проводят исследование:</div>
+      <div class="sub-title" v-if="inspection?.doctors.length">
+        Проводят исследование:
+      </div>
       <div>
         <div v-for="doctor in inspection?.doctors">
           <RouterLink :to="`/doctors/${doctor.id}`">{{
@@ -30,7 +34,7 @@ const inspection = ref<Inspection | null>(null);
 
 onMounted(async () => {
   const inspectionId = Number(route.params.inspectionId);
-  inspection.value = await InspectionsApi.getInspection(inspectionId);
+  inspection.value = await InspectionsApi.get(inspectionId);
 });
 </script>
 
