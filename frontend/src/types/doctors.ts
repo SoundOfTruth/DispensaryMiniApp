@@ -68,3 +68,15 @@ export const getComputedDoctors = (data: InputDoctorList[]): SimpleDoctor[] => {
     fullname: `${doctor.lastname} ${doctor.firstname} ${doctor.middlename}`,
   }));
 };
+
+export interface CreateDoctor {
+  firstname: string;
+  lastname: string;
+  middlename: string;
+  qualification: string | null;
+  experience_start: number | null;
+  speciality_id: number;
+  department_id: number;
+  education: string[];
+  extra_education: string[];
+}

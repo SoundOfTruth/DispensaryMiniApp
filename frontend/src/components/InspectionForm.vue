@@ -1,8 +1,9 @@
 <template>
   <div class="form-container">
     <form @submit.prevent="handleSubmit">
+
       <div class="group">
-        <label for="title">Заголовок</label>
+        <label for="title">Заголовок *</label>
         <input
           id="title"
           v-model="formData.title"
@@ -105,7 +106,7 @@
       <!-- Кнопки формы -->
       <div class="form-actions">
         <button type="submit" class="btn save">Сохранить</button>
-        <button type="button" class="btn cancel" @click="handleCancel">
+        <button type="button" class="btn cancel" @click="handleCancel()">
           Отмена
         </button>
       </div>
@@ -127,6 +128,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   availableDoctors: () => [],
 });
+
+const emits = defineEmits(["cancel"]);
 
 const formData = ref({
   title: "",
@@ -204,7 +207,7 @@ const handleSubmit = async () => {
   };
 
   if (!payload.title || !payload.preparation || payload.doctors.length < 1) {
-    alert("Пожалуйста, заполните обязательные поля (Заголовок и Описание)");
+    alert("Пожалуйста, заполните обязательные поля (Заголовок и Подготовка)");
     return;
   }
   console.log(payload);
@@ -213,7 +216,7 @@ const handleSubmit = async () => {
 };
 
 const handleCancel = () => {
-  console.log("cance;");
+  emits("cancel");
 };
 </script>
 

@@ -1,23 +1,23 @@
-from pydantic import ConfigDict, field_serializer
+from pydantic import ConfigDict, field_serializer, BaseModel
 
 
 from src.schemas.base import BaseSchema
 
 
-class CreateDoctorSchema(BaseSchema):
+class CreateDoctorSchema(BaseModel):
     firstname: str
     lastname: str
     middlename: str
-    qualification: str
-    experience_start: int
+    qualification: str | None
+    experience_start: int | None
     speciality_id: int
     department_id: int
 
-    education: list[str]
-    extra_education: list[str]
+    education: list[str] | None
+    extra_education: list[str] | None
 
 
-class SimpleDoctorSchema(BaseSchema):
+class SimpleDoctorSchema(BaseModel):
     id: int
     firstname: str
     lastname: str
