@@ -8,8 +8,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.config import settings
 from src.database.core import Base
-from src.models.doctors import *  # noqa
-from src.models.inspections import *  # noqa
+from src.models import *  # noqa
 
 config = context.config
 
