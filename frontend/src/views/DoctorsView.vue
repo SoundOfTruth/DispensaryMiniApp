@@ -5,15 +5,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 import DoctorCard from "../components/DoctorCard.vue";
-import DoctorsApi from "../api/doctors";
-import type { SimpleDoctor } from "../types/doctors";
 
-const doctors = ref<SimpleDoctor[]>();
+import { useDoctorStore } from "../stores/DoctorStore";
+
+const doctorStore = useDoctorStore();
+const doctors = computed(() => doctorStore.doctors);
 
 onMounted(async () => {
-  doctors.value = await DoctorsApi.getAll();
+  await doctorStore.loadDoctors();
 });
 </script>
 

@@ -23,18 +23,19 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
-import InspectionsApi from "../api/inspections";
 
-import type { Inspection } from "../types/inspections";
+import { useInspectionStore } from "../stores/InspectionStore";
+
+const InspectionStore = useInspectionStore();
+const inspection = computed(() => InspectionStore.inspection);
 
 const route = useRoute();
-const inspection = ref<Inspection | null>(null);
 
 onMounted(async () => {
   const inspectionId = Number(route.params.inspectionId);
-  inspection.value = await InspectionsApi.get(inspectionId);
+  await InspectionStore.loadInspection(inspectionId);
 });
 </script>
 

@@ -59,6 +59,32 @@
         />
       </div>
 
+      <div class="group">
+        <label for="speciality_id">Специальность</label>
+        <select
+          name="option"
+          v-model="formData.speciality_id"
+          class="input-data"
+        >
+          <option :value="speciality.id" v-for="speciality in specialities">
+            {{ speciality.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="group">
+        <label for="department_id">Отделение</label>
+        <select
+          name="option"
+          v-model="formData.department_id"
+          class="input-data"
+        >
+          <option :value="department.id" v-for="department in departments">
+            {{ department.name }}
+          </option>
+        </select>
+      </div>
+
       <div class="form-actions">
         <button type="submit" class="btn save">Сохранить</button>
         <button type="button" class="btn cancel" @click="handleCancel()">
@@ -73,14 +99,20 @@
 import { ref } from "vue";
 import DoctorsApi from "../api/doctors";
 import type { CreateDoctor } from "../types/doctors";
+import type { Department } from "../types/departments";
+import type { Speciality } from "../types/specialities";
 
+const props = defineProps<{
+  departments: Department[];
+  specialities: Speciality[];
+}>();
 const emits = defineEmits(["cancel"]);
 
 const formData = ref({
   lastname: "",
   firstname: "",
   middlename: "",
-  qualification: "",
+  qualification: null,
   experience_start: 0,
   department_id: 1,
   speciality_id: 1,
@@ -100,9 +132,8 @@ const handleSubmit = async () => {
     alert("Пожалуйста, заполните обязательные поля");
     return;
   }
-  console.log(payload);
-  const inspection = await DoctorsApi.create(payload);
-  console.log(inspection);
+  const doctor = await DoctorsApi.create(payload);
+  console.log(doctor);
 };
 
 const handleCancel = () => {

@@ -44,16 +44,18 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import DoctorsApi from "../api/doctors";
-import type { Doctor } from "../types/doctors";
+
+import { useDoctorStore } from "../stores/DoctorStore";
 
 const route = useRoute();
-const doctor = ref<Doctor | null>(null);
+const doctorStore = useDoctorStore();
+const doctor = computed(() => doctorStore.doctor);
+
 onMounted(async () => {
   const doctorId: number = Number(route.params.doctorId);
-  doctor.value = await DoctorsApi.get(doctorId);
+  await doctorStore.loadDoctor(doctorId);
 });
 </script>
 

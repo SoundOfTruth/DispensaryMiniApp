@@ -6,22 +6,39 @@
     <div @click="openForm(ActiveForm.doctorsForm)">Форма добавления врача</div>
   </div>
   <div v-if="activeForm == ActiveForm.inspectionsForm">
-    <InspectionForm
-      :available-doctors="doctors"
-      @cancel="cancel"
-    ></InspectionForm>
+    <InspectionForm :doctors="doctors" @cancel="cancel"></InspectionForm>
   </div>
   <div v-if="activeForm == ActiveForm.doctorsForm">
-    <DoctorsForm @cancel="cancel"></DoctorsForm>
+    <DoctorsForm
+      :departments="departments"
+      :specialities="specialities"
+      @cancel="cancel"
+    ></DoctorsForm>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import DoctorsApi from "../api/doctors";
-import type { SimpleDoctor } from "../types/doctors";
+import { onMounted, ref, computed } from "vue";
+
 import InspectionForm from "../components/InspectionForm.vue";
 import DoctorsForm from "../components/DoctorsForm.vue";
+
+import { useDoctorStore } from "../stores/DoctorStore";
+import { useDepartmentStore } from "../stores/DepartmentStore";
+import { useSpecialityStore } from "../stores/SpecialityStore";
+
+const DoctorStore = useDoctorStore();
+const DepartmentStore = useDepartmentStore();
+const SpecialitiesStore = useSpecialityStore();
+const doctors = computed(() => DoctorStore.doctors);
+const departments = computed(() => DepartmentStore.departments);
+const specialities = computed(() => SpecialitiesStore.specialities);
+
+onMounted(async () => {
+  await DoctorStore.loadDoctors();
+  await DepartmentStore.loadDepartments();
+  await SpecialitiesStore.loadSpecialities();
+});
 
 const ActiveForm = {
   inspectionsForm: 0,
@@ -45,16 +62,6 @@ const openForm = (form: ActiveFormSwitch) => {
 const cancel = () => {
   activeForm.value = null;
 };
-
-const doctors = ref<SimpleDoctor[]>([]);
-
-onMounted(async () => {
-  try {
-    doctors.value = await DoctorsApi.getAll();
-  } catch (error) {
-    console.error("Failed to load doctors:", error);
-  }
-});
 </script>
 
 <style scoped lang="scss">

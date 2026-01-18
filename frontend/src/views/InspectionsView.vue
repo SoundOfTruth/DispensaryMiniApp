@@ -9,15 +9,14 @@
 
 <script setup lang="ts">
 import InspectionCard from "../components/InspectionCard.vue";
-import { ref, onMounted } from "vue";
+import { computed, onMounted } from "vue";
 
-import InspectionsApi from "../api/inspections";
-import type { Inspection } from "../types/inspections";
+import { useInspectionStore } from "../stores/InspectionStore";
 
-const inspections = ref<Inspection[]>();
-
+const InspectionStore = useInspectionStore();
+const inspections = computed(() => InspectionStore.inspections);
 onMounted(async () => {
-  inspections.value = await InspectionsApi.getAll();
+  await InspectionStore.loadInspections();
 });
 </script>
 

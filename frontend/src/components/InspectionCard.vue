@@ -8,10 +8,10 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import type { Inspection } from "../types/inspections";
+import type { SimpleInspection } from "../types/inspections";
 
 const router = useRouter();
-const props = defineProps<{ inspection: Inspection }>();
+const props = defineProps<{ inspection: SimpleInspection }>();
 
 const openResearch = (inspectionId: number) => {
   router.push(`inspections/${inspectionId}`);

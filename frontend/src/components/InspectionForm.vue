@@ -1,7 +1,6 @@
 <template>
   <div class="form-container">
     <form @submit.prevent="handleSubmit">
-
       <div class="group">
         <label for="title">Заголовок *</label>
         <input
@@ -54,7 +53,6 @@
             v-for="doctor in filteredDoctors"
             :key="doctor.id"
             class="doctor-item"
-            :class="{ selected: isDoctorSelected(doctor.id) }"
             @click="toggleDoctor(doctor)"
           >
             <div class="doctor-info">
@@ -93,12 +91,12 @@
         </div>
 
         <div
-          v-if="filteredDoctors.length === 0 && doctorSearch"
+          v-if="filteredDoctors?.length === 0 && doctorSearch"
           class="no-doctors"
         >
           Врачи не найдены
         </div>
-        <div v-if="doctorsList.length === 0" class="no-doctors">
+        <div v-if="doctorsList?.length === 0" class="no-doctors">
           Список врачей пуст
         </div>
       </div>
@@ -115,19 +113,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 
 import type { SimpleDoctor } from "../types/doctors";
 import type { CreateInspection } from "../types/inspections";
 import InspectionsApi from "../api/inspections";
 
-interface Props {
-  availableDoctors?: SimpleDoctor[];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  availableDoctors: () => [],
-});
+const props = defineProps<{ doctors: SimpleDoctor[] | undefined }>();
 
 const emits = defineEmits(["cancel"]);
 
@@ -138,21 +130,22 @@ const formData = ref({
   doctors: [] as SimpleDoctor[],
 });
 
+const doctorsList = ref<SimpleDoctor[] | undefined>(props.doctors);
+
 const doctorSearch = ref("");
 const selectedDoctors = ref<SimpleDoctor[]>(formData.value.doctors);
-const doctorsList = ref<SimpleDoctor[]>(props.availableDoctors);
 
 const filteredDoctors = computed(() => {
   const searchTerm = doctorSearch.value.toLowerCase().trim();
 
   if (!searchTerm) {
-    return doctorsList.value.filter(
+    return doctorsList.value?.filter(
       (doctor) =>
-        !selectedDoctors.value.some((selected) => selected.id === doctor.id)
+        !selectedDoctors.value.some((selected) => selected.id === doctor.id),
     );
   }
 
-  return doctorsList.value.filter((doctor) => {
+  return doctorsList.value?.filter((doctor) => {
     const matchesSearch =
       doctor.fullname.toLowerCase().includes(searchTerm) ||
       (doctor.speciality?.toLowerCase() || "").includes(searchTerm) ||
@@ -160,16 +153,12 @@ const filteredDoctors = computed(() => {
       doctor.department.toLowerCase().includes(searchTerm);
 
     const notSelected = !selectedDoctors.value.some(
-      (selected) => selected.id === doctor.id
+      (selected) => selected.id === doctor.id,
     );
 
     return matchesSearch && notSelected;
   });
 });
-
-const isDoctorSelected = (doctorId: number) => {
-  return selectedDoctors.value.some((doctor) => doctor.id === doctorId);
-};
 
 const toggleDoctor = (doctor: SimpleDoctor) => {
   const index = selectedDoctors.value.findIndex((d) => d.id === doctor.id);
@@ -182,19 +171,9 @@ const toggleDoctor = (doctor: SimpleDoctor) => {
 
 const removeDoctor = (doctorId: number) => {
   selectedDoctors.value = selectedDoctors.value.filter(
-    (doctor) => doctor.id !== doctorId
+    (doctor) => doctor.id !== doctorId,
   );
 };
-
-watch(
-  () => props.availableDoctors,
-  (newDoctors) => {
-    if (newDoctors && newDoctors.length > 0) {
-      doctorsList.value = newDoctors;
-    }
-  },
-  { immediate: true }
-);
 
 const handleSubmit = async () => {
   const payload: CreateInspection = {
@@ -270,10 +249,6 @@ textarea.input-data {
     border-bottom: 1px solid #eee;
     cursor: pointer;
     transition: background-color 0.2s;
-    .selected {
-      background-color: #e7f3ff;
-      border-left: 3px solid #007bff;
-    }
     &:hover {
       background-color: #f8f9fa;
     }
