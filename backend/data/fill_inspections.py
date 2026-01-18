@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.database.core import AsyncSessionLocal
-from src.models import Inspection, DoctorInspection
+from src.models import DoctorInspection, Inspection
 
 
 def fill_inspections(session: Session):
@@ -28,9 +28,7 @@ def fill_inspections(session: Session):
 
         Необходимо предоставить результаты анализа крови на креатинин (допустимый для исследования в амбулаторных условиях СКФ выше 30 мл/мин/1,73 м2)."""
     instance = Inspection(
-        title="МРТ гинекол, таза у мужчин",
-        description="",
-        preparation=preparation
+        title="МРТ гинекол, таза у мужчин", description="", preparation=preparation
     )
     session.add(instance)
     session.flush()

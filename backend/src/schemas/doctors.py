@@ -1,5 +1,4 @@
-from pydantic import ConfigDict, field_serializer, BaseModel
-
+from pydantic import BaseModel, ConfigDict, field_serializer
 
 from src.schemas.base import BaseSchema
 
@@ -56,7 +55,6 @@ class SimpleInspectionShema(BaseSchema):
     title: str
 
     model_config = ConfigDict(from_attributes=True)
-
 
 
 class DoctorSchema(SimpleDoctorSchema):

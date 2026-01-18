@@ -45,7 +45,7 @@ class InspectionRepository(DefaultRepository[Inspection]):
         except IntegrityError as ex:
             message = "Непредвиденная ошибка"
             params = ex.params
-            ids = list(map(lambda x: x[0], params)) if params else [] # type: ignore
+            ids = list(map(lambda x: x[0], params)) if params else []  # type: ignore
             if 'отсутствует в таблице "doctors"' in str(ex.orig) and params:
                 message = f"Врач(и) с id {ids} не в базе данных."
             raise DbIntegrityException(detail=message)

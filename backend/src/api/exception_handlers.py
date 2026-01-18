@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
-from src.api.exceptions import NotFoundException, DbIntegrityException
+from src.api.exceptions import DbIntegrityException, NotFoundException
 
 
 def register_exception_handlers(app: FastAPI):
