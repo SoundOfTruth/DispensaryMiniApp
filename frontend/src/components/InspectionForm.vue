@@ -101,7 +101,6 @@
         </div>
       </div>
 
-      <!-- Кнопки формы -->
       <div class="form-actions">
         <button type="submit" class="btn save">Сохранить</button>
         <button type="button" class="btn cancel" @click="handleCancel()">

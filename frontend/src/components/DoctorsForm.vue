@@ -85,6 +85,84 @@
         </select>
       </div>
 
+      <div class="group">
+        <label for="education">Образование</label>
+        <div class="education-group">
+          <input
+            id="education"
+            v-model="educationField"
+            type="text"
+            class="input-data"
+            placeholder="Введите образование"
+          />
+          <button
+            type="button"
+            class="add"
+            @click="addEducation(formData.education, educationField)"
+          >
+            +
+          </button>
+        </div>
+      </div>
+
+      <div v-if="formData.education.length > 0" class="selected-doctors">
+        <div class="selected-list group">
+          <div
+            v-for="education in formData.education"
+            :key="education.title"
+            class="selected-doctor"
+          >
+            <span>{{ education.title }}</span>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeEducation(education)"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="group">
+        <label for="extra_education">Доп. Образование</label>
+        <div class="education-group">
+          <input
+            id="extra_education"
+            v-model="extraEducationField"
+            type="text"
+            class="input-data"
+            placeholder="Введите доп. образование"
+          />
+          <button
+            type="button"
+            class="add"
+            @click="addEducation(formData.extra_education, extraEducationField)"
+          >
+            +
+          </button>
+        </div>
+      </div>
+
+      <div v-if="formData.extra_education.length > 0" class="selected-doctors">
+        <div class="selected-list">
+          <div
+            v-for="education in formData.extra_education"
+            :key="education.title"
+            class="selected-doctor"
+          >
+            <span>{{ education.title }}</span>
+            <button
+              type="button"
+              class="remove-btn"
+              @click="removeExtraEducation(education)"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="form-actions">
         <button type="submit" class="btn save">Сохранить</button>
         <button type="button" class="btn cancel" @click="handleCancel()">
@@ -97,8 +175,9 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
+
 import DoctorsApi from "../api/doctors";
-import type { CreateDoctor } from "../types/doctors";
+import type { CreateDoctor, CreateEducation } from "../types/doctors";
 import type { Department } from "../types/departments";
 import type { Speciality } from "../types/specialities";
 
@@ -108,7 +187,7 @@ const props = defineProps<{
 }>();
 const emits = defineEmits(["cancel"]);
 
-const formData = ref({
+const formData = ref<CreateDoctor>({
   lastname: "",
   firstname: "",
   middlename: "",
@@ -119,6 +198,31 @@ const formData = ref({
   education: [],
   extra_education: [],
 });
+
+const educationField = ref<string>("");
+const extraEducationField = ref<string>("");
+
+const addEducation = (array: CreateEducation[], title: string) => {
+  const payload = { title: title };
+  if (
+    payload.title.length > 0 &&
+    array.findIndex((obj) => obj.title == payload.title) == -1
+  ) {
+    array.push(payload);
+  }
+};
+
+const removeEducation = (edication: CreateEducation) => {
+  formData.value.education = formData.value.education.filter(
+    (obj) => obj != edication,
+  );
+};
+
+const removeExtraEducation = (edication: CreateEducation) => {
+  formData.value.extra_education = formData.value.extra_education.filter(
+    (obj) => obj != edication,
+  );
+};
 
 const handleSubmit = async () => {
   const payload: CreateDoctor = formData.value;
@@ -204,6 +308,60 @@ const handleCancel = () => {
   &:hover {
     background-color: #545b62;
     transform: translateY(-1px);
+  }
+}
+
+.education-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  button.add {
+    background: #007bff;
+    color: white;
+    font-size: 120%;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    margin-right: 5px;
+  }
+}
+
+.selected-list {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  width: max-content;
+  gap: 8px;
+  .selected-doctor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #e7f3ff;
+    padding: 7px 0;
+    text-indent: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    border: 1px solid #b3d7ff;
+
+    .remove-btn {
+      background: transparent;
+      border: none;
+      color: #dc3545;
+      cursor: pointer;
+      padding: 2px;
+      margin-left: 15px;
+      margin-right: 15px;
+      font-size: 20px;
+      line-height: 1;
+      border-radius: 20%;
+
+      transition: background-color 0.2s;
+      &:hover {
+        background-color: rgba(220, 53, 69, 0.1);
+      }
+    }
   }
 }
 </style>
