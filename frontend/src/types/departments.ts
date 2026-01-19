@@ -1,7 +1,7 @@
-export interface CreateDepartment{
-    id: number
+export interface CreateDepartment {
+  name: string;
 }
 
-export interface Department extends CreateDepartment{
-    name: string
+export interface Department extends CreateDepartment {
+  id: number;
 }

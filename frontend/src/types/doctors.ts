@@ -37,6 +37,12 @@ export interface Doctor extends SimpleDoctor {
   inspections: [SimpleInspection];
 }
 
+export interface CreateEducation {
+  title: string;
+}
+
+export interface CreateExtraEducation extends CreateEducation {}
+
 export interface CreateDoctor {
   firstname: string;
   lastname: string;
@@ -45,6 +51,6 @@ export interface CreateDoctor {
   experience_start: number | null;
   speciality_id: number;
   department_id: number;
-  education: string[];
-  extra_education: string[];
+  education: CreateEducation[];
+  extra_education: CreateExtraEducation[];
 }

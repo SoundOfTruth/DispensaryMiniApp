@@ -1,7 +1,7 @@
-export interface CreateSpeciality{
-    id: number
+export interface CreateSpeciality {
+  name: string;
 }
 
-export interface Speciality extends CreateSpeciality{
-    name: string
+export interface Speciality extends CreateSpeciality {
+  id: number;
 }
