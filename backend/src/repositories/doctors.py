@@ -37,7 +37,9 @@ class DoctorRepository(BaseRepository[Doctor]):
         return res.scalars().all()
 
     async def get_with_relations(self, id: int) -> Doctor | None:
-        return await self.session.get(self.model, id, options=self.options)
+        statement = select(self.model).where(self.model.id == id).options(*self.options)
+        res = await self.session.execute(statement)
+        return res.scalar_one_or_none()
 
     async def get_all_with_relations(self) -> Sequence[Doctor]:
         statement = select(self.model).options(*self.options)
@@ -45,18 +47,17 @@ class DoctorRepository(BaseRepository[Doctor]):
         return res.scalars().all()
 
     async def create(
-        self, data: dict, education: list[str], extra_education: list[str]
+        self, data: dict, education: list[dict], extra_education: list[dict]
     ) -> Doctor | None:
         instance = self.model(**data)
-        instance.education = [Education(title=title) for title in education]
+        instance.education = [Education(title=obj["title"]) for obj in education]
         instance.extra_education = [
-            ExtraEducation(title=title) for title in extra_education
+            ExtraEducation(title=obj["title"]) for obj in extra_education
         ]
         self.session.add(instance)
         try:
             await self.session.commit()
-        except IntegrityError as ex:
-            print(ex)
+        except IntegrityError:
             raise DbIntegrityException(detail="Ошибка")
         await self.session.refresh(instance)
         doctor_id = instance.id

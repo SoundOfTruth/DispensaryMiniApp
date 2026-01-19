@@ -5,7 +5,7 @@ from fastapi import Depends
 from src.api.exceptions import NotFoundException
 from src.database.core import AsyncScopedSessionDep
 from src.repositories.specialities import SpecialitiesRepository
-from src.schemas.specialities import CreateSpecialityShema, SpecialitySchema
+from src.schemas.specialities import CreateSpecialitySchema, SpecialitySchema
 
 
 class SpecialityService:
@@ -24,7 +24,7 @@ class SpecialityService:
             SpecialitySchema.model_validate(speciality) for speciality in specialities
         ]
 
-    async def create(self, schema: CreateSpecialityShema) -> SpecialitySchema:
+    async def create(self, schema: CreateSpecialitySchema) -> SpecialitySchema:
         payload = schema.model_dump()
         speciality = await self.specialitie_rep.create(payload)
         return SpecialitySchema.model_validate(speciality)

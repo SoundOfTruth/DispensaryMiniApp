@@ -3,6 +3,14 @@ from pydantic import BaseModel, ConfigDict, field_serializer
 from src.schemas.base import BaseSchema
 
 
+class CreateEducationSchema(BaseModel):
+    title: str
+
+
+class CreateExtraEducationSchema(BaseModel):
+    title: str
+
+
 class CreateDoctorSchema(BaseModel):
     firstname: str
     lastname: str
@@ -12,8 +20,8 @@ class CreateDoctorSchema(BaseModel):
     speciality_id: int
     department_id: int
 
-    education: list[str] | None
-    extra_education: list[str] | None
+    education: list[CreateEducationSchema] | None
+    extra_education: list[CreateExtraEducationSchema] | None
 
 
 class SimpleDoctorSchema(BaseModel):
@@ -73,19 +81,10 @@ class DoctorSchema(SimpleDoctorSchema):
         return [row.title for row in obj]
 
 
-class CreateEducationSchema(BaseSchema):
-    title: str
-    doctor_id: int
-
-
 class EducationSchema(CreateEducationSchema):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
-
-
-class CreateExtraEducationSchema(CreateEducationSchema):
-    pass
 
 
 class ExtraEducationSchema(CreateExtraEducationSchema):

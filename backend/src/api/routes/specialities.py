@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.schemas.specialities import CreateSpecialityShema
+from src.schemas.specialities import CreateSpecialitySchema
 from src.services.specialities import SpecialityServiceDep
 
 router = APIRouter(prefix="/specialities", tags=["Specialities"])
@@ -18,6 +18,6 @@ async def get_speciality(service: SpecialityServiceDep, id: int):
 
 @router.post("/")
 async def create_speciality(
-    service: SpecialityServiceDep, schema: CreateSpecialityShema
+    service: SpecialityServiceDep, schema: CreateSpecialitySchema
 ):
     return await service.create(schema)

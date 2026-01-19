@@ -3,11 +3,11 @@ from pydantic import ConfigDict
 from src.schemas.base import BaseSchema
 
 
-class CreateSpecialityShema(BaseSchema):
+class CreateSpecialitySchema(BaseSchema):
     name: str
 
 
-class SpecialitySchema(CreateSpecialityShema):
+class SpecialitySchema(CreateSpecialitySchema):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
