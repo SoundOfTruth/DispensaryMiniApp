@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { AxiosError } from "axios";
 
 import DoctorsApi from "../api/doctors";
 
@@ -12,17 +14,46 @@ import type {
 } from "../types/doctors";
 
 export const useDoctorStore = defineStore("doctorStore", () => {
+  const router = useRouter();
+
   const doctors = ref<SimpleDoctor[]>();
   const doctor = ref<Doctor>();
+  const err = ref<string>("Загрузка данных...");
+
   const loadDoctors = async () => {
-    doctors.value = getComputedDoctors(await DoctorsApi.getAll());
+    try {
+      doctors.value = getComputedDoctors(await DoctorsApi.getAll());
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.code == "ERR_NETWORK") {
+          err.value = "Удалённый сервер не отвечает";
+        }
+      }
+    }
   };
+
   const loadDoctor = async (id: number) => {
-    doctor.value = getComputedDoctor(await DoctorsApi.get(id));
+    try {
+      const doctorApi = await DoctorsApi.get(id);
+      if (doctorApi) {
+        doctor.value = getComputedDoctor(doctorApi);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.code == "ERR_NETWORK") {
+          err.value = "Удалённый сервер не отвечает";
+        }
+        if (error.message == "Request failed with status code 404") {
+          router.push("/not-found");
+        }
+      }
+    }
   };
+
   return {
     doctor,
     doctors,
+    err,
     loadDoctor,
     loadDoctors,
   };
