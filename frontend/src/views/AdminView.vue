@@ -2,16 +2,14 @@
   <div>
     <div class="form-list" v-if="activeForm === null">
       <div @click="openForm(ActiveForm.inspectionsForm)">
-        Форма добавления обследования
+        Форма создания обследования
       </div>
-      <div @click="openForm(ActiveForm.doctorsForm)">
-        Форма добавления врача
-      </div>
+      <div @click="openForm(ActiveForm.doctorsForm)">Форма создания врача</div>
       <div @click="openForm(ActiveForm.specialitiesForm)">
-        Форма добавления специальности
+        Форма создания специальности
       </div>
       <div @click="openForm(ActiveForm.departmentsForm)">
-        Форма добавления отделения
+        Форма создания отделения
       </div>
     </div>
     <div v-if="activeForm == ActiveForm.inspectionsForm">
@@ -70,17 +68,6 @@ const activeForm = ref<number | null>(null);
 
 const openForm = (form: ActiveFormSwitch) => {
   activeForm.value = form;
-  // switch (form) {
-  //   case ActiveForm.inspectionsForm:
-  //     activeForm.value = ActiveForm.inspectionsForm;
-  //     break;
-  //   case ActiveForm.doctorsForm:
-  //     activeForm.value = ActiveForm.doctorsForm;
-  //     break;
-  //   case ActiveForm.doctorsForm:
-  //     activeForm.value = ActiveForm.doctorsForm;
-  //     break;
-  // }
 };
 
 const cancel = () => {

@@ -51,6 +51,6 @@ export interface CreateDoctor {
   experience_start: number | null;
   speciality_id: number;
   department_id: number;
-  education: CreateEducation[];
-  extra_education: CreateExtraEducation[];
+    education: CreateEducation[];
+    extra_education: CreateExtraEducation[];
 }
