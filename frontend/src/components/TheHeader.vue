@@ -21,6 +21,9 @@
         <li @click="toggleMenu()">
           <RouterLink to="/inspections">Обследования</RouterLink>
         </li>
+        <li @click="toggleMenu()">
+          <RouterLink to="/equipments">Оборудование</RouterLink>
+        </li>
       </ul>
     </nav>
   </header>
@@ -54,7 +57,7 @@ header .hat {
 }
 
 header .title {
-color: #222;
+  color: #222;
   font-size: 140%;
   font-weight: 500;
   margin: 0;
