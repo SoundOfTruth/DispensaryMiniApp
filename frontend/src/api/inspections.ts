@@ -1,31 +1,34 @@
 import type { Inspection, CreateInspection } from "../types/inspections";
 
+import axios from "axios";
+import type { AxiosInstance } from "axios";
+
 class InspectionsApi {
-  protected url: string;
-  protected headers: Record<string, string>;
+  protected client: AxiosInstance;
+
   constructor(url: string, headers: Record<string, string>) {
-    this.url = url;
-    this.headers = headers;
+    this.client = axios.create({
+      baseURL: url,
+      headers: headers,
+      timeout: 7000,
+    });
   }
+
   async getAll(): Promise<Inspection[]> {
-    let response = await fetch(`${this.url}/inspections/`);
-    return (await response.json()) as Inspection[];
+    const response = await this.client.get("/inspections/");
+    return response.data;
   }
   async get(id: number): Promise<Inspection> {
-    let response = await fetch(`${this.url}/inspections/${id}/`);
-    return (await response.json()) as Inspection;
+    const response = await this.client.get(`/inspections/${id}/`);
+    return response.data as Inspection;
   }
 
   async create(data: CreateInspection): Promise<Inspection[]> {
-    let payload = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    };
-    let response = await fetch(`${this.url}/inspections/`, payload);
-    return (await response.json()) as Inspection[];
+    const response = await this.client.post(
+      "/inspections/",
+      JSON.stringify(data),
+    );
+    return (await response.data) as Inspection[];
   }
 }
 

@@ -1,29 +1,35 @@
 import type { Speciality, CreateSpeciality } from "../types/specialities";
+
+import axios from "axios";
+import type { AxiosInstance } from "axios";
+
 class SpecialitiesApi {
-  protected url: string;
-  protected headers: Record<string, string>;
+  protected client: AxiosInstance;
+
   constructor(url: string, headers: Record<string, string>) {
-    this.url = url;
-    this.headers = headers;
+    this.client = axios.create({
+      baseURL: url,
+      headers: headers,
+      timeout: 7000,
+    });
   }
+
   async getAll(): Promise<Speciality[]> {
-    const response = await fetch(`${this.url}/specialities/`);
-    return await response.json();
+    const response = await this.client.get("/specialities/");
+    return response.data;
   }
+
   async get(id: number): Promise<Speciality> {
-    const response = await fetch(`${this.url}/specialities/${id}/`);
-    return await response.json();
+    const response = await this.client.get(`/specialities/${id}/`);
+    return await response.data;
   }
+
   async create(data: CreateSpeciality): Promise<Speciality> {
-    const payload = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    };
-    const response = await fetch(`${this.url}/specialities/`, payload);
-    return await response.json();
+    const response = await this.client.post(
+      "/specialities/",
+      JSON.stringify(data),
+    );
+    return await response.data;
   }
 }
 

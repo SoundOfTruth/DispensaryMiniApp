@@ -4,7 +4,7 @@ import axios from "axios";
 import type { AxiosInstance } from "axios";
 
 class DepartmentsApi {
-  client: AxiosInstance;
+  protected client: AxiosInstance;
 
   constructor(url: string, headers: Record<string, string>) {
     this.client = axios.create({
@@ -15,18 +15,18 @@ class DepartmentsApi {
   }
 
   async getAll(): Promise<Department[]> {
-    const response = await this.client.get("/departments/");
+    const response = await this.client.get("/equipments/");
     return await response.data;
   }
 
   async get(id: number): Promise<Department> {
-    const response = await this.client.get(`/departments/${id}/`);
+    const response = await this.client.get(`/equipments/${id}/`);
     return await response.data;
   }
 
   async create(data: CreateDepartment): Promise<Department> {
     const response = await this.client.post(
-      "/departments/",
+      "/equipments/",
       JSON.stringify(data),
     );
     return await response.data;

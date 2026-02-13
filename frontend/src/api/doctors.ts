@@ -1,29 +1,39 @@
-import type { InputDoctor, InputDoctorList, CreateDoctor } from "../types/doctors";
+import type {
+  InputDoctor,
+  InputDoctorList,
+  CreateDoctor,
+} from "../types/doctors";
+
+import axios from "axios";
+import type { AxiosInstance } from "axios";
+
 class DoctorsApi {
-  protected url: string;
-  protected headers: Record<string, string>;
+  protected client: AxiosInstance;
+
   constructor(url: string, headers: Record<string, string>) {
-    this.url = url;
-    this.headers = headers;
+    this.client = axios.create({
+      baseURL: url,
+      headers: headers,
+      timeout: 7000,
+    });
   }
-  async getAll(): Promise<InputDoctorList[]> {
-    const response = await fetch(`${this.url}/doctors/`);
-    return await response.json();
+
+  async getAll() {
+    const response = await this.client.get<InputDoctorList[]>("/doctors/");
+    return response.data;
   }
-  async get(id: number): Promise<InputDoctor> {
-    const response = await fetch(`${this.url}/doctors/${id}/`);
-    return await response.json();
+  async get(id: number) {
+    const response = await this.client.get<InputDoctor | undefined>(
+      `/doctors/${id}/`,
+    );
+    return response.data;
   }
-  async create(data: CreateDoctor): Promise<InputDoctor> {
-    const payload = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    };
-    const response = await fetch(`${this.url}/doctors/`, payload);
-    return await response.json();
+  async create(data: CreateDoctor) {
+    const response = await this.client.post<InputDoctor>(
+      "/doctors/",
+      JSON.stringify(data),
+    );
+    return response.data;
   }
 }
 
