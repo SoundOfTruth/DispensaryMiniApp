@@ -1,43 +1,46 @@
 <template>
   <div>
-    <div class="doctor-img-container">
-      <img src="/src/images/avatar.png" class="doctor-img" />
-    </div>
-    <div class="fullname">
-      <div>{{ doctor?.lastname }}</div>
-      <div>{{ doctor?.firstname }} {{ doctor?.middlename }}</div>
-    </div>
-    <div class="information">
-      <div class="speciality" v-html="doctor?.speciality"></div>
-      <div class="expirience" v-if="doctor?.experience">
-        <span>Опыт работы: </span>
-        <span>{{ doctor?.experience }}</span>
+    <div class="err-handler" v-if="!doctor">{{ doctorStore.err }}</div>
+    <div v-else>
+      <div class="doctor-img-container">
+        <img src="/src/images/avatar.png" class="doctor-img" />
       </div>
-      <div v-if="doctor?.qualification">
-        <div class="title">Квалификация</div>
-        <span>{{ doctor?.qualification }}</span>
+      <div class="fullname">
+        <div>{{ doctor?.lastname }}</div>
+        <div>{{ doctor?.firstname }} {{ doctor?.middlename }}</div>
       </div>
-      <div v-if="doctor?.education.length">
-        <div class="title">Образование</div>
-        <div class="education">
-          <div v-for="education in doctor?.extra_education" class="text">
-            {{ education }}
+      <div class="information">
+        <div class="speciality" v-html="doctor?.speciality"></div>
+        <div class="expirience" v-if="doctor?.experience">
+          <span>Опыт работы: </span>
+          <span>{{ doctor?.experience }}</span>
+        </div>
+        <div v-if="doctor?.qualification">
+          <div class="title">Квалификация</div>
+          <span>{{ doctor?.qualification }}</span>
+        </div>
+        <div v-if="doctor?.education?.length">
+          <div class="title">Образование</div>
+          <div class="education">
+            <div v-for="education in doctor?.extra_education" class="text">
+              {{ education }}
+            </div>
           </div>
         </div>
-      </div>
-      <div v-if="doctor?.extra_education.length">
-        <div class="title">Доп. образование</div>
-        <div class="education">
-          <div v-for="education in doctor?.extra_education">
-            {{ education }}
+        <div v-if="doctor?.extra_education?.length">
+          <div class="title">Доп. образование</div>
+          <div class="education">
+            <div v-for="education in doctor?.extra_education">
+              {{ education }}
+            </div>
           </div>
         </div>
-      </div>
-      <div class="title">Проводимые иследования:</div>
-      <div v-for="inspection in doctor?.inspections">
-        <RouterLink :to="`/inspections/${inspection.id}`">{{
-          `${inspection.title}`
-        }}</RouterLink>
+        <div class="title">Проводимые иследования:</div>
+        <div v-for="inspection in doctor?.inspections">
+          <RouterLink :to="`/inspections/${inspection.id}`">{{
+            `${inspection.title}`
+          }}</RouterLink>
+        </div>
       </div>
     </div>
   </div>
@@ -60,6 +63,11 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+.err-handler {
+  display: flex;
+  justify-content: center;
+  font-size: 110%;
+}
 .doctor-img-container {
   display: grid;
   place-content: center;

@@ -1,175 +1,183 @@
 <template>
-  <div class="form-container">
-    <form @submit.prevent="handleSubmit()">
-      <div class="group">
-        <label for="lastname">Фамилия *</label>
-        <input
-          id="lastname"
-          v-model="formData.lastname"
-          type="text"
-          class="input-data"
-          placeholder="Введите фамилию"
-          required
-        />
-      </div>
-
-      <div class="group">
-        <label for="firstname">Имя *</label>
-        <input
-          id="firstname"
-          v-model="formData.firstname"
-          type="text"
-          class="input-data"
-          placeholder="Введите имя"
-          required
-        />
-      </div>
-
-      <div class="group">
-        <label for="middlename">Отчество *</label>
-        <input
-          id="middlename"
-          v-model="formData.middlename"
-          type="text"
-          class="input-data"
-          placeholder="Введите отчество"
-          required
-        />
-      </div>
-
-      <div class="group">
-        <label for="experienceStart">Год начала стажа *</label>
-        <input
-          id="experienceStart"
-          v-model="formData.experience_start"
-          type="number"
-          class="input-data"
-          placeholder="Введите год начала рабочего стажа"
-        />
-      </div>
-
-      <div class="group">
-        <label for="qualification">Квалификационная категория</label>
-        <input
-          id="qualification"
-          v-model="formData.qualification"
-          type="text"
-          class="input-data"
-          placeholder="Введите квалификационную категорию"
-        />
-      </div>
-
-      <div class="group">
-        <label for="speciality_id">Специальность</label>
-        <select
-          name="option"
-          v-model="formData.speciality_id"
-          class="input-data"
-        >
-          <option :value="speciality.id" v-for="speciality in specialities">
-            {{ speciality.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="group">
-        <label for="department_id">Отделение</label>
-        <select
-          name="option"
-          v-model="formData.department_id"
-          class="input-data"
-        >
-          <option :value="department.id" v-for="department in departments">
-            {{ department.name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="group">
-        <label for="education">Образование</label>
-        <div class="education-group">
+  <div>
+    <h3 class="form-title">Форма создания врача</h3>
+    <div class="form-container">
+      <form @submit.prevent="handleSubmit()">
+        <div class="group">
+          <label for="lastname">Фамилия *</label>
           <input
-            id="education"
-            v-model="educationField"
+            id="lastname"
+            v-model="formData.lastname"
             type="text"
             class="input-data"
-            placeholder="Введите образование"
+            placeholder="Введите фамилию"
+            required
           />
-          <button
-            type="button"
-            class="add"
-            @click="addEducation(formData.education, educationField)"
-          >
-            +
-          </button>
         </div>
-      </div>
 
-      <div v-if="formData.education.length > 0" class="selected-doctors">
-        <div class="selected-list group">
-          <div
-            v-for="education in formData.education"
-            :key="education.title"
-            class="selected-doctor"
+        <div class="group">
+          <label for="firstname">Имя *</label>
+          <input
+            id="firstname"
+            v-model="formData.firstname"
+            type="text"
+            class="input-data"
+            placeholder="Введите имя"
+            required
+          />
+        </div>
+
+        <div class="group">
+          <label for="middlename">Отчество *</label>
+          <input
+            id="middlename"
+            v-model="formData.middlename"
+            type="text"
+            class="input-data"
+            placeholder="Введите отчество"
+            required
+          />
+        </div>
+
+        <div class="group">
+          <label for="experienceStart">Год начала стажа *</label>
+          <input
+            id="experienceStart"
+            v-model="formData.experience_start"
+            type="number"
+            class="input-data"
+            placeholder="Введите год начала рабочего стажа"
+          />
+        </div>
+
+        <div class="group">
+          <label for="qualification">Квалификационная категория</label>
+          <input
+            id="qualification"
+            v-model="formData.qualification"
+            type="text"
+            class="input-data"
+            placeholder="Введите квалификационную категорию"
+          />
+        </div>
+
+        <div class="group">
+          <label for="speciality_id">Специальность</label>
+          <select
+            name="option"
+            v-model="formData.speciality_id"
+            class="input-data"
           >
-            <span>{{ education.title }}</span>
+            <option :value="speciality.id" v-for="speciality in specialities">
+              {{ speciality.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="group">
+          <label for="department_id">Отделение</label>
+          <select
+            name="option"
+            v-model="formData.department_id"
+            class="input-data"
+          >
+            <option :value="department.id" v-for="department in departments">
+              {{ department.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="group">
+          <label for="education">Образование</label>
+          <div class="education-group">
+            <input
+              id="education"
+              v-model="educationField"
+              type="text"
+              class="input-data"
+              placeholder="Введите образование"
+            />
             <button
               type="button"
-              class="remove-btn"
-              @click="removeEducation(education)"
+              class="add"
+              @click="addEducation(formData.education, educationField)"
             >
-              ×
+              +
             </button>
           </div>
         </div>
-      </div>
 
-      <div class="group">
-        <label for="extra_education">Доп. Образование</label>
-        <div class="education-group">
-          <input
-            id="extra_education"
-            v-model="extraEducationField"
-            type="text"
-            class="input-data"
-            placeholder="Введите доп. образование"
-          />
-          <button
-            type="button"
-            class="add"
-            @click="addEducation(formData.extra_education, extraEducationField)"
-          >
-            +
-          </button>
+        <div v-if="formData.education.length > 0" class="selected-doctors">
+          <div class="selected-list group">
+            <div
+              v-for="education in formData.education"
+              :key="education.title"
+              class="selected-doctor"
+            >
+              <span>{{ education.title }}</span>
+              <button
+                type="button"
+                class="remove-btn"
+                @click="removeEducation(education)"
+              >
+                ×
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div v-if="formData.extra_education.length > 0" class="selected-doctors">
-        <div class="selected-list">
-          <div
-            v-for="education in formData.extra_education"
-            :key="education.title"
-            class="selected-doctor"
-          >
-            <span>{{ education.title }}</span>
+        <div class="group">
+          <label for="extra_education">Доп. Образование</label>
+          <div class="education-group">
+            <input
+              id="extra_education"
+              v-model="extraEducationField"
+              type="text"
+              class="input-data"
+              placeholder="Введите доп. образование"
+            />
             <button
               type="button"
-              class="remove-btn"
-              @click="removeExtraEducation(education)"
+              class="add"
+              @click="
+                addEducation(formData.extra_education, extraEducationField)
+              "
             >
-              ×
+              +
             </button>
           </div>
         </div>
-      </div>
 
-      <div class="form-actions">
-        <button type="submit" class="btn save">Сохранить</button>
-        <button type="button" class="btn cancel" @click="handleCancel()">
-          Отмена
-        </button>
-      </div>
-    </form>
+        <div
+          v-if="formData.extra_education.length > 0"
+          class="selected-doctors"
+        >
+          <div class="selected-list">
+            <div
+              v-for="education in formData.extra_education"
+              :key="education.title"
+              class="selected-doctor"
+            >
+              <span>{{ education.title }}</span>
+              <button
+                type="button"
+                class="remove-btn"
+                @click="removeExtraEducation(education)"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn save">Сохранить</button>
+          <button type="button" class="btn cancel" @click="handleCancel()">
+            Отмена
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -246,6 +254,10 @@ const handleCancel = () => {
 </script>
 
 <style lang="scss" scoped>
+.form-title {
+  margin: 0 auto;
+  padding-bottom: 15px;
+}
 .form-container {
   max-width: 800px;
   margin: 0 auto;

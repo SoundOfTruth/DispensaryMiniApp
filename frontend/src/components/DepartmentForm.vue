@@ -1,24 +1,27 @@
 <template>
-  <div class="form-container">
-    <form @submit.prevent="handleSubmit()">
-      <div class="group">
-        <label for="name">Название отделения</label>
-        <input
-          id="name"
-          v-model="formData.name"
-          type="text"
-          class="input-data"
-          placeholder="Введите название отделения"
-          required
-        />
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="btn save">Сохранить</button>
-        <button type="button" class="btn cancel" @click="handleCancel()">
-          Отмена
-        </button>
-      </div>
-    </form>
+  <div>
+    <h3 class="form-title">Форма создания отделения</h3>
+    <div class="form-container">
+      <form @submit.prevent="handleSubmit()">
+        <div class="group">
+          <label for="name">Название отделения</label>
+          <input
+            id="name"
+            v-model="formData.name"
+            type="text"
+            class="input-data"
+            placeholder="Введите название отделения"
+            required
+          />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn save">Сохранить</button>
+          <button type="button" class="btn cancel" @click="handleCancel()">
+            Отмена
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -41,6 +44,10 @@ const handleCancel = () => {
 </script>
 
 <style lang="scss" scoped>
+.form-title {
+  margin: 0 auto;
+  padding-bottom: 15px;
+}
 .form-container {
   max-width: 800px;
   margin: 0 auto;

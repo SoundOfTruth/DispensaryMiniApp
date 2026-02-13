@@ -1,113 +1,116 @@
 <template>
-  <div class="form-container">
-    <form @submit.prevent="handleSubmit">
-      <div class="group">
-        <label for="title">Заголовок *</label>
-        <input
-          id="title"
-          v-model="formData.title"
-          type="text"
-          class="input-data"
-          placeholder="Введите заголовок"
-          required
-        />
-      </div>
-
-      <div class="group">
-        <label for="description">Описание</label>
-        <textarea
-          id="description"
-          v-model="formData.description"
-          class="input-data"
-          rows="4"
-          placeholder="Введите описание"
-        ></textarea>
-      </div>
-
-      <div class="group">
-        <label for="preparation">Подготовка *</label>
-        <textarea
-          id="preparation"
-          v-model="formData.preparation"
-          class="input-data"
-          rows="3"
-          placeholder="Опишите подготовку"
-          required
-        ></textarea>
-      </div>
-
-      <div class="group">
-        <label>Врачи</label>
-
-        <div class="doctor-search">
+  <div>
+    <h3 class="form-title">Форма создания обследования</h3>
+    <div class="form-container">
+      <form @submit.prevent="handleSubmit">
+        <div class="group">
+          <label for="title">Заголовок *</label>
           <input
-            v-model="doctorSearch"
+            id="title"
+            v-model="formData.title"
             type="text"
             class="input-data"
-            placeholder="Поиск врачей..."
+            placeholder="Введите заголовок"
+            required
           />
         </div>
 
-        <div class="doctors-selection">
-          <div
-            v-for="doctor in filteredDoctors"
-            :key="doctor.id"
-            class="doctor-item"
-            @click="toggleDoctor(doctor)"
-          >
-            <div class="doctor-info">
-              <strong>{{ doctor.fullname }}</strong>
-              <div v-if="doctor.speciality" class="speciality">
-                {{ doctor.speciality }}
-              </div>
-              <div v-if="doctor.qualification" class="qualification">
-                {{ doctor.qualification }}
-              </div>
-              <div class="department">
-                {{ doctor.department }}
-              </div>
-            </div>
-          </div>
+        <div class="group">
+          <label for="description">Описание</label>
+          <textarea
+            id="description"
+            v-model="formData.description"
+            class="input-data"
+            rows="4"
+            placeholder="Введите описание"
+          ></textarea>
         </div>
 
-        <div v-if="selectedDoctors.length > 0" class="selected-doctors">
-          <h4>Выбранные врачи:</h4>
-          <div class="selected-list">
+        <div class="group">
+          <label for="preparation">Подготовка *</label>
+          <textarea
+            id="preparation"
+            v-model="formData.preparation"
+            class="input-data"
+            rows="3"
+            placeholder="Опишите подготовку"
+            required
+          ></textarea>
+        </div>
+
+        <div class="group">
+          <label>Врачи</label>
+
+          <div class="doctor-search">
+            <input
+              v-model="doctorSearch"
+              type="text"
+              class="input-data"
+              placeholder="Поиск врачей..."
+            />
+          </div>
+
+          <div class="doctors-selection">
             <div
-              v-for="doctor in selectedDoctors"
+              v-for="doctor in filteredDoctors"
               :key="doctor.id"
-              class="selected-doctor"
+              class="doctor-item"
+              @click="toggleDoctor(doctor)"
             >
-              <span>{{ doctor.fullname }}</span>
-              <button
-                type="button"
-                class="remove-btn"
-                @click="removeDoctor(doctor.id)"
-              >
-                ×
-              </button>
+              <div class="doctor-info">
+                <strong>{{ doctor.fullname }}</strong>
+                <div v-if="doctor.speciality" class="speciality">
+                  {{ doctor.speciality }}
+                </div>
+                <div v-if="doctor.qualification" class="qualification">
+                  {{ doctor.qualification }}
+                </div>
+                <div class="department">
+                  {{ doctor.department }}
+                </div>
+              </div>
             </div>
+          </div>
+
+          <div v-if="selectedDoctors.length > 0" class="selected-doctors">
+            <h4>Выбранные врачи:</h4>
+            <div class="selected-list">
+              <div
+                v-for="doctor in selectedDoctors"
+                :key="doctor.id"
+                class="selected-doctor"
+              >
+                <span>{{ doctor.fullname }}</span>
+                <button
+                  type="button"
+                  class="remove-btn"
+                  @click="removeDoctor(doctor.id)"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            v-if="filteredDoctors?.length === 0 && doctorSearch"
+            class="no-doctors"
+          >
+            Врачи не найдены
+          </div>
+          <div v-if="doctorsList?.length === 0" class="no-doctors">
+            Список врачей пуст
           </div>
         </div>
 
-        <div
-          v-if="filteredDoctors?.length === 0 && doctorSearch"
-          class="no-doctors"
-        >
-          Врачи не найдены
+        <div class="form-actions">
+          <button type="submit" class="btn save">Сохранить</button>
+          <button type="button" class="btn cancel" @click="handleCancel()">
+            Отмена
+          </button>
         </div>
-        <div v-if="doctorsList?.length === 0" class="no-doctors">
-          Список врачей пуст
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" class="btn save">Сохранить</button>
-        <button type="button" class="btn cancel" @click="handleCancel()">
-          Отмена
-        </button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -199,6 +202,10 @@ const handleCancel = () => {
 </script>
 
 <style scoped lang="scss">
+.form-title {
+  margin: 0 auto;
+  padding-bottom: 15px;
+}
 .form-container {
   max-width: 800px;
   margin: 0 auto;

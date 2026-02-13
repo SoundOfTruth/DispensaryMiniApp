@@ -1,34 +1,39 @@
 <template>
-  <div class="form-container">
-    <form @submit.prevent="handleSubmit()">
-      <div class="group">
-        <label for="name">Название специальности</label>
-        <input
-          id="name"
-          v-model="formData.name"
-          type="text"
-          class="input-data"
-          placeholder="Введите название специальности"
-          required
-        />
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="btn save">Сохранить</button>
-        <button type="button" class="btn cancel" @click="handleCancel()">
-          Отмена
-        </button>
-      </div>
-    </form>
+  <div>
+    <h3 class="form-title">Форма создания специальности</h3>
+    <div class="form-container">
+      <form @submit.prevent="handleSubmit()">
+        <div class="group">
+          <label for="name">Название специальности</label>
+          <input
+            id="name"
+            v-model="formData.name"
+            type="text"
+            class="input-data"
+            placeholder="Введите название специальности"
+            required
+          />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn save">Сохранить</button>
+          <button type="button" class="btn cancel" @click="handleCancel()">
+            Отмена
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import type { CreateSpeciality } from "../types/specialities";
+import type { CreateSpeciality, Speciality } from "../types/specialities";
 import { useSpecialityStore } from "../stores/SpecialityStore";
 
+const props = defineProps<{ editSpeciality?: Speciality }>();
 const emits = defineEmits(["cancel"]);
-const formData = ref<CreateSpeciality>({ name: "" });
+
+const formData = ref<CreateSpeciality>({name: ""});
 
 const specialityStore = useSpecialityStore();
 
@@ -41,6 +46,10 @@ const handleCancel = () => {
 </script>
 
 <style lang="scss" scoped>
+.form-title {
+  margin: 0 auto;
+  padding-bottom: 15px;
+}
 .form-container {
   max-width: 800px;
   margin: 0 auto;
