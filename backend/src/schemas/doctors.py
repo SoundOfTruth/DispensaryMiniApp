@@ -58,7 +58,7 @@ class DepartmentSchema(BaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
-class SimpleInspectionShema(BaseSchema):
+class SimpleInspectionSchema(BaseSchema):
     id: int
     title: str
 
@@ -70,7 +70,7 @@ class DoctorSchema(SimpleDoctorSchema):
 
     education: list["EducationSchema"]
     extra_education: list["ExtraEducationSchema"]
-    inspections: list[SimpleInspectionShema]
+    inspections: list[SimpleInspectionSchema]
 
     @field_serializer("education")
     def serialize_education(self, obj: list["EducationSchema"]):

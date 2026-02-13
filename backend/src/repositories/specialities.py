@@ -9,11 +9,11 @@ class SpecialitiesRepository(DefaultRepository[Speciality]):
     model = Speciality
 
     async def create(self, data: dict) -> Speciality:
-        research = Speciality(**data)
-        self.session.add(research)
+        instance = Speciality(**data)
+        self.session.add(instance)
         try:
             await self.session.commit()
         except IntegrityError:
             raise DbIntegrityException(detail="Специальность уже сушествует")
-        await self.session.refresh(research)
-        return research
+        await self.session.refresh(instance)
+        return instance

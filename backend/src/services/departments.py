@@ -5,7 +5,7 @@ from fastapi import Depends
 from src.api.exceptions import NotFoundException
 from src.database.core import AsyncScopedSessionDep
 from src.repositories.departments import DepartmentRepository
-from src.schemas.departments import CreateDepartmentShema, DepartmentSchema
+from src.schemas.departments import CreateDepartmentSchema, DepartmentSchema
 
 
 class DepartmentService:
@@ -24,7 +24,7 @@ class DepartmentService:
             DepartmentSchema.model_validate(department) for department in departments
         ]
 
-    async def create(self, schema: CreateDepartmentShema) -> DepartmentSchema:
+    async def create(self, schema: CreateDepartmentSchema) -> DepartmentSchema:
         payload = schema.model_dump()
         department = await self.department_rep.create(payload)
         return DepartmentSchema.model_validate(department)

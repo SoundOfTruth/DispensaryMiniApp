@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.schemas.departments import CreateDepartmentShema
+from src.schemas.departments import CreateDepartmentSchema
 from src.services.departments import DepartmentServiceDep
 
 router = APIRouter(prefix="/departments", tags=["Departments"])
@@ -18,6 +18,6 @@ async def get_department(service: DepartmentServiceDep, id: int):
 
 @router.post("/")
 async def create_department(
-    service: DepartmentServiceDep, schema: CreateDepartmentShema
+    service: DepartmentServiceDep, schema: CreateDepartmentSchema
 ):
     return await service.create(schema)
