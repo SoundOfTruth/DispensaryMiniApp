@@ -1,9 +1,13 @@
 <template>
-  <div class="doctors-list" v-if="doctors?.length">
-    <div v-if="doctors?.length == 0">В базе нет врачей</div>
-    <DoctorCard v-else :doctor="doctor" v-for="doctor in doctors"></DoctorCard>
+  <div class="err-handler" v-if="errCondition">
+    {{ err }}
   </div>
-  <div class="err-handler" v-else-if="err">{{ err }}</div>
+  <div v-else>
+    <SearchField title="Поиск врачей" />
+    <div class="doctors-list" v-if="doctors?.length">
+      <DoctorCard :doctor="doctor" v-for="doctor in doctors" />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -11,13 +15,18 @@ import { computed, onMounted } from "vue";
 import DoctorCard from "../components/DoctorCard.vue";
 
 import { useDoctorStore } from "../stores/DoctorStore";
+import SearchField from "../components/SearchField.vue";
 
 const doctorStore = useDoctorStore();
 const doctors = computed(() => doctorStore.doctors);
 const err = computed(() => doctorStore.err);
+const errCondition = computed(
+  () => doctors.value == undefined || doctors.value?.length == 0,
+);
 
 onMounted(async () => {
   await doctorStore.loadDoctors();
+  console.log(doctors.value?.length);
 });
 </script>
 

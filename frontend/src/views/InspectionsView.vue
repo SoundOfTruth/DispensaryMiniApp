@@ -1,17 +1,19 @@
 <template>
-  <div class="inspections-list" v-if="inspections?.length">
-    <div v-if="inspections?.length == 0">В базе нет обследований</div>
-    <InspectionCard
-      v-else
-      :inspection="inspection"
-      v-for="inspection in inspections"
-    ></InspectionCard>
+  <div class="err-handler" v-if="errCondition">{{ err }}</div>
+  <div v-else>
+    <SearchField title="Поиск обследований" />
+    <div class="inspections-list">
+      <InspectionCard
+        :inspection="inspection"
+        v-for="inspection in inspections"
+      ></InspectionCard>
+    </div>
   </div>
-  <div class="err-handler" v-else-if="err">{{ err }}</div>
 </template>
 
 <script setup lang="ts">
 import InspectionCard from "../components/InspectionCard.vue";
+import SearchField from "../components/SearchField.vue";
 import { computed, onMounted } from "vue";
 
 import { useInspectionStore } from "../stores/InspectionStore";
@@ -19,6 +21,9 @@ import { useInspectionStore } from "../stores/InspectionStore";
 const inspectionStore = useInspectionStore();
 const inspections = computed(() => inspectionStore.inspections);
 const err = computed(() => inspectionStore.err);
+const errCondition = computed(
+  () => inspections.value == undefined || inspections.value?.length == 0,
+);
 onMounted(async () => {
   await inspectionStore.loadInspections();
 });

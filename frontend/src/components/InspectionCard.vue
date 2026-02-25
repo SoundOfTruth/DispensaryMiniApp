@@ -22,7 +22,7 @@ const openResearch = (inspectionId: number) => {
 .research-card {
   background: white;
   display: flex;
-  border-radius: 4px;
+  border-radius: 16px;
   border: 1px solid transparent;
   .info {
     display: flex;

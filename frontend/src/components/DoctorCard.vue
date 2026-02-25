@@ -26,7 +26,7 @@ const openDoctor = (doctorId: number) => {
 .doctor-card {
   background: white;
   display: flex;
-  border-radius: 4px;
+  border-radius: 16px;
   border: 1px solid transparent;
   .avatar-container {
     display: grid;

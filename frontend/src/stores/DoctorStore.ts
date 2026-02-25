@@ -23,6 +23,9 @@ export const useDoctorStore = defineStore("doctorStore", () => {
   const loadDoctors = async () => {
     try {
       doctors.value = getComputedDoctors(await DoctorsApi.getAll());
+      if (doctors.value.length == 0) {
+        err.value = "В базе нет врачей";
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.code == "ERR_NETWORK") {
