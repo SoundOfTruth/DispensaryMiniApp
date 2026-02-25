@@ -1,9 +1,9 @@
-import type { Department, CreateDepartment } from "../types/departments";
+import type { EquipmentsGroupedByType } from "../types/equipments";
 
 import axios from "axios";
 import type { AxiosInstance } from "axios";
 
-class DepartmentsApi {
+class EquipmentsApi {
   protected client: AxiosInstance;
 
   constructor(url: string, headers: Record<string, string>) {
@@ -14,25 +14,12 @@ class DepartmentsApi {
     });
   }
 
-  async getAll(): Promise<Department[]> {
-    const response = await this.client.get("/equipments/");
-    return await response.data;
-  }
-
-  async get(id: number): Promise<Department> {
-    const response = await this.client.get(`/equipments/${id}/`);
-    return await response.data;
-  }
-
-  async create(data: CreateDepartment): Promise<Department> {
-    const response = await this.client.post(
-      "/equipments/",
-      JSON.stringify(data),
-    );
+  async getAllGroupedByType(): Promise<EquipmentsGroupedByType[]> {
+    const response = await this.client.get("/equipments/?group_by=type");
     return await response.data;
   }
 }
 
-export default new DepartmentsApi("http://localhost:8000/api", {
+export default new EquipmentsApi("http://localhost:8000/api", {
   "content-type": "application/json",
 });

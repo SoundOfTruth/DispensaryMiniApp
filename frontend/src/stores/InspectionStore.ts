@@ -17,6 +17,9 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
   const loadInspections = async () => {
     try {
       inspections.value = await InspectionApi.getAll();
+      if (inspections.value.length == 0) {
+        err.value = "В базе нет обследований";
+      }
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.code == "ERR_NETWORK") {

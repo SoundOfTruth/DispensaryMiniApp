@@ -16,8 +16,8 @@ class EquipmentsService:
     def __init__(self, session: AsyncScopedSessionDep) -> None:
         self.equipment_repo = EquipmentRepository(session=session)
 
-    async def get_all_grouped(self):
-        equipments = await self.equipment_repo.get_all_grouped()
+    async def get_all_grouped_by_type(self):
+        equipments = await self.equipment_repo.get_all_grouped_by_type()
         return [
             EquipmentByTypeSchema.model_validate(equipment) for equipment in equipments
         ]

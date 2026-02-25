@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, field_serializer
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 
 class CreateEquipmentSchema(BaseModel):
@@ -7,10 +7,15 @@ class CreateEquipmentSchema(BaseModel):
     image: str | None
 
 
-class EquimentSchema(BaseModel):
+class SimpleEquimentSchema(BaseModel):
+    id: int
     name: str
     image: str | None
 
+    model_config = ConfigDict(from_attributes=True)
+
+
+class EquimentSchema(SimpleEquimentSchema):
     type: "EquipmentTypeSchema"
 
     model_config = ConfigDict(from_attributes=True)
@@ -30,5 +35,9 @@ class EquipmentTypeSchema(CreateEquipmentTypeSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
-class EquipmentByTypeSchema(EquipmentTypeSchema):
-    equipments: list[EquimentSchema]
+class EquipmentByTypeSchema(BaseModel):
+    name: str = Field(serialization_alias="type")
+
+    equipments: list[SimpleEquimentSchema]
+
+    model_config = ConfigDict(from_attributes=True, serialize_by_alias=True)

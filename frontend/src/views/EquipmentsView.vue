@@ -1,34 +1,54 @@
 <template>
   <div>
-    <div class="equipment-type">Рентгенсистемы</div>
-    <div class="equipment">
-      <img src="/src/images/test.jpg">
-      <div class="name">Рентгенодиагностический комплекс на 3 рабочих места СУР</div>
+    <div class="err-handler" v-if="errCondition">
+      {{ err }}
+    </div>
+    <div v-else>
+      <div v-for="obj in equipments">
+        <div>
+          <div class="equipment-type">{{ obj.type }}</div>
+          <div class="equipments-list">
+            <EquipmentCard
+              :equipment="equipment"
+              v-for="equipment in obj.equipments"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
+<script setup lang="ts">
+import { computed, onMounted } from "vue";
+import EquipmentCard from "../components/EquipmentCard.vue";
+import { useEquipmentStore } from "../stores/EquipmentStore";
+
+const equipmentStore = useEquipmentStore();
+const equipments = computed(() => equipmentStore.equipmentsGroupedByType);
+const err = computed(() => equipmentStore.err);
+const errCondition = computed(
+  () => equipments.value == undefined || equipments.value?.length == 0,
+);
+onMounted(async () => {
+  await equipmentStore.loadEquipmentsGroupedByType();
+});
+</script>
 
 <style lang="scss" scoped>
-.equipment-type{
+.equipment-type {
   font-weight: 500;
   font-size: 140%;
   padding-bottom: 20px;
 }
-img{
-  width: 292px;
-  height: 270px;
-  max-width: 40vw;
-  max-height: 40vw;
-}
-.equipment{
+.err-handler {
   display: flex;
-  background: white;
-  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.equipments-list {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
-  .name{
-    font-size: clamp(75%, 3.7vw, 110%);
-    padding-right: 3px;
-  }
 }
 </style>

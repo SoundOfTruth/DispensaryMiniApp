@@ -10,7 +10,7 @@ from src.repositories.base import DefaultRepository
 class EquipmentRepository(DefaultRepository[Equipment]):
     model = Equipment
 
-    async def get_all_grouped(self):
+    async def get_all_grouped_by_type(self):
         statement = select(EquipmentType).options(
             selectinload(EquipmentType.equipments)
         )
