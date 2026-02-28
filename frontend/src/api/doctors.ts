@@ -1,11 +1,11 @@
+import axios from "axios";
+import type { AxiosInstance } from "axios";
+
 import type {
   InputDoctor,
   InputDoctorList,
   CreateDoctor,
 } from "../types/doctors";
-
-import axios from "axios";
-import type { AxiosInstance } from "axios";
 
 class DoctorsApi {
   protected client: AxiosInstance;
@@ -18,8 +18,10 @@ class DoctorsApi {
     });
   }
 
-  async getAll() {
-    const response = await this.client.get<InputDoctorList[]>("/doctors/");
+  async getAll(filters: Record<string, any> = {}) {
+    const response = await this.client.get<InputDoctorList[]>("/doctors/", {
+      params: filters,
+    });
     return response.data;
   }
   async get(id: number) {

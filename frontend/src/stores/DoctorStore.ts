@@ -1,7 +1,6 @@
-import { defineStore } from "pinia";
-
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+import { defineStore } from "pinia";
 import { AxiosError } from "axios";
 
 import DoctorsApi from "../api/doctors";
@@ -14,17 +13,32 @@ import type {
 } from "../types/doctors";
 
 export const useDoctorStore = defineStore("doctorStore", () => {
+  const route = useRoute();
   const router = useRouter();
 
   const doctors = ref<SimpleDoctor[]>();
   const doctor = ref<Doctor>();
   const err = ref<string>("Загрузка данных...");
 
+  const getAllowedFilters = (filters: Record<string, any>) => {
+    const allowedParams = ["page", "department_id", "speciality_id", "search"];
+    const cleanParams: Record<string, any> = {};
+    Object.keys(filters).forEach((key) => {
+      if (allowedParams.includes(key)) {
+        cleanParams[key] = filters[key];
+      }
+    });
+    return cleanParams;
+  };
+
   const loadDoctors = async () => {
+    const filters = getAllowedFilters(route.query);
     try {
-      doctors.value = getComputedDoctors(await DoctorsApi.getAll());
-      if (doctors.value.length == 0) {
+      doctors.value = getComputedDoctors(await DoctorsApi.getAll(filters));
+      if (doctors.value.length == 0 && !filters) {
         err.value = "В базе нет врачей";
+      } else {
+        err.value = "Ничего не найдено...";
       }
     } catch (error) {
       if (error instanceof AxiosError) {

@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import joinedload, selectinload, with_expression
 
@@ -29,9 +29,25 @@ class DoctorRepository(BaseRepository[Doctor]):
     async def get(self, id: int) -> Doctor | None:
         return await self.session.get(self.model, id)
 
-    async def get_all(self) -> Sequence[Doctor]:
-        statement = select(self.model).options(
-            joinedload(self.model.speciality), joinedload(self.model.department)
+    async def get_all(
+        self, search: str | None, filters: dict[str, int] = {}
+    ) -> Sequence[Doctor]:
+        expressions = []
+        if search:
+            expressions.append(
+                or_(
+                    self.model.lastname.icontains(search),
+                    self.model.firstname.icontains(search),
+                    self.model.middlename.icontains(search),
+                )
+            )
+        statement = (
+            select(self.model)
+            .filter_by(**filters)
+            .where(*expressions)
+            .options(
+                joinedload(self.model.speciality), joinedload(self.model.department)
+            )
         )
         res = await self.session.execute(statement)
         return res.scalars().all()

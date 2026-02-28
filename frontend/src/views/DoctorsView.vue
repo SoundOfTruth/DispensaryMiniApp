@@ -1,9 +1,11 @@
 <template>
-  <div class="err-handler" v-if="errCondition">
-    {{ err }}
-  </div>
-  <div v-else>
-    <SearchField title="Поиск врачей" />
+  <div class="container">
+    <SearchField title="Поиск врачей"
+      ><template #filter> <FilterButton /></template
+    ></SearchField>
+    <div class="err-handler" v-if="errCondition">
+      {{ err }}
+    </div>
     <div class="doctors-list" v-if="doctors?.length">
       <DoctorCard :doctor="doctor" v-for="doctor in doctors" />
     </div>
@@ -11,12 +13,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
-import DoctorCard from "../components/DoctorCard.vue";
-
-import { useDoctorStore } from "../stores/DoctorStore";
+import DoctorCard from "../components/doctors/DoctorCard.vue";
+import FilterButton from "../components/FilterButton.vue";
 import SearchField from "../components/SearchField.vue";
 
+import { computed, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
+
+import { useDoctorStore } from "../stores/DoctorStore";
+
+const route = useRoute();
 const doctorStore = useDoctorStore();
 const doctors = computed(() => doctorStore.doctors);
 const err = computed(() => doctorStore.err);
@@ -26,8 +32,15 @@ const errCondition = computed(
 
 onMounted(async () => {
   await doctorStore.loadDoctors();
-  console.log(doctors.value?.length);
 });
+
+watch(
+  () => route.query,
+  async () => {
+    await doctorStore.loadDoctors();
+  },
+  { deep: true },
+);
 </script>
 
 <style scoped lang="scss">
@@ -36,9 +49,17 @@ onMounted(async () => {
   justify-content: center;
   font-size: 16px;
 }
-.doctors-list {
+.container {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  .doctors-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    padding: 0px 15px;
+  }
 }
 </style>

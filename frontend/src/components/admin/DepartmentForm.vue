@@ -1,16 +1,16 @@
 <template>
   <div>
-    <h3 class="form-title">Форма создания специальности</h3>
+    <h3 class="form-title">Форма создания отделения</h3>
     <div class="form-container">
       <form @submit.prevent="handleSubmit()">
         <div class="group">
-          <label for="name">Название специальности</label>
+          <label for="name">Название отделения</label>
           <input
             id="name"
             v-model="formData.name"
             type="text"
             class="input-data"
-            placeholder="Введите название специальности"
+            placeholder="Введите название отделения"
             required
           />
         </div>
@@ -27,18 +27,17 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import type { CreateSpeciality, Speciality } from "../types/specialities";
-import { useSpecialityStore } from "../stores/SpecialityStore";
 
-const props = defineProps<{ editSpeciality?: Speciality }>();
+import { useDepartmentStore } from "../../stores/DepartmentStore";
+import type { CreateDepartment } from "../../types/departments";
+
 const emits = defineEmits(["cancel"]);
+const formData = ref<CreateDepartment>({ name: "" });
 
-const formData = ref<CreateSpeciality>({name: ""});
-
-const specialityStore = useSpecialityStore();
+const departmentStore = useDepartmentStore();
 
 const handleSubmit = async () => {
-  await specialityStore.create(formData.value);
+  await departmentStore.create(formData.value);
 };
 const handleCancel = () => {
   emits("cancel");

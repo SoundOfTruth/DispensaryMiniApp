@@ -1,7 +1,7 @@
-import type { Inspection, CreateInspection } from "../types/inspections";
-
 import axios from "axios";
 import type { AxiosInstance } from "axios";
+
+import type { Inspection, CreateInspection } from "../types/inspections";
 
 class InspectionsApi {
   protected client: AxiosInstance;
@@ -14,8 +14,10 @@ class InspectionsApi {
     });
   }
 
-  async getAll(): Promise<Inspection[]> {
-    const response = await this.client.get("/inspections/");
+  async getAll(filters: Record<string, any> = {}): Promise<Inspection[]> {
+    const response = await this.client.get("/inspections/", {
+      params: filters,
+    });
     return response.data;
   }
   async get(id: number): Promise<Inspection> {

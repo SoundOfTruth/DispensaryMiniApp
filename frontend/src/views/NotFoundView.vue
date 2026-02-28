@@ -1,10 +1,14 @@
+<script setup lang="ts">
+import { RouterLink } from "vue-router";
+</script>
+
 <template>
   <div class="not-found-container">
     <div>
       <div class="error-code">404</div>
       <h2>Страница не найдена</h2>
       <div class="actions">
-        <router-link to="/" class="btn"> Перейти на главную </router-link>
+        <RouterLink to="/" class="btn"> Перейти на главную </RouterLink>
       </div>
     </div>
   </div>

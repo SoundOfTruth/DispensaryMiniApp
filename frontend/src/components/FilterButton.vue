@@ -1,46 +1,27 @@
 <template>
-  <button class="filter-btn">
-    <svg
-      width="25"
-      height="25"
-      viewBox="0 0 25 25"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <mask
-        id="mask0_1_2311"
-        style="mask-type: luminance"
-        maskUnits="userSpaceOnUse"
-        x="2"
-        y="2"
-        width="21"
-        height="21"
-      >
-        <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M2.08374 2.08333H22.3958V22.3966H2.08374V2.08333Z"
-          fill="white"
-        />
-      </mask>
-      <g mask="url(#mask0_1_2311)">
-        <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
-          d="M9.13895 12.082C9.1577 12.0986 9.17541 12.1143 9.19311 12.133C10.3171 13.2851 10.9369 14.8111 10.9369 16.4309V20.5809L13.266 19.3122C13.4494 19.2122 13.5629 19.0164 13.5629 18.8007V16.4184C13.5629 14.8049 14.1764 13.2841 15.29 12.1382L20.3285 6.77886C20.6546 6.43198 20.8337 5.97677 20.8337 5.49656V4.52156C20.8337 4.03823 20.4525 3.64552 19.9858 3.64552H4.4952C4.02749 3.64552 3.64624 4.03823 3.64624 4.52156V5.49656C3.64624 5.97677 3.82541 6.43198 4.15145 6.77781L9.13895 12.082ZM10.5692 22.3966C10.3587 22.3966 10.1504 22.3403 9.96082 22.2278C9.59416 22.0091 9.37437 21.6226 9.37437 21.1934V16.4309C9.37437 15.2486 8.93374 14.1351 8.13061 13.282C8.10666 13.2622 8.0827 13.2403 8.06186 13.2174L3.01395 7.84969C2.41395 7.21219 2.08374 6.37573 2.08374 5.49656V4.52156C2.08374 3.17677 3.16603 2.08302 4.4952 2.08302H19.9858C21.3139 2.08302 22.3962 3.17677 22.3962 4.52156V5.49656C22.3962 6.37469 22.066 7.21011 21.4681 7.84865L16.4192 13.2174C15.5827 14.0799 15.1254 15.2143 15.1254 16.4184V18.8007C15.1254 19.5882 14.6994 20.3091 14.0139 20.6841L11.1379 22.2507C10.9587 22.3476 10.7639 22.3966 10.5692 22.3966V22.3966Z"
-          fill="#BABABA"
-        />
-      </g>
-    </svg>
+  <button class="filter-btn" @click="filterOpen = !filterOpen">
+    <FilterSvg />
   </button>
+  <div>
+    <Teleport to="#modals">
+      <FilterModal :open="filterOpen" @close="filterOpen = false" />
+    </Teleport>
+  </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import FilterSvg from "./svg/FilterSvg.vue";
+import FilterModal from "./modals/DoctorFilterModal.vue";
+
+import { ref } from "vue";
+const filterOpen = ref<boolean>(false);
+</script>
 
 <style lang="scss" scoped>
 .filter-btn {
   padding: 0;
   display: flex;
   align-items: center;
+  background: transparent;
 }
 </style>

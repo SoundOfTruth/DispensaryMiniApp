@@ -1,10 +1,9 @@
+import { ref } from "vue";
 import { defineStore } from "pinia";
 
-import { ref } from "vue";
+import DepartmentsApi from "../api/departments";
 
 import type { Department, CreateDepartment } from "../types/departments";
-
-import DepartmentsApi from "../api/departments";
 
 export const useDepartmentStore = defineStore("departmentStore", () => {
   const departments = ref<Department[]>([]);

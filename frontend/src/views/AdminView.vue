@@ -34,14 +34,14 @@
 <script lang="ts" setup>
 import { onMounted, ref, computed } from "vue";
 
-import InspectionForm from "../components/InspectionForm.vue";
-import DoctorsForm from "../components/DoctorsForm.vue";
-import SpecialityForm from "../components/SpecialityForm.vue";
+import InspectionForm from "../components/admin/InspectionForm.vue";
+import DoctorsForm from "../components/admin/DoctorsForm.vue";
+import SpecialityForm from "../components/admin/SpecialityForm.vue";
+import DepartmentForm from "../components/admin/DepartmentForm.vue";
 
 import { useDoctorStore } from "../stores/DoctorStore";
 import { useDepartmentStore } from "../stores/DepartmentStore";
 import { useSpecialityStore } from "../stores/SpecialityStore";
-import DepartmentForm from "../components/DepartmentForm.vue";
 
 const DoctorStore = useDoctorStore();
 const DepartmentStore = useDepartmentStore();

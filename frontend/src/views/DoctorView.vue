@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="doctor-page">
     <div class="err-handler" v-if="!doctor">{{ doctorStore.err }}</div>
     <div v-else>
       <div class="doctor-img-container">
@@ -14,6 +14,10 @@
         <div class="expirience" v-if="doctor?.experience">
           <span>Опыт работы: </span>
           <span>{{ doctor?.experience }}</span>
+        </div>
+        <div v-if="doctor?.department">
+          <div class="title">Отделение</div>
+          <span>{{ doctor?.department }}</span>
         </div>
         <div v-if="doctor?.qualification">
           <div class="title">Квалификация</div>
@@ -35,7 +39,9 @@
             </div>
           </div>
         </div>
-        <div class="title">Проводимые иследования:</div>
+        <div class="title" v-if="doctor?.inspections?.length > 0">
+          Проводимые иследования:
+        </div>
         <div v-for="inspection in doctor?.inspections">
           <RouterLink :to="`/inspections/${inspection.id}`">{{
             `${inspection.title}`
@@ -63,6 +69,9 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+.doctor-page {
+  padding: 0px 15px;
+}
 .err-handler {
   display: flex;
   justify-content: center;

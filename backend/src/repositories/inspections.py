@@ -21,8 +21,13 @@ class InspectionRepository(DefaultRepository[Inspection]):
         res = await self.session.execute(statement)
         return res.scalar_one_or_none()
 
-    async def get_all_with_relations(self) -> Sequence[Inspection]:
-        statement = select(self.model).options(*self.options)
+    async def get_all_with_relations(
+        self, search: str | None = None
+    ) -> Sequence[Inspection]:
+        expressions = []
+        if search:
+            expressions.append(self.model.title.icontains(search))
+        statement = select(self.model).where(*expressions).options(*self.options)
         res = await self.session.execute(statement)
         return res.scalars().all()
 

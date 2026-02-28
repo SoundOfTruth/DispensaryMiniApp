@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="inspections">
     <div class="err-handler" v-if="errCondition">
       {{ err }}
     </div>
@@ -20,8 +20,9 @@
 </template>
 
 <script setup lang="ts">
+import EquipmentCard from "../components/equipments/EquipmentCard.vue";
 import { computed, onMounted } from "vue";
-import EquipmentCard from "../components/EquipmentCard.vue";
+
 import { useEquipmentStore } from "../stores/EquipmentStore";
 
 const equipmentStore = useEquipmentStore();
@@ -36,6 +37,9 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
+.inspections {
+  padding: 0px 15px;
+}
 .equipment-type {
   font-weight: 500;
   font-size: 140%;

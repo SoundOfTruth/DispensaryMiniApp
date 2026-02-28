@@ -1,7 +1,7 @@
-import type { Department, CreateDepartment } from "../types/departments";
-
 import axios from "axios";
 import type { AxiosInstance } from "axios";
+
+import type { Department, CreateDepartment } from "../types/departments";
 
 class DepartmentsApi {
   client: AxiosInstance;

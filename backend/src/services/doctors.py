@@ -5,7 +5,12 @@ from fastapi import Depends
 from src.api.exceptions import NotFoundException
 from src.database.core import AsyncScopedSessionDep
 from src.repositories.doctors import DoctorRepository
-from src.schemas.doctors import CreateDoctorSchema, DoctorSchema, SimpleDoctorSchema
+from src.schemas.doctors import (
+    CreateDoctorSchema,
+    DoctorFilterParams,
+    DoctorSchema,
+    SimpleDoctorSchema,
+)
 
 
 class DoctorsService:
@@ -18,8 +23,9 @@ class DoctorsService:
             raise NotFoundException
         return DoctorSchema.model_validate(doctor)
 
-    async def get_all(self):
-        doctors = await self.doctor_repo.get_all()
+    async def get_all(self, params: DoctorFilterParams, search: str | None):
+        filters = params.model_dump(exclude_none=True)
+        doctors = await self.doctor_repo.get_all(filters=filters, search=search)
         return [SimpleDoctorSchema.model_validate(doctor) for doctor in doctors]
 
     async def get_all_with_relations(self):

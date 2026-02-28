@@ -1,7 +1,7 @@
-import type { EquipmentsGroupedByType } from "../types/equipments";
-
 import axios from "axios";
 import type { AxiosInstance } from "axios";
+
+import type { EquipmentsGroupedByType } from "../types/equipments";
 
 class EquipmentsApi {
   protected client: AxiosInstance;

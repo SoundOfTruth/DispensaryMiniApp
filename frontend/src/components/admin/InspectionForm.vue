@@ -117,9 +117,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 
-import type { SimpleDoctor } from "../types/doctors";
-import type { CreateInspection } from "../types/inspections";
-import InspectionsApi from "../api/inspections";
+import InspectionsApi from "../../api/inspections";
+import type { SimpleDoctor } from "../../types/doctors";
+import type { CreateInspection } from "../../types/inspections";
 
 const props = defineProps<{ doctors: SimpleDoctor[] | undefined }>();
 

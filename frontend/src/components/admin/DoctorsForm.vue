@@ -184,10 +184,10 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
-import DoctorsApi from "../api/doctors";
-import type { CreateDoctor, CreateEducation } from "../types/doctors";
-import type { Department } from "../types/departments";
-import type { Speciality } from "../types/specialities";
+import DoctorsApi from "../../api/doctors";
+import type { CreateDoctor, CreateEducation } from "../../types/doctors";
+import type { Department } from "../../types/departments";
+import type { Speciality } from "../../types/specialities";
 
 const props = defineProps<{
   departments: Department[];

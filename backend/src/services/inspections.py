@@ -18,8 +18,8 @@ class InspectionService:
             raise NotFoundException
         return InspectionSchema.model_validate(inspection)
 
-    async def get_all(self):
-        inspections = await self.inspetion_rep.get_all_with_relations()
+    async def get_all(self, search: str | None):
+        inspections = await self.inspetion_rep.get_all_with_relations(search)
         return [
             InspectionSchema.model_validate(inspection) for inspection in inspections
         ]

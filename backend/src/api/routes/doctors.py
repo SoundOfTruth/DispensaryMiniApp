@@ -1,14 +1,20 @@
-from fastapi import APIRouter
+from typing import Annotated
 
-from src.schemas.doctors import CreateDoctorSchema
+from fastapi import APIRouter, Depends
+
+from src.schemas.doctors import CreateDoctorSchema, DoctorFilterParams
 from src.services.doctors import DoctorServiceDep
 
 router = APIRouter(prefix="/doctors", tags=["Doctors"])
 
 
 @router.get("/")
-async def get_doctors(service: DoctorServiceDep):
-    return await service.get_all()
+async def get_doctors(
+    service: DoctorServiceDep,
+    params: Annotated[DoctorFilterParams, Depends()],
+    search: str | None = None,
+):
+    return await service.get_all(params, search)
 
 
 @router.get("/{id}/")

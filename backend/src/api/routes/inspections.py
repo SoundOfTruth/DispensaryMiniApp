@@ -7,8 +7,8 @@ router = APIRouter(prefix="/inspections", tags=["Inspections"])
 
 
 @router.get("/")
-async def get_inspections(service: InspectionServiceDep):
-    return await service.get_all()
+async def get_inspections(service: InspectionServiceDep, search: str | None = None):
+    return await service.get_all(search)
 
 
 @router.get("/{id}/")

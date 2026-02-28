@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="inspection-page">
     <div class="err-handler" v-if="!inspection">{{ inspectionStore.err }}</div>
     <div v-else>
       <div class="information">
@@ -43,6 +43,9 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+.inspection-page {
+  padding: 0px 15px;
+}
 .err-handler {
   display: flex;
   justify-content: center;

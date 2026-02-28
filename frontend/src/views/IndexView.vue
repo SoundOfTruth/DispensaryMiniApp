@@ -33,6 +33,7 @@
   display: flex;
   gap: 10px;
   flex-direction: column;
+  padding: 0px 15px;
 }
 .info .title {
   font-size: 140%;

@@ -4,20 +4,44 @@
       <div class="svg">
         <SearchSvg />
       </div>
-      <input type="text" :placeholder="props.title" class="input-field" />
+      <input
+        type="text"
+        v-model.lazy="pattern"
+        :placeholder="props.title"
+        class="input-field"
+        @keyup.enter="search()"
+      />
     </div>
-    <FilterButton/>
+    <slot name="filter"></slot>
   </div>
 </template>
 
 <script lang="ts" setup>
-import FilterButton from "./FilterButton.vue";
 import SearchSvg from "./SearchSvg.vue";
+
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
 interface inputData {
   title: string;
 }
+
+const route = useRoute();
+const router = useRouter();
+const pattern = ref<string>(route.query.search?.toString() ?? "");
+
 const props = defineProps<inputData>();
+
+const search = () => {
+  let query = { ...route.query };
+  if (pattern.value) {
+    query = { ...query, search: pattern.value };
+  }
+  router.replace({
+    path: route.path,
+    query: query,
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -27,7 +51,7 @@ const props = defineProps<inputData>();
   height: min-content;
 }
 .filters {
-  padding-inline: 10px;
+  padding-inline: 25px;
   padding-bottom: 20px;
   display: flex;
   gap: 10px;

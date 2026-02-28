@@ -9,19 +9,23 @@ import TheHeader from "./components/TheHeader.vue";
       <RouterView />
     </div>
   </div>
+  <div id="modals"></div>
 </template>
 
 <style scoped>
-.app {
-  max-width: 900px;
-  margin: 0 auto;
-}
 main {
   margin-top: 16px;
 }
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 .content {
-  padding-top: 20px;
-  padding-inline: 15px;
-  padding-bottom: 20px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 0px;
 }
 </style>

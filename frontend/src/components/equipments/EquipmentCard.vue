@@ -8,7 +8,8 @@
 </template>
 
 <script lang="ts" setup>
-import type { Equiment } from "../types/equipments";
+import type { Equiment } from "../../types/equipments";
+
 const props = defineProps<{ equipment: Equiment }>();
 </script>
 

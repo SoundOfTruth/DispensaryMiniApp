@@ -11,8 +11,10 @@ class EquipmentRepository(DefaultRepository[Equipment]):
     model = Equipment
 
     async def get_all_grouped_by_type(self):
-        statement = select(EquipmentType).options(
-            selectinload(EquipmentType.equipments)
+        statement = (
+            select(EquipmentType)
+            .options(selectinload(EquipmentType.equipments))
+            .where(EquipmentType.equipments.any())
         )
         res = await self.session.execute(statement)
         return res.scalars().all()

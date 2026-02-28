@@ -1,7 +1,7 @@
-import type { Speciality, CreateSpeciality } from "../types/specialities";
-
 import axios from "axios";
 import type { AxiosInstance } from "axios";
+
+import type { Speciality, CreateSpeciality } from "../types/specialities";
 
 class SpecialitiesApi {
   protected client: AxiosInstance;

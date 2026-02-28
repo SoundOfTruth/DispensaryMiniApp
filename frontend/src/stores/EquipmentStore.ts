@@ -1,9 +1,9 @@
-import { defineStore } from "pinia";
 import { ref } from "vue";
+import { defineStore } from "pinia";
 
-import type { EquipmentsGroupedByType } from "../types/equipments";
 import EquipmentApi from "../api/equipments";
 import { AxiosError } from "axios";
+import type { EquipmentsGroupedByType } from "../types/equipments";
 
 export const useEquipmentStore = defineStore("equipmentStore", () => {
   const equipmentsGroupedByType = ref<EquipmentsGroupedByType[]>();
