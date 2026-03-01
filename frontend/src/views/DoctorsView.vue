@@ -6,9 +6,11 @@
     <div class="err-handler" v-if="errCondition">
       {{ err }}
     </div>
-    <div class="doctors-list" v-if="doctors?.length">
-      <DoctorCard :doctor="doctor" v-for="doctor in doctors" />
-    </div>
+    <PaginatedPage :last-page="10" , :size="5">
+      <div class="doctors-list" v-if="doctors?.length">
+        <DoctorCard :doctor="doctor" v-for="doctor in doctors" />
+      </div>
+    </PaginatedPage>
   </div>
 </template>
 
@@ -21,6 +23,7 @@ import { computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 
 import { useDoctorStore } from "../stores/DoctorStore";
+import PaginatedPage from "../components/PaginatedPage.vue";
 
 const route = useRoute();
 const doctorStore = useDoctorStore();
