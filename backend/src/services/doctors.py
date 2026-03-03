@@ -1,14 +1,17 @@
+import math
 from typing import Annotated
 
 from fastapi import Depends
 
 from src.api.exceptions import NotFoundException
+from src.config import settings
 from src.database.core import AsyncScopedSessionDep
 from src.repositories.doctors import DoctorRepository
 from src.schemas.doctors import (
     CreateDoctorSchema,
-    DoctorFilterParams,
+    DoctorFiltersSchema,
     DoctorSchema,
+    PaginatedDoctorSchema,
     SimpleDoctorSchema,
 )
 
@@ -23,10 +26,21 @@ class DoctorsService:
             raise NotFoundException
         return DoctorSchema.model_validate(doctor)
 
-    async def get_all(self, params: DoctorFilterParams, search: str | None):
-        filters = params.model_dump(exclude_none=True)
-        doctors = await self.doctor_repo.get_all(filters=filters, search=search)
-        return [SimpleDoctorSchema.model_validate(doctor) for doctor in doctors]
+    async def get_all(
+        self, page: int, search: str | None, filters: DoctorFiltersSchema
+    ):
+        limit = settings.PAGINATION_SIZE
+        offset = limit * (page - 1)
+        count = await self.doctor_repo.count()
+        pages_count = math.ceil(count / limit)
+        doctors = await self.doctor_repo.get_all(
+            filters=filters.model_dump(exclude_none=True),
+            search=search,
+            offset=offset,
+            limit=limit,
+        )
+        results = [SimpleDoctorSchema.model_validate(doctor) for doctor in doctors]
+        return PaginatedDoctorSchema(pages_count=pages_count, results=results)
 
     async def get_all_with_relations(self):
         doctors = await self.doctor_repo.get_all_with_relations()
@@ -42,4 +56,4 @@ class DoctorsService:
         return doctor
 
 
-DoctorServiceDep = Annotated[DoctorsService, Depends(DoctorsService)]
+DoctorServiceDep = Annotated[DoctorsService, Depends()]

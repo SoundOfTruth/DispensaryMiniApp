@@ -14,22 +14,22 @@ class DepartmentsApi {
     });
   }
 
-  async getAll(): Promise<Department[]> {
-    const response = await this.client.get("/departments/");
-    return await response.data;
+  async getAll() {
+    const response = await this.client.get<Department[]>("/departments/");
+    return response.data;
   }
 
-  async get(id: number): Promise<Department> {
-    const response = await this.client.get(`/departments/${id}/`);
-    return await response.data;
+  async get(id: number) {
+    const response = await this.client.get<Department>(`/departments/${id}/`);
+    return response.data;
   }
 
-  async create(data: CreateDepartment): Promise<Department> {
-    const response = await this.client.post(
+  async create(data: CreateDepartment) {
+    const response = await this.client.post<Department>(
       "/departments/",
       JSON.stringify(data),
     );
-    return await response.data;
+    return response.data;
   }
 }
 

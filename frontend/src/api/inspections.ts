@@ -1,7 +1,11 @@
 import axios from "axios";
 import type { AxiosInstance } from "axios";
 
-import type { Inspection, CreateInspection } from "../types/inspections";
+import type {
+  Inspection,
+  CreateInspection,
+  PaginatedInspection,
+} from "../types/inspections";
 
 class InspectionsApi {
   protected client: AxiosInstance;
@@ -14,23 +18,26 @@ class InspectionsApi {
     });
   }
 
-  async getAll(filters: Record<string, any> = {}): Promise<Inspection[]> {
-    const response = await this.client.get("/inspections/", {
-      params: filters,
-    });
+  async getAll(filters: Record<string, any> = {}) {
+    const response = await this.client.get<PaginatedInspection>(
+      "/inspections/",
+      {
+        params: filters,
+      },
+    );
     return response.data;
   }
-  async get(id: number): Promise<Inspection> {
-    const response = await this.client.get(`/inspections/${id}/`);
-    return response.data as Inspection;
+  async get(id: number) {
+    const response = await this.client.get<Inspection>(`/inspections/${id}/`);
+    return response.data;
   }
 
-  async create(data: CreateInspection): Promise<Inspection[]> {
-    const response = await this.client.post(
+  async create(data: CreateInspection) {
+    const response = await this.client.post<Inspection>(
       "/inspections/",
       JSON.stringify(data),
     );
-    return (await response.data) as Inspection[];
+    return response.data;
   }
 }
 

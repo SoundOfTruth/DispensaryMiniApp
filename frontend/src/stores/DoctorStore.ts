@@ -5,19 +5,14 @@ import { AxiosError } from "axios";
 
 import DoctorsApi from "../api/doctors";
 
-import type {
-  InputDoctor,
-  InputDoctorList,
-  Doctor,
-  SimpleDoctor,
-} from "../types/doctors";
+import type { Doctor, SimpleDoctor, ApiDoctor } from "../types/doctors";
 
 export const useDoctorStore = defineStore("doctorStore", () => {
   const route = useRoute();
   const router = useRouter();
-
   const doctors = ref<SimpleDoctor[]>();
   const doctor = ref<Doctor>();
+  const pagesCount = ref<number>(0);
   const err = ref<string>("Загрузка данных...");
 
   const getAllowedFilters = (filters: Record<string, any>) => {
@@ -34,7 +29,9 @@ export const useDoctorStore = defineStore("doctorStore", () => {
   const loadDoctors = async () => {
     const filters = getAllowedFilters(route.query);
     try {
-      doctors.value = getComputedDoctors(await DoctorsApi.getAll(filters));
+      const paginatedData = await DoctorsApi.getAll(filters);
+      doctors.value = paginatedData.results;
+      pagesCount.value = paginatedData.pages_count;
       if (doctors.value.length == 0 && !filters) {
         err.value = "В базе нет врачей";
       } else {
@@ -70,6 +67,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
   return {
     doctor,
     doctors,
+    pagesCount,
     err,
     loadDoctor,
     loadDoctors,
@@ -93,17 +91,9 @@ const getYearsWord = (years: number | undefined): string => {
   }
 };
 
-export const getComputedDoctor = (doctor: InputDoctor): Doctor => {
+export const getComputedDoctor = (doctor: ApiDoctor): Doctor => {
   return {
     ...doctor,
-    fullname: `${doctor.lastname} ${doctor.firstname} ${doctor.middlename}`,
-    experience: getYearsWord(doctor.experience),
+    experience: getYearsWord(doctor.experience_start),
   };
-};
-
-export const getComputedDoctors = (data: InputDoctorList[]): SimpleDoctor[] => {
-  return data.map((doctor) => ({
-    ...doctor,
-    fullname: `${doctor.lastname} ${doctor.firstname} ${doctor.middlename}`,
-  }));
 };

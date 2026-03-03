@@ -51,6 +51,7 @@ const search = () => {
   height: min-content;
 }
 .filters {
+  padding-top: 20px;
   padding-inline: 25px;
   padding-bottom: 20px;
   display: flex;

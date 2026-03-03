@@ -30,4 +30,4 @@ class SpecialityService:
         return SpecialitySchema.model_validate(speciality)
 
 
-SpecialityServiceDep = Annotated[SpecialityService, Depends(SpecialityService)]
+SpecialityServiceDep = Annotated[SpecialityService, Depends()]

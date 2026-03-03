@@ -14,22 +14,22 @@ class SpecialitiesApi {
     });
   }
 
-  async getAll(): Promise<Speciality[]> {
-    const response = await this.client.get("/specialities/");
+  async getAll() {
+    const response = await this.client.get<Speciality[]>("/specialities/");
     return response.data;
   }
 
-  async get(id: number): Promise<Speciality> {
-    const response = await this.client.get(`/specialities/${id}/`);
-    return await response.data;
+  async get(id: number) {
+    const response = await this.client.get<Speciality>(`/specialities/${id}/`);
+    return response.data;
   }
 
-  async create(data: CreateSpeciality): Promise<Speciality> {
-    const response = await this.client.post(
+  async create(data: CreateSpeciality) {
+    const response = await this.client.post<Speciality>(
       "/specialities/",
       JSON.stringify(data),
     );
-    return await response.data;
+    return response.data;
   }
 }
 

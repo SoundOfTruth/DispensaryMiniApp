@@ -10,31 +10,21 @@ export interface BaseDoctor {
   middlename: string;
 }
 
-export interface InputDoctorList extends BaseDoctor {
-  qualification: string | null;
-  speciality: string | null;
-  department: string;
-}
-
-export interface InputDoctor extends InputDoctorList {
-  experience: number;
+export interface ApiDoctor extends BaseDoctor {
+  experience_start: number;
   education: string[];
   extra_education: string[];
   inspections: [SimpleInspection];
 }
 
 export interface SimpleDoctor extends BaseDoctor {
-  fullname: string;
   qualification: string | null;
   speciality: string | null;
   department: string;
 }
 
-export interface Doctor extends SimpleDoctor {
+export interface Doctor extends ApiDoctor {
   experience: string;
-  education: string[];
-  extra_education: string[];
-  inspections: [SimpleInspection];
 }
 
 export interface CreateEducation {
@@ -51,6 +41,11 @@ export interface CreateDoctor {
   experience_start: number | null;
   speciality_id: number;
   department_id: number;
-    education: CreateEducation[];
-    extra_education: CreateExtraEducation[];
+  education: CreateEducation[];
+  extra_education: CreateExtraEducation[];
+}
+
+export interface PaginatedDoctors {
+  pages_count: number;
+  results: SimpleDoctor[];
 }

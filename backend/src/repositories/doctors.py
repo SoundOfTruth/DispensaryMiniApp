@@ -26,12 +26,7 @@ class DoctorRepository(BaseRepository[Doctor]):
         ),
     )
 
-    async def get(self, id: int) -> Doctor | None:
-        return await self.session.get(self.model, id)
-
-    async def get_all(
-        self, search: str | None, filters: dict[str, int] = {}
-    ) -> Sequence[Doctor]:
+    def get_expressions(self, search: str | None = None):
         expressions = []
         if search:
             expressions.append(
@@ -41,13 +36,39 @@ class DoctorRepository(BaseRepository[Doctor]):
                     self.model.middlename.icontains(search),
                 )
             )
-        statement = (
-            select(self.model)
-            .filter_by(**filters)
-            .where(*expressions)
-            .options(
-                joinedload(self.model.speciality), joinedload(self.model.department)
+        return expressions
+
+    async def get(self, id: int) -> Doctor | None:
+        return await self.session.get(self.model, id)
+
+    async def get_all(
+        self,
+        search: str | None,
+        filters: dict[str, int] = {},
+        limit: int | None = None,
+        offset: int | None = None,
+    ) -> Sequence[Doctor]:
+        expressions = self.get_expressions()
+        if search:
+            expressions.append(
+                or_(
+                    self.model.lastname.icontains(search),
+                    self.model.firstname.icontains(search),
+                    self.model.middlename.icontains(search),
+                )
             )
+        statement = (
+            (
+                select(self.model)
+                .filter_by(**filters)
+                .where(*expressions)
+                .options(
+                    joinedload(self.model.speciality), joinedload(self.model.department)
+                )
+            )
+            .limit(limit)
+            .offset(offset)
+            .order_by(self.model.lastname, self.model.firstname, self.model.middlename)
         )
         res = await self.session.execute(statement)
         return res.scalars().all()

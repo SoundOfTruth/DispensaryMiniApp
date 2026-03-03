@@ -43,4 +43,4 @@ class EquipmentsService:
         return await self.equipment_repo.get_type(id)
 
 
-EquipmentServiceDep = Annotated[EquipmentsService, Depends(EquipmentsService)]
+EquipmentServiceDep = Annotated[EquipmentsService, Depends()]

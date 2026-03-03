@@ -9,6 +9,8 @@ import type { Inspection, SimpleInspection } from "../types/inspections";
 export const useInspectionStore = defineStore("inspectionStore", () => {
   const route = useRoute();
   const router = useRouter();
+
+  const pagesCount = ref<number>(0);
   const inspections = ref<SimpleInspection[]>([]);
   const inspection = ref<Inspection>();
   const err = ref<string>("Загрузка данных...");
@@ -27,7 +29,9 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
   const loadInspections = async () => {
     const filters = getAllowedFilters(route.query);
     try {
-      inspections.value = await InspectionApi.getAll(filters);
+      const paginatedData = await InspectionApi.getAll(filters);
+      inspections.value = paginatedData.results;
+      pagesCount.value = paginatedData.pages_count;
       if (inspections.value.length == 0 && !filters) {
         err.value = "В базе нет обследований";
       } else {
@@ -60,6 +64,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
   return {
     inspections,
     inspection,
+    pagesCount,
     err,
     loadInspection,
     loadInspections,

@@ -1,13 +1,15 @@
 <template>
-  <div class="err-handler" v-if="errCondition">{{ err }}</div>
-  <div class="container" v-else>
+  <div id="scroll-container" class="container">
     <SearchField title="Поиск обследований" />
-    <div class="inspections-list">
-      <InspectionCard
-        :inspection="inspection"
-        v-for="inspection in inspections"
-      ></InspectionCard>
-    </div>
+    <div class="err-handler" v-if="errCondition">{{ err }}</div>
+    <PaginatedPage :pagesCount="inspectionStore.pagesCount">
+      <div class="inspections-list">
+        <InspectionCard
+          :inspection="inspection"
+          v-for="inspection in inspections"
+        ></InspectionCard>
+      </div>
+    </PaginatedPage>
   </div>
 </template>
 
@@ -19,6 +21,7 @@ import { computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 
 import { useInspectionStore } from "../stores/InspectionStore";
+import PaginatedPage from "../components/PaginatedPage.vue";
 
 const route = useRoute();
 const inspectionStore = useInspectionStore();
