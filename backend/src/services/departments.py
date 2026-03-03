@@ -30,4 +30,4 @@ class DepartmentService:
         return DepartmentSchema.model_validate(department)
 
 
-DepartmentServiceDep = Annotated[DepartmentService, Depends(DepartmentService)]
+DepartmentServiceDep = Annotated[DepartmentService, Depends()]

@@ -6,15 +6,29 @@ from sqlalchemy.orm import selectinload
 
 from src.api.exceptions import DbIntegrityException
 from src.models import Doctor, DoctorInspection, Inspection
-from src.repositories.base import DefaultRepository
+from src.repositories.base import BaseRepository
 
 
-class InspectionRepository(DefaultRepository[Inspection]):
+class InspectionRepository(BaseRepository[Inspection]):
     model = Inspection
     options = (
         selectinload(model.doctors).joinedload(Doctor.speciality),
         selectinload(model.doctors).joinedload(Doctor.department),
     )
+
+    def get_expressions(self, search: str | None):
+        expressions = []
+        if search:
+            expressions.append(self.model.title.icontains(search))
+        return expressions
+
+    async def get_all(
+        self, search: str | None, limit: int | None = None, offset: int | None = None
+    ):
+        expressions = self.get_expressions(search)
+        statement = select(self.model).where(*expressions).limit(limit).offset(offset)
+        res = await self.session.execute(statement)
+        return res.scalars().all()
 
     async def get_with_relations(self, id: int) -> Inspection | None:
         statement = select(self.model).where(self.model.id == id).options(*self.options)
@@ -24,9 +38,7 @@ class InspectionRepository(DefaultRepository[Inspection]):
     async def get_all_with_relations(
         self, search: str | None = None
     ) -> Sequence[Inspection]:
-        expressions = []
-        if search:
-            expressions.append(self.model.title.icontains(search))
+        expressions = self.get_expressions(search)
         statement = select(self.model).where(*expressions).options(*self.options)
         res = await self.session.execute(statement)
         return res.scalars().all()

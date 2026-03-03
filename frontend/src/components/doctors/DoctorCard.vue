@@ -4,19 +4,23 @@
       <img src="/src/images/avatar.png" class="img" />
     </div>
     <div class="info">
-      <div class="fullname">{{ props.doctor.fullname }}</div>
-      <div class="speciality">{{ props.doctor?.speciality }}</div>
+      <div class="fullname">
+        {{ `${doctor?.lastname}  ${doctor?.firstname} ${doctor?.middlename}` }}
+      </div>
+      <div class="speciality">{{ doctor?.speciality }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 
 import type { SimpleDoctor } from "../../types/doctors";
 
 const router = useRouter();
 const props = defineProps<{ doctor: SimpleDoctor }>();
+const doctor = computed(() => props.doctor);
 
 const openDoctor = (doctorId: number) => {
   router.push(`doctors/${doctorId}`);

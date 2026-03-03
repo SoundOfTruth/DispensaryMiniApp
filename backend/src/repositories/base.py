@@ -1,6 +1,6 @@
 from typing import Generic, Sequence, TypeVar
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from src.database.core import AsyncSession, Base
 
@@ -10,8 +10,13 @@ Table = TypeVar("Table", bound=Base)
 class BaseRepository(Generic[Table]):
     model: type[Table]
 
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(self, session: AsyncSession):
         self.session = session
+
+    async def count(self) -> int:
+        statement = select(func.count()).select_from(self.model)
+        res = await self.session.execute(statement)
+        return res.scalar_one()
 
 
 class DefaultRepository(BaseRepository[Table]):

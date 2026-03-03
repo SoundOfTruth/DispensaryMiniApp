@@ -2,7 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from src.schemas.doctors import CreateDoctorSchema, DoctorFilterParams
+from src.schemas.doctors import CreateDoctorSchema, DoctorFiltersSchema
+from src.schemas.pagination import PaginationParams
 from src.services.doctors import DoctorServiceDep
 
 router = APIRouter(prefix="/doctors", tags=["Doctors"])
@@ -11,10 +12,11 @@ router = APIRouter(prefix="/doctors", tags=["Doctors"])
 @router.get("/")
 async def get_doctors(
     service: DoctorServiceDep,
-    params: Annotated[DoctorFilterParams, Depends()],
+    params: Annotated[DoctorFiltersSchema, Depends()],
+    pagination: Annotated[PaginationParams, Depends()],
     search: str | None = None,
 ):
-    return await service.get_all(params, search)
+    return await service.get_all(pagination.page, search, params)
 
 
 @router.get("/{id}/")

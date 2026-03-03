@@ -5,7 +5,7 @@ import TheHeader from "./components/TheHeader.vue";
 <template>
   <div class="app">
     <TheHeader />
-    <div class="content">
+    <div class="content" id="content">
       <RouterView />
     </div>
   </div>
@@ -26,6 +26,5 @@ main {
 .content {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 0px;
 }
 </style>

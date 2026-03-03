@@ -2,9 +2,9 @@ import axios from "axios";
 import type { AxiosInstance } from "axios";
 
 import type {
-  InputDoctor,
-  InputDoctorList,
+  ApiDoctor,
   CreateDoctor,
+  PaginatedDoctors,
 } from "../types/doctors";
 
 class DoctorsApi {
@@ -19,19 +19,17 @@ class DoctorsApi {
   }
 
   async getAll(filters: Record<string, any> = {}) {
-    const response = await this.client.get<InputDoctorList[]>("/doctors/", {
+    const response = await this.client.get<PaginatedDoctors>("/doctors/", {
       params: filters,
     });
     return response.data;
   }
   async get(id: number) {
-    const response = await this.client.get<InputDoctor | undefined>(
-      `/doctors/${id}/`,
-    );
+    const response = await this.client.get<ApiDoctor>(`/doctors/${id}/`);
     return response.data;
   }
   async create(data: CreateDoctor) {
-    const response = await this.client.post<InputDoctor>(
+    const response = await this.client.post<ApiDoctor>(
       "/doctors/",
       JSON.stringify(data),
     );

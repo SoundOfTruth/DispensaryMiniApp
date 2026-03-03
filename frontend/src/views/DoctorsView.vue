@@ -1,13 +1,13 @@
 <template>
-  <div class="container">
+  <div id="scroll-container" class="container">
     <SearchField title="Поиск врачей"
       ><template #filter> <FilterButton /></template
     ></SearchField>
     <div class="err-handler" v-if="errCondition">
       {{ err }}
     </div>
-    <PaginatedPage :last-page="10" , :size="5">
-      <div class="doctors-list" v-if="doctors?.length">
+    <PaginatedPage :pagesCount="doctorStore.pagesCount" v-else>
+      <div id="doctors-list" class="doctors-list" v-if="doctors?.length">
         <DoctorCard :doctor="doctor" v-for="doctor in doctors" />
       </div>
     </PaginatedPage>

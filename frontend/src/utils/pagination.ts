@@ -1,33 +1,35 @@
 export class Pagination {
   private size: number;
-  private lastPage: number;
+  private pagesCount: number;
   private pages: (number | null)[];
 
-  constructor(lastPage: number, size: number = 5) {
+  constructor(pagesCount: number, size: number = 5) {
     this.size = size;
-    this.lastPage = lastPage;
+    this.pagesCount = pagesCount;
     this.pages = [];
   }
 
   private addOverflow(left: boolean, right: boolean): void {
-    if (left && this.pages[2] && this.pages[1]) {
-      if (this.pages[1] !== undefined && this.pages[2] - this.pages[1] === 2) {
+    if (left && this.pages[0] && this.pages[1]) {
+      const startDiff = this.pages[1] - this.pages[0];
+      if (startDiff === 2) {
         this.pages.splice(1, 0, 2);
-      } else {
+      } else if (startDiff !== 1) {
         this.pages.splice(1, 0, null);
       }
     }
 
     if (right) {
       const lastIndex = this.pages.length - 1;
-      if (this.lastPage - (this.pages[lastIndex] as number) === 2) {
-        this.pages.push(this.lastPage - 1);
-      } else {
+      const endDiff = this.pagesCount - (this.pages[lastIndex] as number);
+      if (endDiff === 2) {
+        this.pages.push(this.pagesCount - 1);
+      } else if (endDiff !== 1) {
         this.pages.push(null);
       }
     }
-    if (this.pages[this.pages.length - 1] !== this.lastPage) {
-      this.pages.push(this.lastPage);
+    if (this.pages[this.pages.length - 1] !== this.pagesCount) {
+      this.pages.push(this.pagesCount);
     }
   }
 
@@ -37,8 +39,8 @@ export class Pagination {
     const step = Math.floor(this.size / 2);
 
     if (currPage <= this.size - step) {
-      if (this.lastPage < this.size) {
-        for (let i = 2; i <= this.lastPage; i++) {
+      if (this.pagesCount < this.size) {
+        for (let i = 2; i <= this.pagesCount; i++) {
           this.pages.push(i);
         }
       } else {
@@ -47,8 +49,8 @@ export class Pagination {
         }
         this.addOverflow(false, true);
       }
-    } else if (this.lastPage <= currPage + step) {
-      for (let i = this.lastPage - this.size + 2; i < this.lastPage; i++) {
+    } else if (this.pagesCount <= currPage + step) {
+      for (let i = this.pagesCount - this.size + 2; i < this.pagesCount; i++) {
         this.pages.push(i);
       }
       this.addOverflow(true, false);

@@ -1,7 +1,7 @@
 <template>
   <div>
     <slot></slot>
-    <div class="pagination-container">
+    <div class="pagination-container" v-if="pagesCount > 1">
       <div class="pagination">
         <button
           class="pagination__btn"
@@ -25,12 +25,12 @@
 
         <button
           class="pagination__btn"
-          :disabled="currentPage === props.lastPage"
+          :disabled="currentPage === props.pagesCount"
           @click="goToPage(currentPage + 1)"
         >
           <RightSvg
             class="arrow"
-            :class="{ disabled: currentPage == props.lastPage }"
+            :class="{ disabled: currentPage == props.pagesCount }"
           />
         </button>
       </div>
@@ -39,15 +39,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch, computed, useTemplateRef } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Pagination } from "../utils/pagination";
 import LeftSvg from "./svg/LeftSvg.vue";
 import RightSvg from "./svg/RightSvg.vue";
 
 interface Props {
-  size: number;
-  lastPage: number;
+  pagesCount: number;
 }
 
 const props = defineProps<Props>();
@@ -55,26 +54,39 @@ const props = defineProps<Props>();
 const route = useRoute();
 const router = useRouter();
 
-const currentPage = ref<number>(1);
 const paginationPages = ref<(number | null)[]>();
-const pagination = new Pagination(10);
+
+const currentPage = computed(() => {
+  const page = route.query.page;
+  return page ? Number(page) : 1;
+});
 
 onMounted(() => {
-  const page = route.query.page;
-  currentPage.value = page ? Number(page) : 1;
+  const pagination = new Pagination(props.pagesCount);
   paginationPages.value = pagination.getPages(currentPage.value);
 });
 
 const goToPage = (page: number) => {
-  if (page >= 1 && page <= props.lastPage && page !== currentPage.value) {
-    currentPage.value = page;
-    paginationPages.value = pagination.getPages(page);
+  if (page >= 1 && page <= props.pagesCount && page !== currentPage.value) {
     router.push({
       path: route.path,
       query: { page: page },
     });
+
+    const element = document.getElementById("scroll-container");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
   }
 };
+
+watch(
+  () => [props.pagesCount, route.query],
+  () => {
+    const pagination = new Pagination(props.pagesCount);
+    paginationPages.value = pagination.getPages(currentPage.value);
+  },
+);
 </script>
 
 <style scoped lang="scss">

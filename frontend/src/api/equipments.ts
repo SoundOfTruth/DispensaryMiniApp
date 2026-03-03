@@ -14,9 +14,11 @@ class EquipmentsApi {
     });
   }
 
-  async getAllGroupedByType(): Promise<EquipmentsGroupedByType[]> {
-    const response = await this.client.get("/equipments/?group_by=type");
-    return await response.data;
+  async getAllGroupedByType() {
+    const response = await this.client.get<EquipmentsGroupedByType[]>(
+      "/equipments/?group_by=type",
+    );
+    return response.data;
   }
 }
 

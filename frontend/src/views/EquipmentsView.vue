@@ -1,5 +1,5 @@
 <template>
-  <div class="inspections">
+  <div class="equipments">
     <div class="err-handler" v-if="errCondition">
       {{ err }}
     </div>
@@ -37,8 +37,8 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.inspections {
-  padding: 0px 15px;
+.equipments {
+  padding: 20px 15px;
 }
 .equipment-type {
   font-weight: 500;
