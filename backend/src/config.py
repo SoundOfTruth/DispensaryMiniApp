@@ -1,38 +1,45 @@
+from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseSettings):
-    ALLOWED_HOSTS: str | None = None
-    DEBUG: bool = False
-    PAGINATION_SIZE: int = 6
-
-    DB_HOST: str = "localhost"
-    DB_PORT: int = 5432
-    POSTGRES_DB: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-
-    model_config = SettingsConfigDict(env_file=".env", frozen=True)
+class DatabaseSettings(BaseModel):
+    HOST: str = "localhost"
+    PORT: int = 5432
+    DB: str
+    USER: str
+    PASSWORD: str
 
     @property
-    def origins(self):
-        origins = ["127.0.0.1", "localhost"]
-        if self.ALLOWED_HOSTS:
-            origins = self.ALLOWED_HOSTS.split(", ")
-        return origins
-
-    @property
-    def DATABASE_URL_ASYNCPG(self):
+    def URL_ASYNCPG(self):
         return (
             "postgresql+asyncpg:"
-            f"//{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
-            f"@{self.DB_HOST}:{self.DB_PORT}"
-            f"/{self.POSTGRES_DB}"
+            f"//{self.USER}:{self.PASSWORD}"
+            f"@{self.HOST}:{self.PORT}"
+            f"/{self.DB}"
         )
 
     @property
-    def DATABASE_URL_AIOSQLITE(self):
+    def URL_AIOSQLITE(self):
         return "sqlite+aiosqlite:///db.sqlite3"
+
+
+class Settings(BaseSettings):
+    ALLOWED_HOSTS: list[str] = [
+        "http://localhost",
+        "http://localhost:5173",
+        "http://127.0.0.1",
+        "http://127.0.0.1:5173",
+        "http://192.168.0.11",
+        "http://192.168.0.11:5173",
+    ]
+    DEBUG: bool = False
+    PAGINATION_SIZE: int = 8
+
+    DATABASE: DatabaseSettings = Field(alias="POSTGRES")
+
+    model_config = SettingsConfigDict(
+        env_file=".env", env_nested_delimiter="_", frozen=True
+    )
 
 
 settings = Settings()  # type: ignore
