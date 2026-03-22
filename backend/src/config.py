@@ -33,7 +33,7 @@ class Settings(BaseSettings):
         "http://192.168.0.11:5173",
     ]
     DEBUG: bool = False
-    PAGINATION_SIZE: int = 8
+    PAGINATION_SIZE: int = 10
 
     DATABASE: DatabaseSettings = Field(alias="POSTGRES")
 

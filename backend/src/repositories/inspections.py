@@ -22,6 +22,10 @@ class InspectionRepository(BaseRepository[Inspection]):
             expressions.append(self.model.title.icontains(search))
         return expressions
 
+    async def count(self, search: str | None = None):
+        expressions = self.get_expressions(search)
+        return await self._count(expressions=expressions)
+
     async def get_all(
         self, search: str | None, limit: int | None = None, offset: int | None = None
     ):

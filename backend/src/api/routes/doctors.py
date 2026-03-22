@@ -12,11 +12,13 @@ router = APIRouter(prefix="/doctors", tags=["Doctors"])
 @router.get("/")
 async def get_doctors(
     service: DoctorServiceDep,
-    params: Annotated[DoctorFiltersSchema, Depends()],
+    filters: Annotated[DoctorFiltersSchema, Depends()],
     pagination: Annotated[PaginationParams, Depends()],
     search: str | None = None,
 ):
-    return await service.get_all(pagination.page, search, params)
+    return await service.get_all(
+        limit=pagination.limit, offset=pagination.offset, search=search, filters=filters
+    )
 
 
 @router.get("/{id}/")

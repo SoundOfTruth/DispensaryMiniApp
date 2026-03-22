@@ -27,11 +27,12 @@ class InspectionSchema(BaseModel):
 
 
 class SimpleInspectionSchema(BaseModel):
+    id: int
     title: str
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class PaginatedInspectionSchema(BaseModel):
-    pages_count: int
+    count: int
     results: list[SimpleInspectionSchema]

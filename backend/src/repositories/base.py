@@ -13,8 +13,13 @@ class BaseRepository(Generic[Table]):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def count(self) -> int:
-        statement = select(func.count()).select_from(self.model)
+    async def _count(self, filters: dict[str, int] = {}, expressions: list = []) -> int:
+        statement = (
+            select(func.count())
+            .select_from(self.model)
+            .filter_by(**filters)
+            .where(*expressions)
+        )
         res = await self.session.execute(statement)
         return res.scalar_one()
 

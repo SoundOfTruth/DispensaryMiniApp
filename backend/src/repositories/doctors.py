@@ -38,6 +38,11 @@ class DoctorRepository(BaseRepository[Doctor]):
             )
         return expressions
 
+    async def count(self, filters: dict[str, int] = {}, search: str | None = None):
+        expressions = self.get_expressions(search)
+        return await self._count(filters, expressions)
+
+
     async def get(self, id: int) -> Doctor | None:
         return await self.session.get(self.model, id)
 
@@ -68,7 +73,7 @@ class DoctorRepository(BaseRepository[Doctor]):
             )
             .limit(limit)
             .offset(offset)
-            .order_by(self.model.lastname, self.model.firstname, self.model.middlename)
+            .order_by(self.model.id)
         )
         res = await self.session.execute(statement)
         return res.scalars().all()

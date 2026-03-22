@@ -99,5 +99,5 @@ class DoctorFiltersSchema(BaseModel):
 
 
 class PaginatedDoctorSchema(BaseModel):
-    pages_count: int
+    count: int
     results: list[SimpleDoctorSchema]

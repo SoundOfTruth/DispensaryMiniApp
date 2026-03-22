@@ -15,7 +15,9 @@ async def get_inspections(
     pagination: Annotated[PaginationParams, Depends()],
     search: str | None = None,
 ):
-    return await service.get_all(pagination.page, search)
+    return await service.get_all(
+        limit=pagination.limit, offset=pagination.offset, search=search
+    )
 
 
 @router.get("/{id}/")

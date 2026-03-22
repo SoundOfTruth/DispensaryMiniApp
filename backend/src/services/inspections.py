@@ -1,10 +1,8 @@
-import math
 from typing import Annotated
 
 from fastapi import Depends
 
 from src.api.exceptions import NotFoundException
-from src.config import settings
 from src.database.core import AsyncScopedSessionDep
 from src.repositories.inspections import InspectionRepository
 from src.schemas.inspections import (
@@ -25,11 +23,8 @@ class InspectionService:
             raise NotFoundException
         return InspectionSchema.model_validate(inspection)
 
-    async def get_all(self, page: int, search: str | None):
-        limit = settings.PAGINATION_SIZE
-        offset = limit * (page - 1)
-        count = await self.inspetion_rep.count()
-        pages_count = math.ceil(count / limit)
+    async def get_all(self, limit: int, offset: int, search: str | None):
+        count = await self.inspetion_rep.count(search)
         inspections = await self.inspetion_rep.get_all(
             search=search, limit=limit, offset=offset
         )
@@ -37,7 +32,7 @@ class InspectionService:
             SimpleInspectionSchema.model_validate(inspection)
             for inspection in inspections
         ]
-        return PaginatedInspectionSchema(pages_count=pages_count, results=results)
+        return PaginatedInspectionSchema(count=count, results=results)
 
     async def create(self, schema: CreateInspectionSchema):
         payload = schema.model_dump()
