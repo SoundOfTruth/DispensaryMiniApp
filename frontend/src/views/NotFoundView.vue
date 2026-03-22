@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import { RouterLink } from "vue-router";
-</script>
-
 <template>
   <div class="not-found-container">
     <div>
@@ -13,6 +9,10 @@ import { RouterLink } from "vue-router";
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { RouterLink } from "vue-router";
+</script>
 
 <style scoped>
 .not-found-container {

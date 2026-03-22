@@ -182,17 +182,24 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { onMounted, ref, computed } from "vue";
 
-import DoctorsApi from "../../api/doctors";
-import type { CreateDoctor, CreateEducation } from "../../types/doctors";
-import type { Department } from "../../types/departments";
-import type { Speciality } from "../../types/specialities";
+import DoctorsApi from "@/api/doctors";
+import type { CreateDoctor, CreateEducation } from "@/types/doctors";
+import { useDepartmentStore } from "@/stores/DepartmentStore";
+import { useSpecialityStore } from "@/stores/SpecialityStore";
 
-const props = defineProps<{
-  departments: Department[];
-  specialities: Speciality[];
-}>();
+const departmentStore = useDepartmentStore();
+const specialityStore = useSpecialityStore();
+
+const departments = computed(() => departmentStore.departments);
+const specialities = computed(() => specialityStore.specialities);
+
+onMounted(async () => {
+  await departmentStore.loadList();
+  await specialityStore.loadList();
+});
+
 const emits = defineEmits(["cancel"]);
 
 const formData = ref<CreateDoctor>({
@@ -257,6 +264,7 @@ const handleCancel = () => {
 .form-title {
   margin: 0 auto;
   padding-bottom: 15px;
+  padding: 15px;
 }
 .form-container {
   max-width: 800px;

@@ -39,7 +39,7 @@ const toggleMenu = () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 header {
   border-bottom: 1px solid black;
   padding-inline: 16px;
@@ -49,21 +49,19 @@ header {
   top: 0;
   z-index: 100;
   background: #f5f7fa;
-}
-
-header .hat {
-  display: flex;
-  gap: 30px;
-}
-
-header .title {
-  color: #222;
-  font-size: 140%;
-  font-weight: 500;
-  margin: 0;
-  padding: 0;
-  line-height: 0.8;
-  max-width: 275px;
+  .hat {
+    display: flex;
+    gap: 30px;
+  }
+  .title {
+    color: #222;
+    font-size: 140%;
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+    line-height: 0.8;
+    max-width: 275px;
+  }
 }
 
 .menu-button {
@@ -75,26 +73,13 @@ header .title {
   justify-content: center;
   gap: 6px;
   padding: 8px;
-}
-
-.menu-button span {
-  width: 24px;
-  height: 2px;
-  background: #222;
-  display: block;
-  transition: all 0.3s black;
-}
-
-.menu-button.active span:nth-child(1) {
-  transform: rotate(45deg) translate(8px, 8px);
-}
-
-.menu-button.active span:nth-child(2) {
-  opacity: 0;
-}
-
-.menu-button.active span:nth-child(3) {
-  transform: rotate(-45deg) translate(8px, -8px);
+  span {
+    width: 24px;
+    height: 2px;
+    background: #222;
+    display: block;
+    transition: all 0.3s black;
+  }
 }
 
 .menu {
@@ -105,29 +90,25 @@ header .title {
   right: 0;
   background: white;
   border-bottom: 1px solid #e0e0e0;
-}
-
-.menu.active {
-  display: block;
-}
-
-.menu ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.menu li {
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.menu a {
-  display: block;
-  padding: 16px;
-  text-decoration: none;
-  color: #222;
-  font-size: 16px;
-  transition: background 0.2s black;
+  &.active {
+    display: block;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  a {
+    display: block;
+    padding: 16px;
+    text-decoration: none;
+    color: #222;
+    font-size: 16px;
+    transition: background 0.2s black;
+  }
 }
 
 @media (max-width: 768px) {

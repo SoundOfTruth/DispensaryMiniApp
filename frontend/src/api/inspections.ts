@@ -19,10 +19,11 @@ class InspectionsApi {
   }
 
   async getAll(filters: Record<string, any> = {}) {
+    const defaultParams = { limit: 10, offset: 0 };
     const response = await this.client.get<PaginatedInspection>(
       "/inspections/",
       {
-        params: filters,
+        params: { ...defaultParams, ...filters },
       },
     );
     return response.data;

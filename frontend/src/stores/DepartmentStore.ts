@@ -9,10 +9,10 @@ export const useDepartmentStore = defineStore("departmentStore", () => {
   const departments = ref<Department[]>([]);
   const department = ref<Department>();
 
-  const loadDepartments = async () => {
+  const loadList = async () => {
     departments.value = await DepartmentsApi.getAll();
   };
-  const loadDepartment = async (id: number) => {
+  const loadById = async (id: number) => {
     department.value = await DepartmentsApi.get(id);
   };
   const create = async (payload: CreateDepartment) => {
@@ -22,8 +22,8 @@ export const useDepartmentStore = defineStore("departmentStore", () => {
   return {
     department,
     departments,
-    loadDepartment,
-    loadDepartments,
+    loadById,
+    loadList,
     create,
   };
 });

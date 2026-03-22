@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import SearchSvg from "./SearchSvg.vue";
+import SearchSvg from "./svg/SearchSvg.vue";
 
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -35,7 +35,9 @@ const props = defineProps<inputData>();
 const search = () => {
   let query = { ...route.query };
   if (pattern.value) {
-    query = { ...query, search: pattern.value };
+    query = { ...query, search: pattern.value, page: "1" };
+  } else {
+    delete query.search;
   }
   router.replace({
     path: route.path,

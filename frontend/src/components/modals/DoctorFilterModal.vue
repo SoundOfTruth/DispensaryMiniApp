@@ -48,8 +48,9 @@
 
 <script setup lang="ts">
 import XSvg from "../svg/XSvg.vue";
-import { useDepartmentStore } from "../../stores/DepartmentStore";
-import { useSpecialityStore } from "../../stores/SpecialityStore";
+
+import { useDepartmentStore } from "@/stores/DepartmentStore";
+import { useSpecialityStore } from "@/stores/SpecialityStore";
 import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -76,8 +77,8 @@ const filtersData = ref<{
 });
 
 onMounted(async () => {
-  await DepartmentStore.loadDepartments();
-  await SpecialitiesStore.loadSpecialities();
+  await DepartmentStore.loadList();
+  await SpecialitiesStore.loadList();
 });
 
 const handleReset = () => {

@@ -8,10 +8,10 @@ export const useSpecialityStore = defineStore("specialityStore", () => {
   const specialities = ref<Speciality[]>([]);
   const speciality = ref<Speciality>();
 
-  const loadSpecialities = async () => {
+  const loadList = async () => {
     specialities.value = await SpecialitiesApi.getAll();
   };
-  const loadSpeciality = async (id: number) => {
+  const loadById = async (id: number) => {
     speciality.value = await SpecialitiesApi.get(id);
   };
   const create = async (payload: CreateSpeciality) => {
@@ -21,8 +21,8 @@ export const useSpecialityStore = defineStore("specialityStore", () => {
   return {
     speciality,
     specialities,
-    loadSpeciality,
-    loadSpecialities,
+    loadById,
+    loadList,
     create,
   };
 });

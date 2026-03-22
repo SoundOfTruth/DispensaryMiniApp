@@ -58,7 +58,7 @@
               @click="toggleDoctor(doctor)"
             >
               <div class="doctor-info">
-                <strong>{{ doctor.fullname }}</strong>
+                <strong>{{ doctor.lastname }}</strong>
                 <div v-if="doctor.speciality" class="speciality">
                   {{ doctor.speciality }}
                 </div>
@@ -80,7 +80,7 @@
                 :key="doctor.id"
                 class="selected-doctor"
               >
-                <span>{{ doctor.fullname }}</span>
+                <span>{{ doctor.lastname }}</span>
                 <button
                   type="button"
                   class="remove-btn"
@@ -117,9 +117,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 
-import InspectionsApi from "../../api/inspections";
-import type { SimpleDoctor } from "../../types/doctors";
-import type { CreateInspection } from "../../types/inspections";
+import InspectionsApi from "@/api/inspections";
+import type { SimpleDoctor } from "@/types/doctors";
+import type { CreateInspection } from "@/types/inspections";
 
 const props = defineProps<{ doctors: SimpleDoctor[] | undefined }>();
 
@@ -149,7 +149,7 @@ const filteredDoctors = computed(() => {
 
   return doctorsList.value?.filter((doctor) => {
     const matchesSearch =
-      doctor.fullname.toLowerCase().includes(searchTerm) ||
+      // doctor.fullname.toLowerCase().includes(searchTerm) ||
       (doctor.speciality?.toLowerCase() || "").includes(searchTerm) ||
       (doctor.qualification?.toLowerCase() || "").includes(searchTerm) ||
       doctor.department.toLowerCase().includes(searchTerm);

@@ -56,7 +56,7 @@
 import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 
-import { useDoctorStore } from "../stores/DoctorStore";
+import { useDoctorStore } from "@/stores/DoctorStore";
 
 const route = useRoute();
 const doctorStore = useDoctorStore();
@@ -64,13 +64,13 @@ const doctor = computed(() => doctorStore.doctor);
 
 onMounted(async () => {
   const doctorId: number = Number(route.params.doctorId);
-  await doctorStore.loadDoctor(doctorId);
+  await doctorStore.loadById(doctorId);
 });
 </script>
 
 <style scoped lang="scss">
 .doctor-page {
-  padding: 0px 15px;
+  padding: 15px;
 }
 .err-handler {
   display: flex;

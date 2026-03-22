@@ -10,17 +10,17 @@ export interface BaseDoctor {
   middlename: string;
 }
 
-export interface ApiDoctor extends BaseDoctor {
-  experience_start: number;
-  education: string[];
-  extra_education: string[];
-  inspections: [SimpleInspection];
-}
-
 export interface SimpleDoctor extends BaseDoctor {
   qualification: string | null;
   speciality: string | null;
   department: string;
+}
+
+export interface ApiDoctor extends SimpleDoctor {
+  experience_start: number;
+  education: string[];
+  extra_education: string[];
+  inspections: [SimpleInspection];
 }
 
 export interface Doctor extends ApiDoctor {
@@ -46,6 +46,6 @@ export interface CreateDoctor {
 }
 
 export interface PaginatedDoctors {
-  pages_count: number;
+  count: number;
   results: SimpleDoctor[];
 }

@@ -10,10 +10,11 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
   const route = useRoute();
   const router = useRouter();
 
-  const pagesCount = ref<number>(0);
-  const inspections = ref<SimpleInspection[]>([]);
+  const limit = ref<number>(10);
   const inspection = ref<Inspection>();
+  const inspections = ref<SimpleInspection[]>([]);
   const err = ref<string>("Загрузка данных...");
+  const count = ref<number>(0);
 
   const getAllowedFilters = (filters: Record<string, any>) => {
     const allowedParams = ["page", "department_id", "speciality_id", "search"];
@@ -26,12 +27,12 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     return cleanParams;
   };
 
-  const loadInspections = async () => {
+  const loadList = async () => {
     const filters = getAllowedFilters(route.query);
     try {
       const paginatedData = await InspectionApi.getAll(filters);
       inspections.value = paginatedData.results;
-      pagesCount.value = paginatedData.pages_count;
+      count.value = paginatedData.count;
       if (inspections.value.length == 0 && !filters) {
         err.value = "В базе нет обследований";
       } else {
@@ -46,7 +47,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     }
   };
 
-  const loadInspection = async (id: number) => {
+  const loadById = async (id: number) => {
     try {
       inspection.value = await InspectionApi.get(id);
     } catch (error) {
@@ -62,11 +63,12 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
   };
 
   return {
-    inspections,
     inspection,
-    pagesCount,
+    inspections,
+    count,
+    limit,
     err,
-    loadInspection,
-    loadInspections,
+    loadById,
+    loadList,
   };
 });

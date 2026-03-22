@@ -34,14 +34,14 @@
 <script lang="ts" setup>
 import { onMounted, ref, computed } from "vue";
 
-import InspectionForm from "../components/admin/InspectionForm.vue";
-import DoctorsForm from "../components/admin/DoctorsForm.vue";
-import SpecialityForm from "../components/admin/SpecialityForm.vue";
-import DepartmentForm from "../components/admin/DepartmentForm.vue";
+import InspectionForm from "./forms/InspectionForm.vue";
+import DoctorsForm from "./forms/DoctorsForm.vue";
+import SpecialityForm from "./forms/SpecialityForm.vue";
+import DepartmentForm from "./forms/DepartmentForm.vue";
 
-import { useDoctorStore } from "../stores/DoctorStore";
-import { useDepartmentStore } from "../stores/DepartmentStore";
-import { useSpecialityStore } from "../stores/SpecialityStore";
+import { useDoctorStore } from "@/stores/DoctorStore";
+import { useDepartmentStore } from "@/stores/DepartmentStore";
+import { useSpecialityStore } from "@/stores/SpecialityStore";
 
 const DoctorStore = useDoctorStore();
 const DepartmentStore = useDepartmentStore();
@@ -51,9 +51,9 @@ const departments = computed(() => DepartmentStore.departments);
 const specialities = computed(() => SpecialitiesStore.specialities);
 
 onMounted(async () => {
-  await DoctorStore.loadDoctors();
-  await DepartmentStore.loadDepartments();
-  await SpecialitiesStore.loadSpecialities();
+  await DoctorStore.loadList();
+  await DepartmentStore.loadList();
+  await SpecialitiesStore.loadList();
 });
 
 const ActiveForm = {

@@ -29,7 +29,7 @@
 import { onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 
-import { useInspectionStore } from "../stores/InspectionStore";
+import { useInspectionStore } from "@/stores/InspectionStore";
 
 const inspectionStore = useInspectionStore();
 const inspection = computed(() => inspectionStore.inspection);
@@ -38,13 +38,13 @@ const route = useRoute();
 
 onMounted(async () => {
   const inspectionId = Number(route.params.inspectionId);
-  await inspectionStore.loadInspection(inspectionId);
+  await inspectionStore.loadById(inspectionId);
 });
 </script>
 
 <style scoped lang="scss">
 .inspection-page {
-  padding: 0px 15px;
+  padding: 15px;
 }
 .err-handler {
   display: flex;

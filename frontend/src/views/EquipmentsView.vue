@@ -20,10 +20,10 @@
 </template>
 
 <script setup lang="ts">
-import EquipmentCard from "../components/equipments/EquipmentCard.vue";
+import EquipmentCard from "@/components/equipments/EquipmentCard.vue";
 import { computed, onMounted } from "vue";
 
-import { useEquipmentStore } from "../stores/EquipmentStore";
+import { useEquipmentStore } from "@/stores/EquipmentStore";
 
 const equipmentStore = useEquipmentStore();
 const equipments = computed(() => equipmentStore.equipmentsGroupedByType);

@@ -29,7 +29,7 @@ export interface SimpleInspection {
 }
 
 export interface PaginatedInspection {
-  pages_count: number;
+  count: number;
   results: SimpleInspection[];
 }
 

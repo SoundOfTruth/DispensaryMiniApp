@@ -3,11 +3,11 @@
     <SearchField title="Поиск врачей"
       ><template #filter> <FilterButton /></template
     ></SearchField>
-    <div class="err-handler" v-if="errCondition">
-      {{ err }}
-    </div>
-    <PaginatedPage :pagesCount="doctorStore.pagesCount" v-else>
-      <div id="doctors-list" class="doctors-list" v-if="doctors?.length">
+    <PaginatedPage :count="doctorStore.count" :limit="doctorStore.limit">
+      <div class="err-handler" v-if="errCondition">
+        {{ err }}
+      </div>
+      <div class="doctors-list">
         <DoctorCard :doctor="doctor" v-for="doctor in doctors" />
       </div>
     </PaginatedPage>
@@ -15,15 +15,15 @@
 </template>
 
 <script setup lang="ts">
-import DoctorCard from "../components/doctors/DoctorCard.vue";
-import FilterButton from "../components/FilterButton.vue";
-import SearchField from "../components/SearchField.vue";
+import SearchField from "@/components/SearchField.vue";
+import FilterButton from "@/components/FilterButton.vue";
+import PaginatedPage from "@/components/PaginatedPage.vue";
+import DoctorCard from "@/components/doctors/DoctorCard.vue";
 
 import { computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 
-import { useDoctorStore } from "../stores/DoctorStore";
-import PaginatedPage from "../components/PaginatedPage.vue";
+import { useDoctorStore } from "@/stores/DoctorStore";
 
 const route = useRoute();
 const doctorStore = useDoctorStore();
@@ -34,13 +34,13 @@ const errCondition = computed(
 );
 
 onMounted(async () => {
-  await doctorStore.loadDoctors();
+  await doctorStore.loadList();
 });
 
 watch(
   () => route.query,
   async () => {
-    await doctorStore.loadDoctors();
+    await doctorStore.loadList();
   },
   { deep: true },
 );

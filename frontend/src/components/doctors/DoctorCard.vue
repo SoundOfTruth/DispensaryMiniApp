@@ -16,7 +16,7 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 
-import type { SimpleDoctor } from "../../types/doctors";
+import type { SimpleDoctor } from "@/types/doctors";
 
 const router = useRouter();
 const props = defineProps<{ doctor: SimpleDoctor }>();
