@@ -49,8 +49,8 @@
 <script setup lang="ts">
 import XSvg from "../svg/XSvg.vue";
 
-import { useDepartmentStore } from "@/stores/DepartmentStore";
-import { useSpecialityStore } from "@/stores/SpecialityStore";
+import { useDepartmentStore } from "@/stores/departments";
+import { useSpecialityStore } from "@/stores/specialties";
 import { computed, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -62,7 +62,7 @@ const emit = defineEmits(["close"]);
 const DepartmentStore = useDepartmentStore();
 const SpecialitiesStore = useSpecialityStore();
 const departments = computed(() => DepartmentStore.departments);
-const specialities = computed(() => SpecialitiesStore.specialities);
+const specialities = computed(() => SpecialitiesStore.specialties);
 
 const filtersData = ref<{
   department_id: number | undefined;

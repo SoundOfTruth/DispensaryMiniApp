@@ -5,3 +5,4 @@ export interface CreateDepartment {
 export interface Department extends CreateDepartment {
   id: number;
 }
+

@@ -5,7 +5,11 @@
       :disabled="currPage === 1"
       @click="goToPage(currPage - 1)"
     >
-      <LeftSvg class="arrow" :class="{ disabled: currPage == 1 }" />
+      <LeftSvg
+        class="arrow"
+        :class="{ disabled: currPage == 1 }"
+        v-if="paginationPages.length > 0"
+      />
     </button>
 
     <div v-for="page in paginationPages">
@@ -25,7 +29,11 @@
       :disabled="currPage === pagesCount"
       @click="goToPage(currPage + 1)"
     >
-      <RightSvg class="arrow" :class="{ disabled: currPage == pagesCount }" />
+      <RightSvg
+        class="arrow"
+        :class="{ disabled: currPage == pagesCount }"
+        v-if="paginationPages.length > 0"
+      />
     </button>
   </div>
 </template>
@@ -34,7 +42,7 @@
 import LeftSvg from "./svg/LeftSvg.vue";
 import RightSvg from "./svg/RightSvg.vue";
 
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { calcPages } from "@/utils/pagination";
@@ -91,6 +99,18 @@ const goToPage = (page: number) => {
     element.scrollIntoView({ behavior: "smooth" });
   }
 };
+
+watch(
+  () => [pagesCount.value],
+  () => {
+    if (currPage.value > pagesCount.value) {
+      router.push({
+        path: route.path,
+        query: { ...route.query, page: pagesCount.value },
+      });
+    }
+  },
+);
 </script>
 
 <style scoped lang="scss">

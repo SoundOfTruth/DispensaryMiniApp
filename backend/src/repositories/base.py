@@ -1,19 +1,25 @@
-from typing import Generic, Sequence, TypeVar
+from typing import Any, Sequence, TypeVar
 
-from sqlalchemy import func, select
+from sqlalchemy import ColumnElement, delete, func, select
+from sqlalchemy.exc import IntegrityError
 
-from src.database.core import AsyncSession, Base
+from src.database.core import AsyncSession
+from src.database.core import Base as RawBASE
+from src.models.mixins import IntPkBase
 
-Table = TypeVar("Table", bound=Base)
+RawTable = TypeVar("RawTable", bound=RawBASE)
+Table = TypeVar("Table", bound=IntPkBase)
 
 
-class BaseRepository(Generic[Table]):
-    model: type[Table]
+class BaseRepository[RawTable]:
+    model: type[RawTable]
 
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def _count(self, filters: dict[str, int] = {}, expressions: list = []) -> int:
+    async def _count(
+        self, filters: dict[str, Any] = {}, expressions: list[ColumnElement[Any]] = []
+    ) -> int:
         statement = (
             select(func.count())
             .select_from(self.model)
@@ -24,21 +30,48 @@ class BaseRepository(Generic[Table]):
         return res.scalar_one()
 
 
-class DefaultRepository(BaseRepository[Table]):
-    async def get(self, pk: int, options: list = list()):
+class ReadOnlyRepository(BaseRepository[Table]):
+    async def get(self, pk: int, options: list = []) -> Table | None:
         return await self.session.get(self.model, pk, options=options)
 
     async def get_all(
         self,
-        expression_args: list = list(),
-        filter_kwargs: dict = dict(),
-        options: list = list(),
+        expressions: list[ColumnElement[Any]] = [],
+        filters: dict[str, Any] = {},
+        options: list = [],
     ) -> Sequence[Table]:
         statement = (
             select(self.model)
-            .where(*expression_args)
-            .filter_by(**filter_kwargs)
+            .where(*expressions)
+            .filter_by(**filters)
             .options(*options)
+            .order_by(self.model.id)
         )
         res = await self.session.execute(statement)
         return res.scalars().all()
+
+
+class DeleteOnlyRepository(BaseRepository[Table]):
+    async def handle_error(self, err: IntegrityError):
+        await self.session.rollback()
+        raise err
+
+    async def delete(self, id: int):
+        statement = delete(self.model).where(self.model.id == id)
+        try:
+            await self.session.execute(statement)
+        except IntegrityError as ex:
+            await self.handle_error(ex)
+        await self.session.commit()
+
+    async def bulk_delete(self, ids: list[int]):
+        statement = delete(self.model).where(self.model.id.in_(ids))
+        try:
+            await self.session.execute(statement)
+        except IntegrityError as ex:
+            await self.handle_error(ex)
+        await self.session.commit()
+
+
+class DefaultRepository(ReadOnlyRepository[Table], DeleteOnlyRepository[Table]):
+    pass

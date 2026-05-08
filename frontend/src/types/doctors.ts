@@ -1,48 +1,56 @@
-import doctorsJson from "../data/doctors.json";
-
 import type { SimpleInspection } from "./inspections";
-export default doctorsJson;
 
-export interface BaseDoctor {
+import { type Speciality } from "./specialities";
+import { type Department } from "./departments";
+
+export interface SimpleDoctor {
   id: number;
   firstname: string;
   lastname: string;
   middlename: string;
-}
-
-export interface SimpleDoctor extends BaseDoctor {
   qualification: string | null;
-  speciality: string | null;
-  department: string;
+
+  speciality: Speciality;
+  department: Department;
 }
 
 export interface ApiDoctor extends SimpleDoctor {
-  experience_start: number;
+  experience_start: number | null;
+  experience_years: number | null;
+  photo: string | null;
   education: string[];
   extra_education: string[];
-  inspections: [SimpleInspection];
+  inspections: SimpleInspection[];
 }
 
 export interface Doctor extends ApiDoctor {
   experience: string;
 }
 
-export interface CreateEducation {
-  title: string;
+interface DoctorInspection {
+  id: number;
 }
 
-export interface CreateExtraEducation extends CreateEducation {}
-
-export interface CreateDoctor {
-  firstname: string;
+interface CreateDoctorMixin {
   lastname: string;
+  firstname: string;
   middlename: string;
   qualification: string | null;
-  experience_start: number | null;
   speciality_id: number;
   department_id: number;
-  education: CreateEducation[];
-  extra_education: CreateExtraEducation[];
+  photo: string | null;
+  education: string[];
+  extra_education: string[];
+}
+
+export interface CreateDoctorForm extends CreateDoctorMixin {
+  experience_start: string | number | null;
+  inspections: SimpleInspection[];
+}
+
+export interface CreateDoctor extends CreateDoctorMixin {
+  experience_start: number | null;
+  inspections: DoctorInspection[];
 }
 
 export interface PaginatedDoctors {

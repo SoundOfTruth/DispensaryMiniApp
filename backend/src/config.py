@@ -19,8 +19,13 @@ class DatabaseSettings(BaseModel):
         )
 
     @property
-    def URL_AIOSQLITE(self):
-        return "sqlite+aiosqlite:///db.sqlite3"
+    def URL_TEST_ASYNCPG(self):
+        return (
+            "postgresql+asyncpg:"
+            f"//{self.USER}:{self.PASSWORD}"
+            f"@{self.HOST}:{self.PORT}"
+            f"/Test{self.DB}"
+        )
 
 
 class Settings(BaseSettings):
@@ -32,8 +37,16 @@ class Settings(BaseSettings):
         "http://192.168.0.11",
         "http://192.168.0.11:5173",
     ]
+
+    SECRET: str
+    ALGORITM: str = "HS256"
+    ACCESS_EXPIRE_MINUTER: int = 15
+    REFRESH_EXPIRE_DAYS: int = 30
+
     DEBUG: bool = False
     PAGINATION_SIZE: int = 10
+    MEDIA_DIR: str = "media"
+    MEDIA_MAX_SIZE: int = 1024 * 30
 
     DATABASE: DatabaseSettings = Field(alias="POSTGRES")
 

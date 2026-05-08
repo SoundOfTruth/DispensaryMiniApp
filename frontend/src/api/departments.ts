@@ -1,9 +1,11 @@
 import axios from "axios";
+
+import { baseApiUrl } from "./base";
+
 import type { AxiosInstance } from "axios";
+import type { Department, CreateDepartment } from "@/types/departments";
 
-import type { Department, CreateDepartment } from "../types/departments";
-
-class DepartmentsApi {
+class DepartmentApi {
   client: AxiosInstance;
 
   constructor(url: string, headers: Record<string, string>) {
@@ -14,8 +16,10 @@ class DepartmentsApi {
     });
   }
 
-  async getAll() {
-    const response = await this.client.get<Department[]>("/departments/");
+  async getAll(params: Record<string, any> = {}) {
+    const response = await this.client.get<Department[]>("/departments/", {
+      params: { ...params },
+    });
     return response.data;
   }
 
@@ -25,14 +29,28 @@ class DepartmentsApi {
   }
 
   async create(data: CreateDepartment) {
-    const response = await this.client.post<Department>(
-      "/departments/",
-      JSON.stringify(data),
+    const response = await this.client.post<Department>("/departments/", data);
+    return response.data;
+  }
+  async update(id: number, data: CreateDepartment) {
+    const response = await this.client.put<Department>(
+      `/departments/${id}/`,
+      data,
     );
     return response.data;
   }
+
+  async delete(id: number) {
+    await this.client.delete(`/departments/${id}/`);
+  }
+
+  async deleteBulk(ids: number[]) {
+    await this.client.delete("/departments/bulk/", {
+      params: { ids: ids },
+    });
+  }
 }
 
-export default new DepartmentsApi("http://localhost:8000/api", {
+export default new DepartmentApi(baseApiUrl, {
   "content-type": "application/json",
 });

@@ -5,12 +5,15 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1 {
@@ -27,6 +30,8 @@ button {
   font-family: inherit;
   cursor: pointer;
   transition: border-color 0.25s;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 @media (prefers-color-scheme: light) {
@@ -36,5 +41,20 @@ button {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+input[type="checkbox"] {
+  background: white;
+  border: 1px solid black;
+  border-radius: 4px;
+  width: 1rem;
+  height: 1rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  &:checked[type="checkbox"] {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill="none" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8.5l2.5 2.5l5.5 -5.5"/></svg>');
   }
 }

@@ -1,13 +1,15 @@
 import axios from "axios";
-import type { AxiosInstance } from "axios";
 
+import { baseApiUrl } from "./base";
+
+import type { AxiosInstance } from "axios";
 import type {
   Inspection,
   CreateInspection,
   PaginatedInspection,
-} from "../types/inspections";
+} from "@/types/inspections";
 
-class InspectionsApi {
+class InspectionApi {
   protected client: AxiosInstance;
 
   constructor(url: string, headers: Record<string, string>) {
@@ -15,15 +17,18 @@ class InspectionsApi {
       baseURL: url,
       headers: headers,
       timeout: 7000,
+      paramsSerializer: {
+        indexes: null,
+      },
     });
   }
 
-  async getAll(filters: Record<string, any> = {}) {
+  async getAll(params: Record<string, any> = {}) {
     const defaultParams = { limit: 10, offset: 0 };
     const response = await this.client.get<PaginatedInspection>(
       "/inspections/",
       {
-        params: { ...defaultParams, ...filters },
+        params: { ...defaultParams, ...params },
       },
     );
     return response.data;
@@ -34,14 +39,29 @@ class InspectionsApi {
   }
 
   async create(data: CreateInspection) {
-    const response = await this.client.post<Inspection>(
-      "/inspections/",
-      JSON.stringify(data),
+    const response = await this.client.post<Inspection>("/inspections/", data);
+    return response.data;
+  }
+
+  async update(id: number, data: Partial<CreateInspection>) {
+    const response = await this.client.patch<Inspection>(
+      `/inspections/${id}`,
+      data,
     );
     return response.data;
   }
+
+  async delete(id: number) {
+    await this.client.delete(`/inspections/${id}/`);
+  }
+
+  async deleteBulk(ids: number[]) {
+    await this.client.delete("/inspections/bulk/", {
+      params: { ids: ids },
+    });
+  }
 }
 
-export default new InspectionsApi("http://localhost:8000/api", {
+export default new InspectionApi(baseApiUrl, {
   "content-type": "application/json",
 });

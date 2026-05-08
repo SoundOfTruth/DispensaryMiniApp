@@ -1,18 +1,15 @@
 <template>
-  <div class="filters">
-    <div class="search-field">
-      <div class="svg">
-        <SearchSvg />
-      </div>
-      <input
-        type="text"
-        v-model.lazy="pattern"
-        :placeholder="props.title"
-        class="input-field"
-        @keyup.enter="search()"
-      />
+  <div class="search-field">
+    <div class="svg">
+      <SearchSvg />
     </div>
-    <slot name="filter"></slot>
+    <input
+      type="text"
+      v-model.lazy="pattern"
+      :placeholder="props.title"
+      class="input-field"
+      @keyup.enter="handleSearch()"
+    />
   </div>
 </template>
 
@@ -32,7 +29,7 @@ const pattern = ref<string>(route.query.search?.toString() ?? "");
 
 const props = defineProps<inputData>();
 
-const search = () => {
+const handleSearch = () => {
   let query = { ...route.query };
   if (pattern.value) {
     query = { ...query, search: pattern.value, page: "1" };
@@ -52,29 +49,20 @@ const search = () => {
   width: min-content;
   height: min-content;
 }
-.filters {
-  padding-top: 20px;
-  padding-inline: 25px;
-  padding-bottom: 20px;
+.search-field {
+  width: 100%;
   display: flex;
-  gap: 10px;
-
-  .search-field {
+  border: 1px solid #bababa;
+  border-radius: 10px;
+  padding: 3px;
+  .input-field {
     width: 100%;
-    display: flex;
-    border: 1px solid #bababa;
-    border-radius: 10px;
-    padding: 3px;
-
-    .input-field {
-      width: 100%;
-      border: transparent;
-      background: #f5f7fa;
-      outline: none;
-      box-sizing: border-box;
-      color: #bababa;
-      font-size: 90%;
-    }
+    border: transparent;
+    background: transparent;
+    outline: none;
+    box-sizing: border-box;
+    color: #bababa;
+    font-size: 90%;
   }
 }
 </style>

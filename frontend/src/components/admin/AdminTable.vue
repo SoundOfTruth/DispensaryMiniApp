@@ -5,7 +5,11 @@
         <thead>
           <tr>
             <td class="s-coll">
-              <CustonInput v-model="isAllSelected" @on-select="selectAll()" />
+              <input
+                type="checkbox"
+                @click="emits('selectAll')"
+                :checked="isAllSelected"
+              />
             </td>
             <td class="s-coll"></td>
             <th v-for="col in columns">{{ col.text }}</th>
@@ -14,17 +18,43 @@
         <tbody>
           <tr v-for="row in data">
             <td>
-              <CustonInput
-                :id="row.id"
-                :selected="selectedItems"
-                @on-select="selectOne(row.id)"
+              <input
+                type="checkbox"
+                @click="emits('selectOne', row.id)"
+                :checked="selectedItems.has(row.id)"
               />
             </td>
             <td>
-              <RowActions />
+              <div class="row-actions">
+                <RouterLink
+                  class="action-btn"
+                  :to="{
+                    name: routeName + '.detail',
+                    params: { id: row.id },
+                  }"
+                >
+                  <WatchSvg />
+                </RouterLink>
+                <RouterLink
+                  class="action-btn"
+                  :to="{
+                    name: routeName + '.edit',
+                    params: { id: row.id },
+                  }"
+                >
+                  <EditSvg />
+                </RouterLink>
+                <button class="action-btn" @click="emits('openDelete', row.id)">
+                  <DeleteSvg />
+                </button>
+              </div>
             </td>
             <td v-for="col in columns">
-              {{ row[col.key as keyof typeof row] }}
+              {{
+                col.secondKey
+                  ? row[col.key as keyof typeof row]?.[col.secondKey]
+                  : row[col.key as keyof typeof row]
+              }}
             </td>
           </tr>
         </tbody>
@@ -35,48 +65,35 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import RowActions from "./RowActions.vue";
-import CustonInput from "../CustonInput.vue";
+import DeleteSvg from "../svg/DeleteSvg.vue";
+import EditSvg from "../svg/EditSvg.vue";
+import WatchSvg from "../svg/WatchSvg.vue";
 import AdminTableFooter from "./AdminTableFooter.vue";
-import type { BaseStore } from "../../stores/baseStore";
 
-const isAllSelected = ref<boolean>(false);
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+
+const routeName = String(route.name);
+
+import type { BaseStore } from "../../stores/base";
 
 interface Columns {
   key: string;
   text: string;
+  secondKey?: string | string;
 }
 
 interface Props {
   columns: Columns[];
   data: any[] | undefined;
   store: BaseStore;
+  isAllSelected: boolean;
+  selectedItems: Set<number>;
 }
 
 const props = defineProps<Props>();
-
-const selectedItems = ref<Set<number>>(new Set());
-
-const selectAll = () => {
-  if (!isAllSelected.value) {
-    props.data?.forEach((val) => {
-      selectedItems.value.add(val.id);
-    });
-    isAllSelected.value = true;
-  } else {
-    selectedItems.value.clear();
-    isAllSelected.value = false;
-  }
-};
-
-const selectOne = (id: number) => {
-  if (!selectedItems.value.has(id)) {
-    selectedItems.value.add(id);
-  } else {
-    selectedItems.value.delete(id);
-  }
-};
+const emits = defineEmits(["openDelete", "selectAll", "selectOne"]);
 </script>
 
 <style lang="scss" scoped>
@@ -128,5 +145,24 @@ tr {
   margin-bottom: 1rem;
   vertical-align: top;
   border-color: var(--cui-table-border-color);
+}
+
+.row-actions {
+  display: flex;
+  place-content: center;
+  .action-btn {
+    width: 20px;
+    display: flex;
+    align-items: center;
+    background: transparent;
+    padding: 0;
+    &:hover {
+      border-color: transparent !important;
+    }
+    &:focus,
+    &:focus-visible {
+      outline: none !important;
+    }
+  }
 }
 </style>

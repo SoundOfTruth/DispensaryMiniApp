@@ -1,12 +1,8 @@
 <template>
   <header>
     <div class="hat">
-      <button class="menu-button" @click="toggleMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      <RouterLink to="/"
+      <MenuButton @click="toggleMenu()" />
+      <RouterLink to="/" class="link"
         ><h1 class="title">Клинический онкологический диспансер</h1></RouterLink
       >
     </div>
@@ -30,6 +26,8 @@
 </template>
 
 <script setup lang="ts">
+import MenuButton from "./MenuButton.vue";
+
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
 
@@ -61,24 +59,6 @@ header {
     padding: 0;
     line-height: 0.8;
     max-width: 275px;
-  }
-}
-
-.menu-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px;
-  span {
-    width: 24px;
-    height: 2px;
-    background: #222;
-    display: block;
-    transition: all 0.3s black;
   }
 }
 

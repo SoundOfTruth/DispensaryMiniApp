@@ -6,41 +6,44 @@ from src.database.core import AsyncScopedSessionDep
 from src.repositories.equipments import EquipmentRepository
 from src.schemas.equipments import (
     CreateEquipmentSchema,
-    CreateEquipmentTypeSchema,
-    EquimentSchema,
-    EquipmentByTypeSchema,
+    EquipmentSchema,
+    UpdateEquipmentSchema,
 )
+from src.services.exceptions import EmptyPatchError, NotFoundError
 
 
 class EquipmentsService:
     def __init__(self, session: AsyncScopedSessionDep) -> None:
-        self.equipment_repo = EquipmentRepository(session=session)
-
-    async def get_all_grouped_by_type(self):
-        equipments = await self.equipment_repo.get_all_grouped_by_type()
-        return [
-            EquipmentByTypeSchema.model_validate(equipment) for equipment in equipments
-        ]
-
-    async def get(self, id):
-        equipment = await self.equipment_repo.get_with_relations(id)
-        return EquimentSchema.model_validate(equipment)
-
-    async def get_all(self):
-        equipments = await self.equipment_repo.get_all_with_relations()
-        return [EquimentSchema.model_validate(equipment) for equipment in equipments]
+        self.equipment_rep = EquipmentRepository(session=session)
 
     async def create(self, schema: CreateEquipmentSchema):
-        return await self.equipment_repo.create(schema.model_dump())
+        equipment = await self.equipment_rep.create(schema.model_dump())
+        return EquipmentSchema.model_validate(equipment)
 
-    async def create_type(self, schema: CreateEquipmentTypeSchema):
-        return await self.equipment_repo.create_type(schema.model_dump())
+    async def update(self, id: int, schema: UpdateEquipmentSchema):
+        payload = schema.model_dump(exclude_unset=True)
+        if not payload:
+            raise EmptyPatchError
+        equipment = await self.equipment_rep.update(id, payload)
+        if not equipment:
+            raise NotFoundError
+        return EquipmentSchema.model_validate(equipment)
 
-    async def get_types(self):
-        return await self.equipment_repo.get_types()
+    async def get_all(self):
+        equipments = await self.equipment_rep.get_all_with_relations()
+        return [EquipmentSchema.model_validate(equipment) for equipment in equipments]
 
-    async def get_type(self, id: int):
-        return await self.equipment_repo.get_type(id)
+    async def get(self, id: int):
+        equipment = await self.equipment_rep.get_with_relations(id)
+        if not equipment:
+            raise NotFoundError
+        return EquipmentSchema.model_validate(equipment)
+
+    async def delete(self, id: int):
+        return await self.equipment_rep.delete(id)
+
+    async def bulk_delete(self, ids: list[int]):
+        return await self.equipment_rep.bulk_delete(ids)
 
 
 EquipmentServiceDep = Annotated[EquipmentsService, Depends()]

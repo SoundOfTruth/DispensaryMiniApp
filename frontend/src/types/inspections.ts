@@ -24,15 +24,7 @@ export interface CreateInspection {
   doctors: CreateInspectionDoctor[];
 }
 
-export interface SimpleInspection {
-  title: string;
-}
-
 export interface PaginatedInspection {
   count: number;
   results: SimpleInspection[];
 }
-
-export const getInspectionsPayload = (data: Inspection[]): Inspection[] => {
-  return data;
-};

@@ -1,32 +1,25 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, String, Text
+from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.database.core import Base
-from src.models.types import int_pk
+from src.models.mixins import IntPkBase as Base
 
 if TYPE_CHECKING:
-    from src.models.doctors import Doctor
-
-
-class DoctorInspection(Base):
-    __tablename__ = "doctor_inspections"
-
-    doctor_id: Mapped[int] = mapped_column(ForeignKey("doctors.id"), primary_key=True)
-    inspection_id: Mapped[int] = mapped_column(
-        ForeignKey("inspections.id"), primary_key=True
-    )
+    from src.models.doctors import Doctor, DoctorInspection
 
 
 class Inspection(Base):
     __tablename__ = "inspections"
 
-    id: Mapped[int_pk]
     title: Mapped[str] = mapped_column(String(255), unique=True)
     description: Mapped[str] = mapped_column(Text())
     preparation: Mapped[str] = mapped_column(Text())
 
+    inspection_doctors: Mapped[list["DoctorInspection"]] = relationship(
+        back_populates="inspection", cascade="all, delete-orphan"
+    )
+
     doctors: Mapped[list["Doctor"]] = relationship(
-        "Doctor", secondary="doctor_inspections", back_populates="inspections"
+        secondary="doctor_inspections", back_populates="inspections", viewonly=True
     )

@@ -7,7 +7,7 @@
       <div class="fullname">
         {{ `${doctor?.lastname}  ${doctor?.firstname} ${doctor?.middlename}` }}
       </div>
-      <div class="speciality">{{ doctor?.speciality }}</div>
+      <div class="speciality">{{ doctor?.speciality.name }}</div>
     </div>
   </div>
 </template>
@@ -29,6 +29,7 @@ const openDoctor = (doctorId: number) => {
 
 <style scoped lang="scss">
 .doctor-card {
+  height: 110px;
   background: white;
   display: flex;
   border-radius: 16px;
@@ -49,7 +50,7 @@ const openDoctor = (doctorId: number) => {
     justify-content: space-around;
     padding: 14px;
     .fullname {
-      font-size: 110%;
+      font-size: 105%;
     }
     .speciality {
       font-size: 85%;

@@ -1,13 +1,15 @@
 import axios from "axios";
-import type { AxiosInstance } from "axios";
 
+import { baseApiUrl } from "./base";
+
+import type { AxiosInstance } from "axios";
 import type {
   ApiDoctor,
   CreateDoctor,
   PaginatedDoctors,
-} from "../types/doctors";
+} from "@/types/doctors";
 
-class DoctorsApi {
+class DoctorApi {
   protected client: AxiosInstance;
 
   constructor(url: string, headers: Record<string, string>) {
@@ -15,13 +17,16 @@ class DoctorsApi {
       baseURL: url,
       headers: headers,
       timeout: 7000,
+      paramsSerializer: {
+        indexes: null,
+      },
     });
   }
 
-  async getAll(filters: Record<string, any> = {}) {
+  async getAll(params: Record<string, any> = {}) {
     const defaultParams = { limit: 10, offset: 0 };
     const response = await this.client.get<PaginatedDoctors>("/doctors/", {
-      params: { ...defaultParams, ...filters },
+      params: { ...defaultParams, ...params },
     });
     return response.data;
   }
@@ -30,14 +35,29 @@ class DoctorsApi {
     return response.data;
   }
   async create(data: CreateDoctor) {
-    const response = await this.client.post<ApiDoctor>(
-      "/doctors/",
-      JSON.stringify(data),
+    const response = await this.client.post<ApiDoctor>("/doctors/", data);
+    return response.data;
+  }
+
+  async update(id: number, data: Partial<CreateDoctor>) {
+    const response = await this.client.patch<ApiDoctor>(
+      `/doctors/${id}/`,
+      data,
     );
     return response.data;
   }
+
+  async delete(id: number) {
+    await this.client.delete(`/doctors/${id}/`);
+  }
+
+  async deleteBulk(ids: number[]) {
+    await this.client.delete("/doctors/bulk/", {
+      params: { ids: ids },
+    });
+  }
 }
 
-export default new DoctorsApi("http://localhost:8000/api", {
+export default new DoctorApi(baseApiUrl, {
   "content-type": "application/json",
 });

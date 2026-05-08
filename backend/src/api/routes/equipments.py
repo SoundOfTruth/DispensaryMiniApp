@@ -1,44 +1,39 @@
-from typing import Annotated
+from fastapi import APIRouter
 
-from fastapi import APIRouter, Query
-
-from src.schemas.equipments import CreateEquipmentSchema, CreateEquipmentTypeSchema
+from src.api.params import QueryIds
+from src.schemas.equipments import CreateEquipmentSchema, UpdateEquipmentSchema
 from src.services.equipments import EquipmentServiceDep
 
 router = APIRouter(prefix="/equipments", tags=["Equipments"])
 
 
 @router.get("/")
-async def get_equiments(
-    service: EquipmentServiceDep, group_by: Annotated[str | None, Query()] = None
-):
-    if group_by == "type":
-        return await service.get_all_grouped_by_type()
+async def get_equiments(service: EquipmentServiceDep):
     return await service.get_all()
 
 
-@router.get("/id/")
+@router.get("/{id}/")
 async def get_equipment(id: int, service: EquipmentServiceDep):
     return await service.get(id)
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 async def create_equipment(schema: CreateEquipmentSchema, service: EquipmentServiceDep):
     return await service.create(schema)
 
 
-@router.post("/types/")
-async def create_equipment_type(
-    schema: CreateEquipmentTypeSchema, service: EquipmentServiceDep
+@router.patch("/{id}/", status_code=201)
+async def update_equipment(
+    id: int, schema: UpdateEquipmentSchema, service: EquipmentServiceDep
 ):
-    return await service.create_type(schema)
+    return await service.update(id, schema)
 
 
-@router.get("/types/")
-async def get_types(service: EquipmentServiceDep):
-    return await service.get_types()
+@router.delete("/bulk/", status_code=204)
+async def delete_equipments(service: EquipmentServiceDep, ids: QueryIds):
+    return await service.bulk_delete(ids)
 
 
-@router.get("/types/{id}/")
-async def get_type(id: int, service: EquipmentServiceDep):
-    return await service.get_type(id)
+@router.delete("/{id}/", status_code=204)
+async def delete_equipment(service: EquipmentServiceDep, id: int):
+    return await service.delete(id)

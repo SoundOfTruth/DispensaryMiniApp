@@ -1,10 +1,14 @@
-from pydantic import ConfigDict
+from pydantic import ConfigDict, Field
 
 from src.schemas.base import BaseSchema
 
 
 class CreateSpecialitySchema(BaseSchema):
-    name: str
+    name: str = Field(max_length=255)
+
+
+class UpdateSpecialitySchema(BaseSchema):
+    name: str = Field(max_length=255)
 
 
 class SpecialitySchema(CreateSpecialitySchema):

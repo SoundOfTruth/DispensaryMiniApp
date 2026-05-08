@@ -1,6 +1,14 @@
-from src.models.doctors import Department, Doctor, Education, ExtraEducation, Speciality
+from src.models.doctors import (
+    Department,
+    Doctor,
+    DoctorInspection,
+    Education,
+    ExtraEducation,
+    Speciality,
+)
 from src.models.equipments import Equipment, EquipmentType
-from src.models.inspections import DoctorInspection, Inspection
+from src.models.inspections import Inspection
+from src.models.users import User
 
 __all__ = [
     "Doctor",
@@ -12,4 +20,5 @@ __all__ = [
     "DoctorInspection",
     "Equipment",
     "EquipmentType",
+    "User",
 ]

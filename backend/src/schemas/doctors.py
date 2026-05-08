@@ -1,4 +1,6 @@
-from pydantic import BaseModel, ConfigDict, field_serializer
+from datetime import datetime
+
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 from src.schemas.base import BaseSchema
 
@@ -11,37 +13,16 @@ class CreateExtraEducationSchema(BaseModel):
     title: str
 
 
-class CreateDoctorSchema(BaseModel):
-    firstname: str
-    lastname: str
-    middlename: str
-    qualification: str | None
-    experience_start: int | None
-    speciality_id: int
-    department_id: int
-
-    education: list[CreateEducationSchema] | None
-    extra_education: list[CreateExtraEducationSchema] | None
-
-
-class SimpleDoctorSchema(BaseModel):
-    id: int
-    firstname: str
-    lastname: str
-    middlename: str
-    qualification: str | None
-    speciality: "SpecialitySchema | None"
-    department: "DepartmentSchema"
-
+class EducationSchema(CreateEducationSchema):
     model_config = ConfigDict(from_attributes=True)
 
-    @field_serializer("speciality")
-    def serialize_speciality(self, obj):
-        return obj.name
 
-    @field_serializer("department")
-    def serialize_department(self, obj):
-        return obj.name
+class ExtraEducationSchema(CreateExtraEducationSchema):
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CreateDoctorInspectionSchema(BaseModel):
+    inspection_id: int = Field(alias="id")
 
 
 class SpecialitySchema(BaseSchema):
@@ -58,6 +39,52 @@ class DepartmentSchema(BaseSchema):
     model_config = ConfigDict(from_attributes=True)
 
 
+class CreateDoctorSchema(BaseModel):
+    firstname: str
+    lastname: str
+    middlename: str
+    qualification: str | None
+    experience_start: int | None = Field(None, examples=[2000])
+    photo: str | None = None
+    speciality_id: int = Field(examples=[1])
+    department_id: int = Field(examples=[1])
+
+    inspections: list[CreateDoctorInspectionSchema] = Field(examples=[[]])
+    education: list[str]
+    extra_education: list[str]
+
+    model_config = ConfigDict(str_min_length=1)
+
+
+class UpdateDoctorSchema(BaseModel):
+    firstname: str = Field("")
+    lastname: str = Field("")
+    middlename: str = Field("")
+    qualification: str | None = Field(None)
+    experience_start: int | None = Field(None, gt=1920, le=datetime.now().year)
+    photo: str | None = None
+    speciality_id: int = Field(1)
+    department_id: int = Field(1)
+
+    inspections: list[CreateDoctorInspectionSchema] = Field([], examples=[[]])
+    education: list[str] = Field([])
+    extra_education: list[str] | None = Field([])
+
+    model_config = ConfigDict(str_min_length=1)
+
+
+class SimpleDoctorSchema(BaseModel):
+    id: int
+    firstname: str
+    lastname: str
+    middlename: str
+    qualification: str | None
+    speciality: "SpecialitySchema"
+    department: "DepartmentSchema"
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class SimpleInspectionSchema(BaseSchema):
     id: int
     title: str
@@ -66,7 +93,8 @@ class SimpleInspectionSchema(BaseSchema):
 
 
 class DoctorSchema(SimpleDoctorSchema):
-    experience: int | None
+    experience_start: int | None
+    experience_years: int | None
 
     education: list["EducationSchema"]
     extra_education: list["ExtraEducationSchema"]
@@ -79,18 +107,6 @@ class DoctorSchema(SimpleDoctorSchema):
     @field_serializer("extra_education")
     def serialize_extra_education(self, obj: list["ExtraEducationSchema"]):
         return [row.title for row in obj]
-
-
-class EducationSchema(CreateEducationSchema):
-    id: int
-
-    model_config = ConfigDict(from_attributes=True)
-
-
-class ExtraEducationSchema(CreateExtraEducationSchema):
-    id: int
-
-    model_config = ConfigDict(from_attributes=True)
 
 
 class DoctorFiltersSchema(BaseModel):

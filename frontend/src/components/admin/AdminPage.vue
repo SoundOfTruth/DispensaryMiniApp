@@ -6,11 +6,16 @@
           <div class="title">{{ props.title }}</div>
           <div class="actions">
             <ExportButton />
-            <button class="add-btn">{{ props.addButtonName }}</button>
+            <RouterLink
+              :to="{ name: String(route.name) + '.create' }"
+              class="add-btn"
+            >
+              {{ props.addButtonName }}</RouterLink
+            >
           </div>
         </div>
         <div class="filters">
-          <ActionButton />
+          <ActionsButton @delete="openDelete()" />
           <div class="search">
             <SearchField title="Поиск" />
           </div>
@@ -18,17 +23,57 @@
       </div>
     </div>
     <div class="content">
-      <AdminTable :columns="props.columns" :data="props.data" :store="store" />
+      <AdminTable
+        :columns="props.columns"
+        :data="props.data"
+        :store="store"
+        :is-all-selected="isAllSelected"
+        :selected-items="selectedItems"
+        @select-all="selectAll"
+        @select-one="selectOne"
+        @open-delete="openDelete"
+      />
     </div>
   </div>
+  <Teleport to="#modals">
+    <AdminDeteleModal
+      :open="deleteOpen"
+      :id="deleteId"
+      :selected-items="selectedItems"
+      :store="props.store"
+      @close="closeDelete"
+    />
+    <AdminErrorModal :errors="store.errors" @close="store.errors = []" />
+  </Teleport>
 </template>
 
 <script lang="ts" setup>
-import ActionButton from "./ActionButton.vue";
+import ActionsButton from "./buttons/ActionsButton.vue";
+import AdminDeteleModal from "./modals/AdminDeteleModal.vue";
+import AdminErrorModal from "./modals/AdminErrorModal.vue";
 import AdminTable from "./AdminTable.vue";
 import SearchField from "../SearchField.vue";
-import ExportButton from "./ExportButton.vue";
-import type { BaseStore } from "../../stores/baseStore";
+import ExportButton from "./buttons/ExportButton.vue";
+
+import type { BaseStore } from "../../stores/base";
+
+import { onMounted, watch, ref } from "vue";
+import { useRoute } from "vue-router";
+
+const deleteId = ref<number | undefined>(undefined);
+const deleteOpen = ref<boolean>(false);
+
+const openDelete = (id?: number) => {
+  deleteId.value = id;
+  deleteOpen.value = true;
+};
+
+const closeDelete = () => {
+  isAllSelected.value = false;
+  selectedItems.value.clear();
+  deleteId.value = undefined;
+  deleteOpen.value = false;
+};
 
 interface Columns {
   key: string;
@@ -43,14 +88,67 @@ interface inputData {
   store: BaseStore;
 }
 
+const route = useRoute();
+
 const props = defineProps<inputData>();
+
+const isAllSelected = ref<boolean>(false);
+const selectedItems = ref<Set<number>>(new Set());
+
+const selectAll = () => {
+  if (!isAllSelected.value) {
+    props.data?.forEach((val) => {
+      selectedItems.value.add(val.id);
+    });
+    isAllSelected.value = true;
+  } else {
+    selectedItems.value.clear();
+    isAllSelected.value = false;
+  }
+};
+
+const selectOne = (id: number) => {
+  if (!selectedItems.value.has(id)) {
+    selectedItems.value.add(id);
+  } else {
+    selectedItems.value.delete(id);
+  }
+};
+
+onMounted(async () => {
+  await props.store.loadList();
+});
+
+watch(
+  () => [route.query],
+  async () => {
+    isAllSelected.value = false;
+    selectedItems.value.clear();
+    await props.store.loadList();
+  },
+  { deep: true },
+);
+watch(
+  () => [props.store.limit],
+  async () => {
+    if (props.store.setLimit) {
+      isAllSelected.value = false;
+      selectedItems.value.clear();
+      await props.store.loadList();
+    }
+  },
+  { deep: true },
+);
 </script>
 
 <style lang="scss" scoped>
 .container {
-  padding-top: 50px;
+  padding-top: 20px;
   padding-left: 10px;
   padding-right: 30px;
+  @media (min-width: 800px) {
+    padding-top: 30px;
+  }
 }
 .content {
   padding-top: 25px;
@@ -68,7 +166,6 @@ const props = defineProps<inputData>();
     .header {
       padding: 1rem;
       display: flex;
-      align-items: center;
       border-bottom: 1px solid #e6e7e9;
       .title {
         font-size: 115%;
@@ -80,11 +177,15 @@ const props = defineProps<inputData>();
         display: flex;
         gap: 20px;
         padding-right: 10px;
-        .export-btn {
-          color: white;
-          background: #616876;
-        }
         .add-btn {
+          border-radius: 8px;
+          border: 1px solid transparent;
+          padding: 0.5em 1em;
+          font-size: 1em;
+          font-weight: 500;
+          font-family: inherit;
+          cursor: pointer;
+          transition: border-color 0.25s;
           color: white;
           background: #206bc4;
         }

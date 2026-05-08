@@ -16,11 +16,16 @@ import TheHeader from "../components/TheHeader.vue";
   max-width: 900px;
   margin: 0 auto;
   height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 .content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  overflow-y: auto;
+  min-height: 0;
+  overflow: hidden;
 }
 </style>

@@ -1,43 +1,5 @@
-<script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import ThePagination from "../ThePagination.vue";
-import type { BaseStore } from "@/stores/baseStore";
-
-const props = defineProps<{
-  tableCount: number | undefined;
-  store: BaseStore;
-}>();
-
-const route = useRoute();
-const router = useRouter();
-
-const IsDropdownOpen = ref<boolean>(false);
-const dropdownCount = [10, 25, 50, 100];
-
-const currentPage = computed(() => {
-  const page = route.query.page;
-  return page ? Number(page) : 1;
-});
-
-const passedCount = computed(() => {
-  if (props.tableCount) {
-    return (currentPage.value - 1) * props.store.limit + props.tableCount;
-  }
-});
-
-watch(
-  () => props.store.limit,
-  async () => {
-    router.push({ path: route.path, query: { ...route.query, page: 1 } });
-    await props.store.loadList();
-  },
-  { deep: true },
-);
-</script>
-
 <template>
-  <div class="table-footer">
+  <div class="table-footer" v-if="props.store.limit">
     <div class="count">
       Пройденно {{ passedCount }} из {{ props.store.count }} строк
     </div>
@@ -47,8 +9,11 @@ watch(
         :limit="props.store.limit"
         :size="7"
       ></ThePagination>
-      <div>Лимит</div>
-      <div class="limit" @click="IsDropdownOpen = !IsDropdownOpen">
+      <div
+        class="limit"
+        @click="IsDropdownOpen = !IsDropdownOpen"
+        v-if="props.store.setLimit"
+      >
         <div>{{ props.store.limit }} / на страницу</div>
         <div class="dropdown" v-if="IsDropdownOpen">
           <button
@@ -63,6 +28,34 @@ watch(
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
+import ThePagination from "../ThePagination.vue";
+import type { BaseStore } from "@/stores/base";
+
+const props = defineProps<{
+  tableCount: number | undefined;
+  store: BaseStore;
+}>();
+
+const route = useRoute();
+
+const IsDropdownOpen = ref<boolean>(false);
+const dropdownCount = [10, 25, 50, 100];
+
+const currentPage = computed(() => {
+  const page = route.query.page;
+  return page ? Number(page) : 1;
+});
+
+const passedCount = computed(() => {
+  if (props.store.limit && props.tableCount !== undefined) {
+    return (currentPage.value - 1) * props.store.limit + props.tableCount;
+  }
+});
+</script>
 
 <style lang="scss" scoped>
 .count {

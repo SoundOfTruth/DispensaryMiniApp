@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="paginated-page">
     <slot></slot>
     <div
       class="pagination-container"
@@ -31,12 +31,20 @@ const props = defineProps<Props>();
 </script>
 
 <style scoped lang="scss">
+.paginated-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: scroll;
+  padding-bottom: 15px;
+}
 .pagination-container {
   display: flex;
   justify-content: center;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-top: 20px;
+  padding-bottom: 20px;
   max-width: 100vw;
-  overflow-x: hidden;
+  flex-shrink: 0;
 }
 </style>
