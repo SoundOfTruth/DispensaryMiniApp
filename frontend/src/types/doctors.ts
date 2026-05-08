@@ -9,6 +9,7 @@ export interface SimpleDoctor {
   lastname: string;
   middlename: string;
   qualification: string | null;
+  photo: string | null;
 
   speciality: Speciality;
   department: Department;
@@ -17,7 +18,6 @@ export interface SimpleDoctor {
 export interface ApiDoctor extends SimpleDoctor {
   experience_start: number | null;
   experience_years: number | null;
-  photo: string | null;
   education: string[];
   extra_education: string[];
   inspections: SimpleInspection[];

@@ -46,6 +46,7 @@ class CreateDoctorSchema(BaseModel):
     qualification: str | None
     experience_start: int | None = Field(None, examples=[2000])
     photo: str | None = None
+
     speciality_id: int = Field(examples=[1])
     department_id: int = Field(examples=[1])
 
@@ -63,6 +64,7 @@ class UpdateDoctorSchema(BaseModel):
     qualification: str | None = Field(None)
     experience_start: int | None = Field(None, gt=1920, le=datetime.now().year)
     photo: str | None = None
+
     speciality_id: int = Field(1)
     department_id: int = Field(1)
 
@@ -79,6 +81,7 @@ class SimpleDoctorSchema(BaseModel):
     lastname: str
     middlename: str
     qualification: str | None
+    photo: str | None
     speciality: "SpecialitySchema"
     department: "DepartmentSchema"
 

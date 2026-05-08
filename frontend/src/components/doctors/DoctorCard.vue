@@ -1,7 +1,8 @@
 <template>
   <div class="doctor-card" @click="openDoctor(props.doctor.id)">
     <div class="avatar-container">
-      <img src="/src/images/avatar.png" class="img" />
+      <img src="/src/images/avatar.png" class="img" v-if="!doctor.photo" />
+      <img :src="doctor.photo" class="img" v-else />
     </div>
     <div class="info">
       <div class="fullname">
