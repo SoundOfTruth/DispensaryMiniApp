@@ -41,7 +41,7 @@ const getPatchPayload = (): Partial<CreateUser> | null => {
 
   if (!user) {
     userStore.errors.push({
-      message: "Непредвиденная ошибка",
+      message: "Непредвиденная ошибка.",
     });
     return null;
   }
@@ -75,7 +75,7 @@ const validateForm = (): boolean => {
   ) {
     userStore.errors.push({
       message:
-        "Поле Фамилия/имя/очество должна состоять не менее, чем из 1 символа",
+        "Фамилия/имя/очество не может содержать менее 1 символа.",
     });
     formValid = false;
   }
@@ -98,7 +98,7 @@ const updateUser = async () => {
       return await userStore.update(userId.value, updatePayload);
     }
   } else {
-    userStore.errors.push({ message: "Непредвиденная ошибка" });
+    userStore.errors.push({ message: "Непредвиденная ошибка." });
   }
 };
 

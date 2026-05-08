@@ -13,7 +13,7 @@ const filesStore = useFilesStore();
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
 const fileTypes = ["image/png", "image/jpeg", "image/webp"];
-const previewUrl = ref<string | null | undefined>(props.previewUrl);
+const previewUrl = ref<string | null>();
 
 const clearPreview = () => {
   if (!props.hidden) {

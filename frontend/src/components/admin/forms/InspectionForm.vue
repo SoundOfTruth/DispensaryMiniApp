@@ -67,13 +67,13 @@ const validateForm = (form: CreateInspection): boolean => {
   let isValid = true;
   if (form.title.length < 1) {
     inspectionStore.errors.push({
-      message: "После заголовок должно содержать минимум 1 символ.",
+      message: "Заголовок не может содержать менее 1 символа.",
     });
     isValid = false;
   }
   if (form.preparation.length < 1) {
     inspectionStore.errors.push({
-      message: "После подготовка должно содержать минимум 1 символ.",
+      message: "Подготовка не может содержать менее 1 символа.",
     });
     isValid = false;
   }
@@ -87,7 +87,7 @@ const getPatchPayload = (
   const inspection = inspectionStore.inspection;
   if (!inspection) {
     inspectionStore.errors.push({
-      message: "Непредвиденная ошибка",
+      message: "Непредвиденная ошибка.",
     });
     return null;
   }
@@ -128,7 +128,7 @@ const updateInspection = async (payload: CreateInspection) => {
       return await inspectionStore.update(inspectionId.value, updatePayload);
     }
   } else {
-    inspectionStore.errors.push({ message: "Непредвиденная ошибка" });
+    inspectionStore.errors.push({ message: "Непредвиденная ошибка." });
   }
 };
 

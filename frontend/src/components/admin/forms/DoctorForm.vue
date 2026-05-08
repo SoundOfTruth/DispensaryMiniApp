@@ -58,14 +58,14 @@ const setPhoto = (url: string) => {
 
 const addEducation = (array: string[], title: string) => {
   if (array.includes(title)) {
-    doctorStore.errors.push({ message: `${title} уже в списке` });
+    doctorStore.errors.push({ message: `${title} уже в списке.` });
     return;
   }
   if (title.length > 1) {
     array.push(title);
   } else {
     doctorStore.errors.push({
-      message: "Поле образования содержит менее 2 символов",
+      message: "Поле образование содержит менее 1 символа.",
     });
   }
 };
@@ -106,7 +106,7 @@ const validateForm = (payload: CreateDoctor): boolean => {
 
   if (payload.experience_start && payload.experience_start < 1920) {
     doctorStore.errors.push({
-      message: "Поле начала стажа не коректно",
+      message: "Начало стажа некорректно.",
     });
     isValid = false;
   }
@@ -117,26 +117,26 @@ const validateForm = (payload: CreateDoctor): boolean => {
     payload.middlename.length < 1
   ) {
     doctorStore.errors.push({
-      message: "Поле фамилия/имя/очество содержит менее 1 символа",
+      message: "Фамилия/имя/очество не может содержать менее 1 символа.",
     });
     isValid = false;
   }
   if (payload.qualification && payload.qualification.length < 1) {
     doctorStore.errors.push({
-      message: "Поле квалификация содержит менее 1 символа",
+      message: "Поле квалификация не может содержать менее 1 символа.",
     });
     isValid = false;
   }
 
   if (payload.department_id == 0) {
     doctorStore.errors.push({
-      message: "Некорректное отделение",
+      message: "Отделение некорректно.",
     });
     isValid = false;
   }
   if (payload.speciality_id == 0) {
     doctorStore.errors.push({
-      message: "Некорректная специальность",
+      message: "Специальность некорректна.",
     });
     isValid = false;
   }
@@ -148,7 +148,7 @@ const getPatchPayload = (form: CreateDoctor): Partial<CreateDoctor> | null => {
   const doctor = doctorStore.doctor;
   if (!doctor) {
     inspectionStore.errors.push({
-      message: "Непредвиденная ошибка",
+      message: "Непредвиденная ошибка.",
     });
     return null;
   }
@@ -198,7 +198,7 @@ const updateDoctor = async (payload: CreateDoctor) => {
       return await doctorStore.update(doctorId.value, updatePayload);
     }
   } else {
-    doctorStore.errors.push({ message: "Непредвиденная ошибка" });
+    doctorStore.errors.push({ message: "Непредвиденная ошибка." });
   }
 };
 

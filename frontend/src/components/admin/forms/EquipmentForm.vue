@@ -63,8 +63,7 @@ const validateForm = (): boolean => {
   let isValid: boolean = true;
   if (form.name.length < 1) {
     equipmentStore.errors.push({
-      message:
-        "Название оборудования должно состоять не менее, чем из 1 символа",
+      message: "Название оборудования не может содержать менее 1 символа.",
     });
     isValid = false;
   }
@@ -90,7 +89,7 @@ const updateEquipment = async () => {
       return await equipmentStore.update(equipmentId.value, updatePayload);
     }
   } else {
-    equipmentStore.errors.push({ message: "Непредвиденная ошибка" });
+    equipmentStore.errors.push({ message: "Непредвиденная ошибка." });
   }
 };
 

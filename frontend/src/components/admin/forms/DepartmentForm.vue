@@ -22,7 +22,7 @@ const validateForm = (): boolean => {
   let isValid: boolean = true;
   if (form.name.length < 1) {
     departmentStore.errors.push({
-      message: "Название отделения должно состоять не менее, чем из 1 символа",
+      message: "Название отделения не может содержать менее 1 символа.",
     });
     isValid = false;
   }
@@ -33,7 +33,7 @@ const updateDepartment = async () => {
   if (departmentId.value) {
     return await departmentStore.update(departmentId.value, formData.value);
   } else {
-    departmentStore.errors.push({ message: "Непредвиденная ошибка" });
+    departmentStore.errors.push({ message: "Непредвиденная ошибка." });
   }
 };
 

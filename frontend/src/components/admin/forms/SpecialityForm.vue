@@ -22,7 +22,7 @@ const validateForm = (payload: CreateSpeciality): boolean => {
   if (payload.name.length < 1) {
     specialityStore.errors.push({
       message:
-        "Название специальности должно состоять не менее, чем из 1 символа",
+        "Название специальности не может содержать менее 1 символа",
     });
     isValid = false;
   }
@@ -33,7 +33,7 @@ const updateSpeciality = async () => {
   if (specialityId.value) {
     return await specialityStore.update(specialityId.value, formData.value);
   } else {
-    specialityStore.errors.push({ message: "Непредвиденная ошибка" });
+    specialityStore.errors.push({ message: "Непредвиденная ошибка." });
   }
 };
 

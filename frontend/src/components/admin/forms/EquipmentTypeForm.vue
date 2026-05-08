@@ -22,7 +22,7 @@ const validateForm = (): boolean => {
   let isValid: boolean = true;
   if (form.name.length < 1) {
     typeStore.errors.push({
-      message: "Название типа должно состоять не менее, чем из 1 символа",
+      message: "Название типа не может содержать менее 1 символа.",
     });
     isValid = false;
   }
@@ -33,7 +33,7 @@ const updateType = async () => {
   if (typeId.value) {
     return await typeStore.update(typeId.value, formData.value);
   } else {
-    typeStore.errors.push({ message: "Непредвиденная ошибка" });
+    typeStore.errors.push({ message: "Непредвиденная ошибка." });
   }
 };
 
