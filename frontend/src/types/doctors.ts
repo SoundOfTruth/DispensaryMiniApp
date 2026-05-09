@@ -39,17 +39,19 @@ interface CreateDoctorMixin {
   speciality_id: number;
   department_id: number;
   photo: string | null;
-  education: string[];
-  extra_education: string[];
 }
 
 export interface CreateDoctorForm extends CreateDoctorMixin {
   experience_start: string | number | null;
+  education: Set<string>;
+  extra_education: Set<string>;
   inspections: SimpleInspection[];
 }
 
 export interface CreateDoctor extends CreateDoctorMixin {
   experience_start: number | null;
+  education: string[];
+  extra_education: string[];
   inspections: DoctorInspection[];
 }
 

@@ -44,8 +44,8 @@ const formData = ref<CreateDoctorForm>({
   speciality_id: 0,
   department_id: 0,
   photo: null,
-  education: [],
-  extra_education: [],
+  education: new Set<string>(),
+  extra_education: new Set<string>(),
   inspections: [],
 });
 
@@ -56,25 +56,22 @@ const setPhoto = (url: string) => {
   formData.value.photo = url;
 };
 
-const addEducation = (array: string[], title: string) => {
-  if (array.includes(title)) {
-    doctorStore.errors.push({ message: `${title} уже в списке.` });
+const addEducation = (set: Set<string>, title: string) => {
+  if (set.has(title)) {
+    doctorStore.errors.push({ message: `${title} уже в добавлено.` });
     return;
   }
-  if (title.length > 1) {
-    array.push(title);
+  if (title.length > 0) {
+    set.add(title);
   } else {
     doctorStore.errors.push({
-      message: "Поле образование содержит менее 1 символа.",
+      message: "Добавленное образование содержит менее 1 символа.",
     });
   }
 };
 
-const removeEducation = (array: string[], education: string) => {
-  const index = array.findIndex((row) => row === education);
-  if (index !== -1) {
-    array.splice(index, 1);
-  }
+const removeEducation = (set: Set<string>, title: string) => {
+  set.delete(title);
 };
 
 const availableInspection = computed(() => {
@@ -101,14 +98,19 @@ const removeInspection = (inspectionId: number) => {
   );
 };
 
-const validateForm = (payload: CreateDoctor): boolean => {
+const validateForm = (): boolean => {
+  const payload = formData.value;
   let isValid = true;
 
-  if (payload.experience_start && payload.experience_start < 1920) {
-    doctorStore.errors.push({
-      message: "Начало стажа некорректно.",
-    });
-    isValid = false;
+  if (typeof payload.experience_start === "number") {
+    if (payload.experience_start < 1920) {
+      doctorStore.errors.push({
+        message: "Начало стажа некорректно.",
+      });
+      isValid = false;
+    }
+  } else {
+    formData.value.experience_start = null;
   }
 
   if (
@@ -143,8 +145,7 @@ const validateForm = (payload: CreateDoctor): boolean => {
   return isValid;
 };
 
-const getPatchPayload = (form: CreateDoctor): Partial<CreateDoctor> | null => {
-  const payload = { ...form } as Partial<CreateDoctor>;
+const getPatchPayload = (): Partial<CreateDoctor> | null => {
   const doctor = doctorStore.doctor;
   if (!doctor) {
     inspectionStore.errors.push({
@@ -152,34 +153,63 @@ const getPatchPayload = (form: CreateDoctor): Partial<CreateDoctor> | null => {
     });
     return null;
   }
+  const {
+    speciality_id,
+    department_id,
+    experience_start,
+    education,
+    extra_education,
+    inspections,
+    ...form
+  } = formData.value;
+
+  let inspectionsIsEqual = inspections.length === doctor.inspections.length;
+  if (inspectionsIsEqual) {
+    inspectionsIsEqual = inspections.every((formDoctor) =>
+      doctor.inspections.find((doctor) => {
+        return doctor.id == formDoctor.id;
+      }),
+    );
+  }
+
+  const educationHasNoChanges = (
+    set: Set<string>,
+    array: string[],
+  ): boolean => {
+    return set.size === array.length && array.every((val) => set.has(val));
+  };
+
+  const validExperienceStart: number | null =
+    typeof experience_start === "string" ? null : experience_start;
+  const payload: Partial<CreateDoctor> = {
+    department_id:
+      doctor?.department.id === department_id ? undefined : department_id,
+    speciality_id:
+      doctor?.speciality.id === speciality_id ? undefined : speciality_id,
+    experience_start:
+      doctor?.experience_start === validExperienceStart
+        ? undefined
+        : validExperienceStart,
+    inspections: inspectionsIsEqual
+      ? undefined
+      : inspections.map((inspection) => ({
+          id: inspection.id,
+        })),
+    education: educationHasNoChanges(education, doctor.education)
+      ? undefined
+      : Array.from(education),
+    extra_education: educationHasNoChanges(extra_education, doctor.extra_education)
+      ? undefined
+      : Array.from(extra_education),
+  };
+
   const entries = Object.entries(form) as [
-    keyof CreateDoctor,
-    CreateDoctor[keyof CreateDoctor],
+    keyof typeof form,
+    keyof (typeof form)[keyof typeof form],
   ][];
   entries.forEach(([key, val]) => {
-    if (
-      key != "inspections" &&
-      key != "speciality_id" &&
-      key != "department_id" &&
-      doctor[key] === val
-    ) {
+    if (doctor[key] === val) {
       payload[key] = undefined;
-    } else if (key == "department_id" && doctor.department.id == val) {
-      payload.department_id = undefined;
-    } else if (key == "speciality_id" && doctor.speciality.id == val) {
-      payload.speciality_id = undefined;
-    } else if (key == "experience_start") {
-    } else if (key == "inspections") {
-      if (form.inspections.length == doctor.inspections.length) {
-        const equal = form.inspections.every((formDoctor) =>
-          doctor.inspections.find((doctor) => {
-            return doctor.id == formDoctor.id;
-          }),
-        );
-        if (equal) {
-          payload.inspections = undefined;
-        }
-      }
     }
   });
   if (JSON.stringify(payload) === "{}") {
@@ -191,9 +221,25 @@ const getPatchPayload = (form: CreateDoctor): Partial<CreateDoctor> | null => {
   return payload;
 };
 
-const updateDoctor = async (payload: CreateDoctor) => {
+const createDoctor = async () => {
+  const { inspections, education, extra_education, experience_start, ...data } =
+    formData.value;
+  const payload: CreateDoctor = {
+    ...data,
+    experience_start:
+      typeof experience_start != "string" ? experience_start : null,
+    education: Array.from(education),
+    extra_education: Array.from(extra_education),
+    inspections: inspections.map((inspection) => ({
+      id: inspection.id,
+    })),
+  };
+  return await doctorStore.create(payload);
+};
+
+const updateDoctor = async () => {
   if (doctorId.value) {
-    const updatePayload = getPatchPayload(payload);
+    const updatePayload = getPatchPayload();
     if (updatePayload) {
       return await doctorStore.update(doctorId.value, updatePayload);
     }
@@ -203,23 +249,14 @@ const updateDoctor = async (payload: CreateDoctor) => {
 };
 
 const handleSubmit = async () => {
-  const { inspections, experience_start, ...data } = formData.value;
-  const payload: CreateDoctor = {
-    ...data,
-    experience_start:
-      typeof experience_start != "string" ? experience_start : null,
-    inspections: inspections.map((inspection) => ({
-      id: inspection.id,
-    })),
-  };
-  if (validateForm(payload)) {
-    if (props.mode == "create") {
-      const created = await doctorStore.create(payload);
+  if (validateForm()) {
+    if (props.mode === "create") {
+      const created = await createDoctor();
       if (created) {
         router.go(-1);
       }
     } else if (props.mode == "edit") {
-      const updated = await updateDoctor(payload);
+      const updated = await updateDoctor();
       if (updated) {
         router.go(-1);
       }
@@ -245,10 +282,19 @@ onMounted(async () => {
     }
     await doctorStore.loadById(doctorId.value);
     if (doctorStore.apiDoctor) {
-      const { speciality, department, experience_years, inspections, ...data } =
-        doctorStore.apiDoctor;
+      const {
+        extra_education,
+        education,
+        speciality,
+        department,
+        experience_years,
+        inspections,
+        ...data
+      } = doctorStore.apiDoctor;
       formData.value = {
         ...data,
+        education: new Set<string>(education),
+        extra_education: new Set<string>(extra_education),
         speciality_id: speciality?.id,
         department_id: department?.id,
         inspections: [...inspections],
@@ -411,7 +457,7 @@ watch(
         </div>
       </div>
 
-      <div class="group" v-if="formData.education.length > 0">
+      <div class="group" v-if="formData.education.size > 0">
         <div class="education-list">
           <div
             v-for="education in formData.education"
@@ -451,7 +497,7 @@ watch(
         </div>
       </div>
 
-      <div class="group" v-if="formData.extra_education.length > 0">
+      <div class="group" v-if="formData.extra_education.size > 0">
         <div class="education-list">
           <div
             v-for="education in formData.extra_education"
@@ -573,7 +619,7 @@ watch(
 
 .form-container {
   max-width: 800px;
-  margin: 0 auto;
+  margin-left: 14%;
   padding: 20px;
   .group {
     margin-bottom: 24px;
