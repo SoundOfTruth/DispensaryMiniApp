@@ -151,5 +151,4 @@ class DoctorRepository(DeleteOnlyRepository[Doctor]):
             doctor = await self.get_with_relations(id)
             if not doctor:
                 raise DoctorWasDeletedError
-            print(doctor.inspections)
             return doctor
