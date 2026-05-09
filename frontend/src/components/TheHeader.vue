@@ -39,11 +39,12 @@ const toggleMenu = () => {
 
 <style scoped lang="scss">
 header {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1000px;
   border-bottom: 1px solid black;
-  padding-inline: 16px;
-  padding-top: 12px;
-  padding-bottom: 16px;
-  position: sticky;
+  padding: 16px;
+  position: fixed;
   top: 0;
   z-index: 100;
   background: #f5f7fa;

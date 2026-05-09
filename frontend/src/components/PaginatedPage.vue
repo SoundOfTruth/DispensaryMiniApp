@@ -36,8 +36,8 @@ const props = defineProps<Props>();
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow-y: scroll;
   padding-bottom: 15px;
+  overflow-y: auto;
 }
 .pagination-container {
   display: flex;
@@ -46,5 +46,6 @@ const props = defineProps<Props>();
   padding-bottom: 20px;
   max-width: 100vw;
   flex-shrink: 0;
+  overflow-y: auto;
 }
 </style>

@@ -4,7 +4,7 @@
       {{ err.message }}
     </div>
     <div class="doctor-container" v-else>
-      <div class="description">
+      <div class="doctor-header">
         <div class="doctor-img-container">
           <img
             src="/src/images/avatar.png"
@@ -13,45 +13,44 @@
           />
           <img :src="doctor.photo" class="doctor-img" v-else />
         </div>
-        <div class="fullname">
-          <div>{{ doctor?.lastname }}</div>
-          <div>{{ doctor?.firstname }} {{ doctor?.middlename }}</div>
-          <div class="speciality">
+        <div class="doctor-header-info">
+          <div class="doctor-fullname">
+            <div>{{ doctor?.lastname }}</div>
+            <div>{{ doctor?.firstname }} {{ doctor?.middlename }}</div>
+          </div>
+          <div class="doctor-speciality">
             {{ doctor?.speciality.name }}
           </div>
+          <div class="doctor-department">{{ doctor?.department.name }}</div>
         </div>
       </div>
-      <div class="information">
-        <div class="title">Информация</div>
+      <div class="doctor-extra-info">
+        <div class="title" v-if="infoExists">Информация</div>
         <div class="expirience" v-if="doctor?.experience">
           <span>Опыт работы: </span>
           <span>{{ doctor?.experience }}</span>
         </div>
-        <div>
-          <div class="title">Отделение</div>
-          <span>{{ doctor?.department.name }}</span>
-        </div>
         <div v-if="doctor?.qualification">
-          <div class="title">Квалификация</div>
+          <div class="sub-title">Квалификация</div>
           <span>{{ doctor?.qualification }}</span>
         </div>
         <div v-if="doctor?.education?.length">
-          <div class="title">Образование</div>
+          <div class="sub-title">Образование</div>
           <div class="education">
-            <div v-for="education in doctor?.extra_education">
+            <div v-for="education in doctor?.education">
               {{ education }}
             </div>
           </div>
         </div>
         <div v-if="doctor?.extra_education?.length">
-          <div class="title">Доп. образование</div>
+          <div class="sub-title">Доп. образование</div>
           <div class="education">
             <div v-for="education in doctor?.extra_education">
               {{ education }}
             </div>
           </div>
         </div>
-        <div class="title" v-if="doctor?.inspections?.length > 0">
+        <div class="sub-title" v-if="doctor?.inspections?.length > 0">
           Проводит обследования:
         </div>
         <div v-for="inspection in doctor?.inspections">
@@ -74,6 +73,16 @@ const route = useRoute();
 const doctorStore = useDoctorStore();
 const doctor = computed(() => doctorStore.doctor);
 
+const infoExists = computed(() =>
+  Boolean(
+    doctor.value?.experience ||
+    doctor.value?.qualification ||
+    doctor.value?.education.length != 0 ||
+    doctor.value?.extra_education.length != 0 ||
+    doctor.value.inspections.length != 0,
+  ),
+);
+
 onMounted(async () => {
   const doctorId: number = Number(route.params.doctorId);
   await doctorStore.loadById(doctorId);
@@ -84,67 +93,103 @@ onMounted(async () => {
 .doctor-page {
   overflow-y: auto;
   padding: 15px;
+  .err-handler {
+    display: flex;
+    justify-content: center;
+    font-size: 110%;
+  }
+  .doctor-container {
+    display: flex;
+    flex-direction: column;
+  }
 }
-.err-handler {
-  display: flex;
-  justify-content: center;
-  font-size: 110%;
-}
-.doctor-container {
+.doctor-header {
+  border-radius: 8px;
+  padding: 20px;
+  background: white;
   display: flex;
   flex-direction: column;
-}
-.description {
-  display: flex;
-  gap: 50px;
-  flex-direction: column;
-  @media (min-width: 520px) {
+  @media (min-width: 720px) {
+    padding: 8px;
+    gap: 26px;
     flex-direction: row;
+  }
+  .doctor-img-container {
+    display: grid;
+    place-content: center;
+    @media (min-width: 720px) {
+      width: 200px;
+      padding: 8px;
+    }
+    .doctor-img {
+      width: 100%;
+      height: auto;
+      max-width: 500px;
+      border-radius: 8px;
+      @media (min-width: 720px) {
+        max-width: 180px;
+      }
+    }
   }
 }
 
-.doctor-img-container {
-  display: grid;
-  place-content: center;
-  padding-bottom: 18px;
-  @media (min-width: 520px) {
-    width: 200px;
+.doctor-header-info {
+  max-width: 400px;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  @media (min-width: 720px) {
+    padding-top: 20px;
+  }
+  .doctor-fullname {
+    font-size: 170%;
+    font-weight: 500;
+    line-height: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    @media (min-width: 720px) {
+      gap: 7px;
+    }
+  }
+  .doctor-speciality {
+    padding-top: 5px;
+    font-size: 130%;
+    font-weight: 400;
+    color: #0d9ce3;
+  }
+  .doctor-department {
+    padding-top: 5px;
+    font-size: 120%;
   }
 }
-.doctor-img {
-  width: 100%;
-  height: auto;
-  max-width: 500px;
-  border-radius: 8px;
-}
-.title {
-  font-size: 110%;
-  color: #b1b2b4;
-  line-height: 1;
-  padding-bottom: 4px;
-}
-.information {
+
+.doctor-extra-info {
+  padding-top: 24px;
   display: flex;
   gap: 7px;
   flex-direction: column;
-}
-.education {
-  display: flex;
-  flex-direction: column;
-  font-size: 90%;
-  gap: 3px;
-}
-.fullname {
-  font-size: 180%;
-  font-weight: 500;
-  line-height: 1;
-}
-.speciality {
-  padding-top: 5px;
-  font-size: 135%;
-  color: #0d9ce3;
-}
-.expirience {
-  font-size: 115%;
+  .title {
+    font-size: 130%;
+    font-weight: 400;
+    line-height: 1;
+    padding-bottom: 4px;
+  }
+  .sub-title {
+    font-size: 110%;
+    color: #b1b2b4;
+    line-height: 1;
+    padding-bottom: 4px;
+  }
+  .education {
+    display: flex;
+    flex-direction: column;
+    font-size: 90%;
+    gap: 3px;
+  }
+  .expirience {
+    font-size: 115%;
+  }
 }
 </style>

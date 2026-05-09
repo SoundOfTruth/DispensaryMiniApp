@@ -13,19 +13,20 @@ import TheHeader from "../components/TheHeader.vue";
 
 <style scoped>
 .mini-app {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
-  height: 100vh;
-  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
 }
 .content {
+  padding-top: 87px;
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
 }
 </style>

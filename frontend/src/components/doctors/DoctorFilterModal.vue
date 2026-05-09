@@ -95,30 +95,9 @@ const handleConfirm = () => {
 </script>
 
 <style lang="scss" scoped>
-.group {
-  margin-bottom: 20px;
-  label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
-  .input-data {
-    width: 100%;
-    padding: 12px 0;
-    text-indent: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.2s;
-    &:focus {
-      outline: none;
-      border-color: #007bff;
-      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-    }
-  }
-}
-
 .modal {
+  max-width: 1110px;
+  margin: 0 auto;
   z-index: 99;
   position: fixed;
   padding: 20px;
@@ -143,6 +122,29 @@ const handleConfirm = () => {
       display: flex;
       align-items: center;
       padding-top: 5px;
+    }
+  }
+}
+
+.group {
+  margin-bottom: 20px;
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .input-data {
+    width: 100%;
+    padding: 12px 0;
+    text-indent: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
     }
   }
 }

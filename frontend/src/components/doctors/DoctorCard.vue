@@ -46,10 +46,11 @@ const openDoctor = (doctorId: number) => {
     }
   }
   .info {
+    padding-top: 14px;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    padding: 14px;
+    gap: 8px;
+    padding-left: 14px;
     .fullname {
       font-size: 105%;
     }
