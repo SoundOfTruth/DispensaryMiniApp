@@ -167,6 +167,7 @@ onMounted(async () => {
 
 .doctor-extra-info {
   padding-top: 24px;
+  padding-left: 4px;
   display: flex;
   gap: 7px;
   flex-direction: column;

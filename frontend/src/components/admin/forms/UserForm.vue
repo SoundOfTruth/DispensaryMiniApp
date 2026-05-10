@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import AdminErrorModal from "../modals/AdminErrorModal.vue";
+import TheForm from "./TheForm.vue";
+import FormActions from "./FormActions.vue";
 import { onMounted, ref } from "vue";
 
 import { useRoute, useRouter } from "vue-router";
@@ -74,8 +75,7 @@ const validateForm = (): boolean => {
     form.middlename.length < 1
   ) {
     userStore.errors.push({
-      message:
-        "Фамилия/имя/очество не может содержать менее 1 символа.",
+      message: "Фамилия/имя/очество не может содержать менее 1 символа.",
     });
     formValid = false;
   }
@@ -134,99 +134,92 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="form-container">
-    <form @keydown.enter.prevent @submit.prevent="handleSubmit()">
-      <h3 class="form-title">
-        {{
-          mode === "detail"
-            ? "Просмотр пользователя"
-            : mode === "edit"
-              ? "Редактирование данных пользователя"
-              : "Добавить пользователя"
-        }}
-      </h3>
+  <TheForm :store="userStore" @submit="handleSubmit">
+    <h3 class="form-title">
+      {{
+        mode === "detail"
+          ? "Просмотр пользователя"
+          : mode === "edit"
+            ? "Редактирование данных пользователя"
+            : "Добавить пользователя"
+      }}
+    </h3>
 
-      <div class="group" v-if="userId">
-        <label>Id</label>
-        <input v-model="userId" class="field" disabled="true" />
-      </div>
+    <div class="group" v-if="userId">
+      <label>Id</label>
+      <input v-model="userId" class="field" disabled="true" />
+    </div>
 
-      <div class="group">
-        <label for="name">Фамилия *</label>
-        <input
-          id="name"
-          v-model="formData.lastname"
-          type="text"
-          class="field"
-          placeholder="Введите название специальности"
-          required
-          :disabled="mode === 'detail'"
-        />
-      </div>
+    <div class="group">
+      <label for="name">Фамилия *</label>
+      <input
+        id="name"
+        v-model="formData.lastname"
+        type="text"
+        class="field"
+        placeholder="Введите название специальности"
+        required
+        :disabled="mode === 'detail'"
+      />
+    </div>
 
-      <div class="group">
-        <label for="name">Имя *</label>
-        <input
-          id="name"
-          v-model="formData.firstname"
-          type="text"
-          class="field"
-          placeholder="Введите название специальности"
-          required
-          :disabled="mode === 'detail'"
-        />
-      </div>
-      <div class="group">
-        <label for="name">Отчество *</label>
-        <input
-          id="name"
-          v-model="formData.middlename"
-          type="text"
-          class="field"
-          placeholder="Введите название специальности"
-          required
-          :disabled="mode === 'detail'"
-        />
-      </div>
+    <div class="group">
+      <label for="name">Имя *</label>
+      <input
+        id="name"
+        v-model="formData.firstname"
+        type="text"
+        class="field"
+        placeholder="Введите название специальности"
+        required
+        :disabled="mode === 'detail'"
+      />
+    </div>
+    <div class="group">
+      <label for="name">Отчество *</label>
+      <input
+        id="name"
+        v-model="formData.middlename"
+        type="text"
+        class="field"
+        placeholder="Введите название специальности"
+        required
+        :disabled="mode === 'detail'"
+      />
+    </div>
 
-      <div class="group">
-        <label for="name">Почта *</label>
-        <input
-          id="name"
-          v-model="formData.email"
-          type="email"
-          class="field"
-          placeholder="Введите почту"
-          required
-          :disabled="mode === 'detail'"
-        />
-      </div>
+    <div class="group">
+      <label for="name">Почта *</label>
+      <input
+        id="name"
+        v-model="formData.email"
+        type="email"
+        class="field"
+        placeholder="Введите почту"
+        required
+        :disabled="mode === 'detail'"
+      />
+    </div>
 
-      <div class="group" v-if="mode !== 'detail'">
-        <label for="name">Пароль *</label>
-        <input
-          id="name"
-          v-model="formData.password"
-          type="password"
-          class="field"
-          placeholder="Введите пароль"
-          :required="mode === 'create'"
-        />
-      </div>
+    <div class="group" v-if="mode !== 'detail'">
+      <label for="name">Пароль *</label>
+      <input
+        id="name"
+        v-model="formData.password"
+        type="password"
+        class="field"
+        placeholder="Введите пароль"
+        :required="mode === 'create'"
+      />
+    </div>
 
-      <div class="group">
-        <label for="name">Администратор? </label>
-        <input type="checkbox" v-model="formData.is_superuser" />
-      </div>
+    <div class="group">
+      <label for="name">Администратор? </label>
+      <input type="checkbox" v-model="formData.is_superuser" />
+    </div>
 
-      <div class="form-actions">
-        <button type="submit" class="btn save">Сохранить</button>
-        <button type="button" class="btn cancel" @click="handleCancel()">
-          Отмена
-        </button>
-      </div>
-    </form>
-  </div>
+    <FormActions :mode="mode" @cancel="handleCancel" />
+  </TheForm>
   <Teleport to="#modals">
     <AdminErrorModal
       :errors="userStore.errors"
@@ -240,20 +233,14 @@ onMounted(async () => {
   margin: 0 auto;
   padding-bottom: 15px;
 }
-.form-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  .group {
-    margin-bottom: 24px;
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
+.group {
+  margin-bottom: 24px;
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
   }
 }
-
 .field {
   width: 100%;
   padding: 10px 0;
@@ -266,57 +253,6 @@ onMounted(async () => {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-  }
-}
-
-.form-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 32px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
-}
-
-.btn {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-weight: 500;
-}
-
-.save {
-  background-color: #007bff;
-  color: white;
-  &:hover {
-    background-color: #0056b3;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
-  }
-}
-.cancel {
-  background-color: #6c757d;
-  color: white;
-
-  &:hover {
-    background-color: #545b62;
-    transform: translateY(-1px);
-  }
-}
-
-@media (max-width: 768px) {
-  .form-container {
-    padding: 15px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .btn {
-    width: 100%;
   }
 }
 </style>

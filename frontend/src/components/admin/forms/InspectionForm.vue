@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import AdminErrorModal from "../modals/AdminErrorModal.vue";
+import TheForm from "./TheForm.vue";
+
 import FormSearchField from "./FormSearchField.vue";
+import FormActions from "./FormActions.vue";
 
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
@@ -10,7 +12,6 @@ import { useDoctorStore } from "@/stores/doctors";
 
 import type { SimpleDoctor } from "@/types/doctors";
 import type { CreateInspection } from "@/types/inspections";
-
 const props = defineProps<{
   mode: "create" | "edit" | "detail";
 }>();
@@ -63,7 +64,8 @@ const removeDoctor = (doctorId: number) => {
   );
 };
 
-const validateForm = (form: CreateInspection): boolean => {
+const validateForm = (): boolean => {
+  const form = formData.value;
   let isValid = true;
   if (form.title.length < 1) {
     inspectionStore.errors.push({
@@ -80,10 +82,7 @@ const validateForm = (form: CreateInspection): boolean => {
   return isValid;
 };
 
-const getPatchPayload = (
-  form: CreateInspection,
-): Partial<CreateInspection> | null => {
-  const payload = { ...form } as Partial<CreateInspection>;
+const getPatchPayload = (): Partial<CreateInspection> | null => {
   const inspection = inspectionStore.inspection;
   if (!inspection) {
     inspectionStore.errors.push({
@@ -91,24 +90,27 @@ const getPatchPayload = (
     });
     return null;
   }
+
+  const { doctors, ...form } = formData.value;
   const entries = Object.entries(form) as [
-    keyof FormData,
-    FormData[keyof FormData],
+    keyof typeof form,
+    (typeof form)[keyof typeof form],
   ][];
+  let doctorsIsEqual = doctors.length === inspection.doctors.length;
+  if (doctorsIsEqual) {
+    doctorsIsEqual = doctors.every((formDoctor) =>
+      inspection.doctors.find((doctor) => {
+        return doctor.id == formDoctor.id;
+      }),
+    );
+  }
+  const payload: Partial<CreateInspection> = {
+    doctors: doctorsIsEqual ? undefined : doctors,
+  };
+
   entries.forEach(([key, val]) => {
-    if (key != "doctors" && inspection[key] === val) {
+    if (inspection[key] === val) {
       payload[key] = undefined;
-    } else {
-      if (form.doctors.length == inspection.doctors.length) {
-        const equal = form.doctors.every((formDoctor) =>
-          inspection.doctors.find((doctor) => {
-            return doctor.id == formDoctor.id;
-          }),
-        );
-        if (equal) {
-          payload.doctors = undefined;
-        }
-      }
     }
   });
 
@@ -121,9 +123,21 @@ const getPatchPayload = (
   return payload;
 };
 
-const updateInspection = async (payload: CreateInspection) => {
+const createInspection = async () => {
+  const payload: CreateInspection = {
+    title: formData.value.title,
+    description: formData.value.description,
+    preparation: formData.value.preparation,
+    doctors: formData.value.doctors.map((doctor) => ({
+      id: doctor.id,
+    })),
+  };
+  return await inspectionStore.create(payload);
+};
+
+const updateInspection = async () => {
   if (inspectionId.value) {
-    const updatePayload = getPatchPayload(payload);
+    const updatePayload = getPatchPayload();
     if (updatePayload) {
       return await inspectionStore.update(inspectionId.value, updatePayload);
     }
@@ -133,22 +147,14 @@ const updateInspection = async (payload: CreateInspection) => {
 };
 
 const handleSubmit = async () => {
-  const payload: CreateInspection = {
-    title: formData.value.title,
-    description: formData.value.description,
-    preparation: formData.value.preparation,
-    doctors: formData.value.doctors.map((doctor) => ({
-      id: doctor.id,
-    })),
-  };
-  if (validateForm(payload)) {
+  if (validateForm()) {
     if (props.mode == "create") {
-      const created = await inspectionStore.create(payload);
+      const created = await createInspection();
       if (created) {
         router.go(-1);
       }
     } else if (props.mode == "edit") {
-      const updated = await updateInspection(payload);
+      const updated = await updateInspection();
       if (updated) {
         router.go(-1);
       }
@@ -184,64 +190,95 @@ watch(
 </script>
 
 <template>
-  <div class="form-container">
-    <form @submit.prevent="handleSubmit()">
-      <h3 class="form-title">
-        {{
-          mode === "detail"
-            ? "Просмотр данных обследования"
-            : mode === "edit"
-              ? "Редактирование данных обследования"
-              : "Добавить обследования"
-        }}
-      </h3>
+  <TheForm :store="inspectionStore" @submit="handleSubmit">
+    <h3 class="form-title">
+      {{
+        mode === "detail"
+          ? "Просмотр данных обследования"
+          : mode === "edit"
+            ? "Редактирование данных обследования"
+            : "Добавить обследования"
+      }}
+    </h3>
 
-      <div class="group">
-        <label for="title">Заголовок *</label>
-        <input
-          class="field"
-          id="title"
-          v-model="formData.title"
-          placeholder="Введите заголовок"
-          required
-          :disabled="mode === 'detail'"
-          @keydown.enter.prevent
-        />
+    <div class="group">
+      <label for="title">Заголовок *</label>
+      <input
+        class="field"
+        id="title"
+        v-model="formData.title"
+        placeholder="Введите заголовок"
+        required
+        :disabled="mode === 'detail'"
+        @keydown.enter.prevent
+      />
+    </div>
+
+    <div class="group">
+      <label for="description">Описание</label>
+      <textarea
+        class="field"
+        id="description"
+        v-model="formData.description"
+        rows="4"
+        placeholder="Введите описание"
+        :disabled="mode === 'detail'"
+      ></textarea>
+    </div>
+
+    <div class="group">
+      <label for="preparation">Подготовка *</label>
+      <textarea
+        id="preparation"
+        v-model="formData.preparation"
+        class="field"
+        rows="3"
+        placeholder="Опишите подготовку"
+        required
+        :disabled="mode === 'detail'"
+      ></textarea>
+    </div>
+
+    <div class="group">
+      <label for="selectedDoctors">Проводят обследование</label>
+      <div class="selection" id="selectedDoctors">
+        <div
+          v-for="doctor in formData.doctors"
+          :key="doctor.id"
+          class="item"
+          @click="removeDoctor(doctor.id)"
+        >
+          <div class="item-info">
+            <strong
+              >{{ doctor.lastname }} {{ doctor.firstname }}
+              {{ doctor.middlename }}</strong
+            >
+            <div v-if="doctor.speciality" class="speciality">
+              Специальность: {{ doctor.speciality.name }}
+            </div>
+            <div v-if="doctor.qualification" class="qualification">
+              Квалификация: {{ doctor.qualification }}
+            </div>
+            <div class="department">
+              Отделение: {{ doctor.department.name }}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="group">
-        <label for="description">Описание</label>
-        <textarea
-          class="field"
-          id="description"
-          v-model="formData.description"
-          rows="4"
-          placeholder="Введите описание"
-          :disabled="mode === 'detail'"
-        ></textarea>
-      </div>
+      <div v-if="mode !== 'detail'">
+        <label>Выбрать врача</label>
 
-      <div class="group">
-        <label for="preparation">Подготовка *</label>
-        <textarea
-          id="preparation"
-          v-model="formData.preparation"
-          class="field"
-          rows="3"
-          placeholder="Опишите подготовку"
-          required
-          :disabled="mode === 'detail'"
-        ></textarea>
-      </div>
+        <div class="item-search">
+          <FormSearchField title="Найти врача" :pattern="doctorSearch" />
+        </div>
 
-      <div class="group">
-        <label for="selectedDoctors">Проводят обследование</label>
-        <div class="selection" id="selectedDoctors">
+        <div class="selection">
           <div
-            v-for="doctor in formData.doctors"
+            v-for="doctor in availableDoctors"
             :key="doctor.id"
             class="item"
-            @click="removeDoctor(doctor.id)"
+            @click="selectDoctor(doctor)"
           >
             <div class="item-info">
               <strong
@@ -260,63 +297,19 @@ watch(
             </div>
           </div>
         </div>
-
-        <div v-if="mode !== 'detail'">
-          <label>Выбрать врача</label>
-
-          <div class="item-search">
-            <FormSearchField title="Найти врача" :pattern="doctorSearch" />
-          </div>
-
-          <div class="selection">
-            <div
-              v-for="doctor in availableDoctors"
-              :key="doctor.id"
-              class="item"
-              @click="selectDoctor(doctor)"
-            >
-              <div class="item-info">
-                <strong
-                  >{{ doctor.lastname }} {{ doctor.firstname }}
-                  {{ doctor.middlename }}</strong
-                >
-                <div v-if="doctor.speciality" class="speciality">
-                  Специальность: {{ doctor.speciality.name }}
-                </div>
-                <div v-if="doctor.qualification" class="qualification">
-                  Квалификация: {{ doctor.qualification }}
-                </div>
-                <div class="department">
-                  Отделение: {{ doctor.department.name }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div v-if="availableDoctors.length === 0">
-          {{
-            doctorSearch !== undefined
-              ? "Ничего не найдено..."
-              : "В базе нет врачей..."
-          }}
-        </div>
       </div>
 
-      <div class="form-actions" v-if="mode !== 'detail'">
-        <button type="submit" class="btn save">Сохранить</button>
-        <button type="button" class="btn cancel" @click="handleCancel()">
-          Отмена
-        </button>
+      <div v-if="availableDoctors.length === 0">
+        {{
+          doctorSearch !== undefined
+            ? "Ничего не найдено..."
+            : "В базе нет врачей..."
+        }}
       </div>
-    </form>
-  </div>
-  <Teleport to="#modals">
-    <AdminErrorModal
-      :errors="inspectionStore.errors"
-      @close="inspectionStore.errors = []"
-    />
-  </Teleport>
+    </div>
+
+    <FormActions :mode="mode" @cancel="handleCancel" />
+  </TheForm>
 </template>
 
 <style scoped lang="scss">
@@ -324,20 +317,14 @@ watch(
   margin: 0 auto;
   padding-bottom: 15px;
 }
-.form-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  .group {
-    margin-bottom: 24px;
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
+.group {
+  margin-bottom: 24px;
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
   }
 }
-
 .field {
   display: inline-block;
   width: 100%;
@@ -451,56 +438,6 @@ textarea.field {
         background-color: rgba(220, 53, 69, 0.1);
       }
     }
-  }
-}
-
-.form-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 32px;
-  padding-top: 20px;
-}
-
-.btn {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-weight: 500;
-}
-
-.save {
-  background-color: #007bff;
-  color: white;
-  &:hover {
-    background-color: #0056b3;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
-  }
-}
-.cancel {
-  background-color: #6c757d;
-  color: white;
-
-  &:hover {
-    background-color: #545b62;
-    transform: translateY(-1px);
-  }
-}
-
-@media (max-width: 768px) {
-  .form-container {
-    padding: 15px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .btn {
-    width: 100%;
   }
 }
 </style>
