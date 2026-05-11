@@ -1,12 +1,17 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 
 from services.equipment_types import EquipmentTypeServiceDep
+from src.api.dependencies import has_admin_permissions
 from src.api.params import QueryIds
 from src.schemas.equipments import CreateEquipmentTypeSchema, UpdateEquipmentTypeSchema
 
-router = APIRouter(prefix="/equipment-types", tags=["Equipment Types"])
+router = APIRouter(
+    prefix="/equipment-types",
+    tags=["Equipment Types"],
+    dependencies=[Depends(has_admin_permissions)],
+)
 
 
 @router.get("/")
@@ -18,21 +23,24 @@ async def get_equipment_types(
     return await service.get_all()
 
 
-@router.get("/{id}/")
-async def get_equipment_type(id: int, service: EquipmentTypeServiceDep):
+@router.get("/{id}/", dependencies=[])
+async def get_equipment_type(service: EquipmentTypeServiceDep, id: int):
     return await service.get(id)
 
 
 @router.post("/", status_code=201)
 async def create_equipment_type(
-    schema: CreateEquipmentTypeSchema, service: EquipmentTypeServiceDep
+    service: EquipmentTypeServiceDep,
+    schema: CreateEquipmentTypeSchema,
 ):
     return await service.create(schema)
 
 
-@router.put("/{id}/ ")
+@router.put("/{id}/")
 async def update_equipment_type(
-    id: int, schema: UpdateEquipmentTypeSchema, service: EquipmentTypeServiceDep
+    service: EquipmentTypeServiceDep,
+    id: int,
+    schema: UpdateEquipmentTypeSchema,
 ):
     return await service.update(id, schema)
 

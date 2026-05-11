@@ -1,6 +1,9 @@
-class RepositoryException(Exception):
+class ApiError(Exception):
     pass
 
 
-class CheckExperienceException(RepositoryException):
+class PermissionError(ApiError):
+    pass
+
+class IssuedExcessUserPermissions(ApiError):
     pass

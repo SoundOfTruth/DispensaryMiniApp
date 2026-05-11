@@ -3,6 +3,8 @@ from typing import Annotated
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from src.api.exceptions import PermissionError
+from src.models.users import Role
 from src.schemas.auth import TokenDataSchema, TokenType
 from src.services.exceptions import UnauthenticatedError
 from src.utils.auth import get_token_data
@@ -14,17 +16,27 @@ TokenDep = Annotated[HTTPAuthorizationCredentials, Depends(security)]
 
 def get_access_data(token: TokenDep) -> TokenDataSchema:
     token_data = get_token_data(token.credentials)
-    if token_data.type != TokenType.access.value:
+    if token_data.type.value != TokenType.access.value:
         raise UnauthenticatedError
     return token_data
 
 
-def get_admin_data(token: TokenDep) -> TokenDataSchema:
+def has_superuser_permissions(token: TokenDep) -> TokenDataSchema:
     token_data = get_access_data(token)
-    if not token_data.is_admin:
-        raise
+    if token_data.role.value != Role.superuser.value:
+        raise PermissionError
+    return token_data
+
+
+def has_admin_permissions(token: TokenDep) -> TokenDataSchema:
+    token_data = get_access_data(token)
+    if (
+        token_data.role.value != Role.admin.value
+        or token_data.role.value == Role.superuser.value
+    ):
+        raise PermissionError
     return token_data
 
 
 AccessTokenDep = Annotated[TokenDataSchema, Depends(get_access_data)]
-AdminTokenDep = Annotated[TokenDataSchema, Depends(get_admin_data)]
+AdminTokenDep = Annotated[TokenDataSchema, Depends(has_admin_permissions)]

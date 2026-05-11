@@ -1,5 +1,6 @@
 from pydantic import ConfigDict, EmailStr, Field
 
+from src.schemas.auth import Role
 from src.schemas.base import BaseSchema
 
 
@@ -9,7 +10,7 @@ class CreateUserSchema(BaseSchema):
     lastname: str = Field(max_length=50)
     middlename: str = Field(max_length=50)
     password: str = Field(min_length=8)
-    is_superuser: bool = False
+    role: Role
 
 
 class UpdateUserSchema(BaseSchema):
@@ -18,7 +19,7 @@ class UpdateUserSchema(BaseSchema):
     firstname: str = Field("", max_length=50)
     middlename: str = Field("", max_length=50)
     password: str = Field("", min_length=8)
-    is_superuser: bool = False
+    role: Role
 
 
 class UserSchema(CreateUserSchema):

@@ -1,10 +1,15 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from src.api.dependencies import has_admin_permissions
 from src.api.params import QueryIds
 from src.schemas.specialities import CreateSpecialitySchema, UpdateSpecialitySchema
 from src.services.specialities import SpecialityServiceDep
 
-router = APIRouter(prefix="/specialties", tags=["Specialties"])
+router = APIRouter(
+    prefix="/specialties",
+    tags=["Specialties"],
+    dependencies=[Depends(has_admin_permissions)],
+)
 
 
 @router.get("/")

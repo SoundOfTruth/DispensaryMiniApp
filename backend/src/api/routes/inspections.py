@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
+from src.api.dependencies import has_admin_permissions, has_superuser_permissions
 from src.api.params import PaginationParams, QueryIds
 from src.schemas.inspections import CreateInspectionSchema, UpdateInspectionSchema
 from src.services.inspections import InspectionServiceDep
@@ -25,25 +26,29 @@ async def get_inspection(service: InspectionServiceDep, id: int):
     return await service.get(id)
 
 
-@router.post("/", status_code=201)
+@router.post("/", status_code=201, dependencies=[Depends(has_admin_permissions)])
 async def create_inspection(
     service: InspectionServiceDep, schema: CreateInspectionSchema
 ):
     return await service.create(schema)
 
 
-@router.patch("/{id}/")
+@router.patch("/{id}/", dependencies=[Depends(has_admin_permissions)])
 async def update_inspection(
     service: InspectionServiceDep, id: int, schema: UpdateInspectionSchema
 ):
     return await service.update(id, schema)
 
 
-@router.delete("/bulk/", status_code=204)
+@router.delete(
+    "/bulk/", status_code=204, dependencies=[Depends(has_superuser_permissions)]
+)
 async def delete_doctors(service: InspectionServiceDep, ids: QueryIds):
     return await service.bulk_delete(ids)
 
 
-@router.delete("/{id}/", status_code=204)
+@router.delete(
+    "/{id}/", status_code=204, dependencies=[Depends(has_superuser_permissions)]
+)
 async def delete_doctor(service: InspectionServiceDep, id: int):
     return await service.delete(id)

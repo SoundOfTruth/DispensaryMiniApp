@@ -1,10 +1,15 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from api.dependencies import has_admin_permissions
 from src.api.params import QueryIds
 from src.schemas.departments import CreateDepartmentSchema
 from src.services.departments import DepartmentServiceDep
 
-router = APIRouter(prefix="/departments", tags=["Departments"])
+router = APIRouter(
+    prefix="/departments",
+    tags=["Departments"],
+    dependencies=[Depends(has_admin_permissions)],
+)
 
 
 @router.get("/")

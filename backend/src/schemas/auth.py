@@ -4,6 +4,8 @@ from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, PlainSerializer
 
+from src.models.users import Role
+
 Sub = Annotated[int, PlainSerializer(lambda val: str(val), return_type=str)]
 
 DateTimeAsTimestamp = Annotated[
@@ -21,7 +23,7 @@ class TokenDataSchema(BaseModel):
     iat: DateTimeAsTimestamp
     exp: DateTimeAsTimestamp
     type: TokenType
-    is_superuser: bool = False
+    role: Role
 
     model_config = ConfigDict(extra="allow", use_enum_values=True)
 
