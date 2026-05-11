@@ -14,15 +14,26 @@ async def create_jwt(
     token_schema = await service.create(schema)
     refresh_token = token_schema.refresh_token
     if refresh_token:
-        response.set_cookie(
-            key="app_rt",
-            value=refresh_token,
-            httponly=True,
-            secure=settings.DEBUG,
-            samesite="strict",
-            max_age=604800,
-            path="/api/refresh/",
-        )
+        if not settings.DEBUG:
+            response.set_cookie(
+                key="app_rt",
+                value=refresh_token,
+                httponly=True,
+                secure=True,
+                samesite="strict",
+                max_age=604800,
+                path="/api/refresh/",
+            )
+        else:
+            response.set_cookie(
+                key="app_rt",
+                value=refresh_token,
+                httponly=True,
+                secure=False,
+                samesite="lax",
+                max_age=604800,
+                path="/",
+            )
     return token_schema
 
 
