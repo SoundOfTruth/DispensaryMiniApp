@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 
 
 class CreateEquipmentTypeSchema(BaseModel):
@@ -16,7 +16,7 @@ class UpdateEquipmentTypeSchema(BaseModel):
 class CreateEquipmentSchema(BaseModel):
     name: str = Field(max_length=255)
     type_id: int
-    image: str | None = None
+    image: HttpUrl | None = None
 
     model_config = ConfigDict(str_min_length=1)
 
@@ -24,7 +24,7 @@ class CreateEquipmentSchema(BaseModel):
 class UpdateEquipmentSchema(BaseModel):
     name: str = Field(default="", max_length=255)
     type_id: int = Field(default=0, gt=0)
-    image: str | None = None
+    image: HttpUrl | None = None
 
     model_config = ConfigDict(str_min_length=1)
 

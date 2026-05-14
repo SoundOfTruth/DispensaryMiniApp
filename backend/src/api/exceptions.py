@@ -5,5 +5,10 @@ class ApiError(Exception):
 class PermissionError(ApiError):
     pass
 
-class IssuedExcessUserPermissions(ApiError):
+
+class IssuedExcessUserPermissionsError(ApiError):
+    pass
+
+
+class UserSelfDeleteError(ApiError):
     pass

@@ -43,12 +43,12 @@ async def update_inspection(
 @router.delete(
     "/bulk/", status_code=204, dependencies=[Depends(has_superuser_permissions)]
 )
-async def delete_doctors(service: InspectionServiceDep, ids: QueryIds):
+async def delete_inspections(service: InspectionServiceDep, ids: QueryIds):
     return await service.bulk_delete(ids)
 
 
 @router.delete(
     "/{id}/", status_code=204, dependencies=[Depends(has_superuser_permissions)]
 )
-async def delete_doctor(service: InspectionServiceDep, id: int):
+async def delete_inspection(service: InspectionServiceDep, id: int):
     return await service.delete(id)

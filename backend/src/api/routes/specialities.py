@@ -8,7 +8,6 @@ from src.services.specialities import SpecialityServiceDep
 router = APIRouter(
     prefix="/specialties",
     tags=["Specialties"],
-    dependencies=[Depends(has_admin_permissions)],
 )
 
 
@@ -22,25 +21,25 @@ async def get_speciality(service: SpecialityServiceDep, id: int):
     return await service.get(id)
 
 
-@router.post("/", status_code=201)
+@router.post("/", status_code=201, dependencies=[Depends(has_admin_permissions)])
 async def create_speciality(
     service: SpecialityServiceDep, schema: CreateSpecialitySchema
 ):
     return await service.create(schema)
 
 
-@router.put("/{id}/")
+@router.put("/{id}/", dependencies=[Depends(has_admin_permissions)])
 async def update_speciality(
     service: SpecialityServiceDep, id: int, schema: UpdateSpecialitySchema
 ):
     return await service.update(id, schema)
 
 
-@router.delete("/bulk/", status_code=204)
-async def delete_speciality(service: SpecialityServiceDep, ids: QueryIds):
+@router.delete("/bulk/", status_code=204, dependencies=[Depends(has_admin_permissions)])
+async def delete_specialties(service: SpecialityServiceDep, ids: QueryIds):
     return await service.bulk_delete(ids)
 
 
-@router.delete("/{id}/", status_code=204)
-async def delete_specialties(service: SpecialityServiceDep, id: int):
+@router.delete("/{id}/", status_code=204, dependencies=[Depends(has_admin_permissions)])
+async def delete_specialty(service: SpecialityServiceDep, id: int):
     return await service.delete(id)

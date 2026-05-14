@@ -42,7 +42,9 @@ async def refresh_jwt(service: JwtAuthServiceDep, app_rt=Cookie(default=None)):
     return await service.refresh(refresh_token=app_rt)
 
 
-@router.post("/logout")
+@router.post("/logout/")
 async def logout(response: Response):
-    response.delete_cookie(key="refresh_token", path="/api/refresh")
-    return None
+    if not settings.DEBUG:
+        response.delete_cookie(key="app_rt", path="/api/refresh")
+    else:
+        response.delete_cookie(key="app_rt", path="/")

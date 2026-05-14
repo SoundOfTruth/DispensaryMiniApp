@@ -5,33 +5,17 @@ from fastapi import APIRouter, Depends, status
 from src.api.dependencies import (
     AccessTokenDep,
     AdminTokenDep,
+    SuperuserTokenDep,
     has_admin_permissions,
     has_superuser_permissions,
 )
+from src.api.exceptions import IssuedExcessUserPermissionsError, UserSelfDeleteError
 from src.api.params import PaginationParams, QueryIds
 from src.models.users import Role
 from src.schemas.users import CreateUserSchema, PasswordChangeSchema, UpdateUserSchema
 from src.services.users import UserServiceDep
 
 router = APIRouter(prefix="/users", tags=["Users"])
-
-
-@router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_user(
-    service: UserServiceDep, schema: CreateUserSchema, token: AdminTokenDep
-):
-    if token.role.value == Role.admin.value and schema.role.value != Role.user.value:
-        raise 
-    return await service.create(schema)
-
-
-@router.patch("/{id}/")
-async def update_user(
-    service: UserServiceDep, id: int, schema: UpdateUserSchema, token: AdminTokenDep
-):
-    if token.role.value == Role.admin.value and schema.role.value != Role.user.value:
-        raise
-    return await service.update(id, schema)
 
 
 @router.get("/", dependencies=[Depends(has_admin_permissions)])
@@ -53,6 +37,24 @@ async def get_user(service: UserServiceDep, id: int):
     return await service.get(id)
 
 
+@router.post("/", status_code=status.HTTP_201_CREATED)
+async def create_user(
+    service: UserServiceDep, schema: CreateUserSchema, token: AdminTokenDep
+):
+    if token.role.value == Role.ADMIN.value and schema.role.value != Role.USER.value:
+        raise IssuedExcessUserPermissionsError
+    return await service.create(schema)
+
+
+@router.patch("/{id}/")
+async def update_user(
+    service: UserServiceDep, id: int, schema: UpdateUserSchema, token: AdminTokenDep
+):
+    if token.role.value == Role.ADMIN.value and schema.role.value != Role.USER.value:
+        raise IssuedExcessUserPermissionsError
+    return await service.update(id, schema)
+
+
 @router.post("/change_password/")
 async def change_password(
     service: UserServiceDep, schema: PasswordChangeSchema, token: AccessTokenDep
@@ -65,12 +67,14 @@ async def change_password(
 @router.delete(
     "/bulk/", status_code=204, dependencies=[Depends(has_superuser_permissions)]
 )
-async def delete_speciality(service: UserServiceDep, ids: QueryIds):
+async def delete_users(service: UserServiceDep, ids: QueryIds):
     return await service.bulk_delete(ids)
 
 
-@router.delete(
-    "/{id}/", status_code=204, dependencies=[Depends(has_superuser_permissions)]
-)
-async def delete_specialties(service: UserServiceDep, id: int):
+@router.delete("/{id}/", status_code=204)
+async def delete_user(
+    service: UserServiceDep, id: int, token: SuperuserTokenDep
+):
+    if token.sub == id:
+        raise UserSelfDeleteError
     return await service.delete(id)

@@ -6,10 +6,10 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.models.mixins import IntPkBase as Base
 
 
-class Role(Enum):
-    superuser = "superuser"
-    admin = "admin"
-    user = "user"
+class Role(str, Enum):
+    SUPERUSER = "superuser"
+    ADMIN = "admin"
+    USER = "user"
 
 
 roles = tuple(role.value for role in Role)
@@ -25,7 +25,7 @@ class User(Base):
     middlename: Mapped[str] = mapped_column(String(50))
     password: Mapped[str]
 
-    role: Mapped[str] = mapped_column(String(20), server_default=Role.user.value)
+    role: Mapped[str] = mapped_column(String(20), server_default=Role.USER.value)
 
     __table_args__ = (
         CheckConstraint(

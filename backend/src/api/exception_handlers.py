@@ -1,7 +1,11 @@
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
-from src.api.exceptions import PermissionError, IssuedExcessUserPermissions
+from src.api.exceptions import (
+    IssuedExcessUserPermissionsError,
+    PermissionError,
+    UserSelfDeleteError,
+)
 from src.repositories.exceptions import (
     DepartmentIsUsingError,
     DepartmentNameAlreadyExistsError,
@@ -236,9 +240,19 @@ def add_exception_handlers(app: FastAPI):
             status_code=status.HTTP_403_FORBIDDEN,
             content={"detail": "forbiden."},
         )
-    @app.exception_handler(IssuedExcessUserPermissions)
-    def handle_excess_users_permission(request: Request, exc: IssuedExcessUserPermissions):
+
+    @app.exception_handler(IssuedExcessUserPermissionsError)
+    def handle_excess_users_permission(
+        request: Request, exc: IssuedExcessUserPermissionsError
+    ):
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
             content={"detail": "Вы не можете выдать права, превышающие ваши."},
+        )
+
+    @app.exception_handler(UserSelfDeleteError)
+    def handle_self_delete(request: Request, exc: UserSelfDeleteError):
+        return JSONResponse(
+            status_code=status.HTTP_403_FORBIDDEN,
+            content={"detail": "Вы не можете удалить свой аккаунт."},
         )

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_serializer
 
 from src.schemas.base import BaseSchema
 
@@ -45,7 +45,7 @@ class CreateDoctorSchema(BaseModel):
     middlename: str
     qualification: str | None
     experience_start: int | None = Field(None, examples=[2000])
-    photo: str | None = None
+    photo: HttpUrl | None = None
 
     speciality_id: int = Field(examples=[1])
     department_id: int = Field(examples=[1])
@@ -63,7 +63,7 @@ class UpdateDoctorSchema(BaseModel):
     middlename: str = Field("")
     qualification: str | None = Field(None)
     experience_start: int | None = Field(None, gt=1920, le=datetime.now().year)
-    photo: str | None = None
+    photo: HttpUrl | None = None
 
     speciality_id: int = Field(1)
     department_id: int = Field(1)

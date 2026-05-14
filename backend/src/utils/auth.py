@@ -47,7 +47,7 @@ def create_jwt_token(
             iat=iat,
             exp=exp,
             type=token_type,
-            is_superuser=schema.is_superuser,
+            role=schema.role,
         )
     except ValidationError:
         raise InvalidTokenSchemaError

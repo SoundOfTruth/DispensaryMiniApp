@@ -12,6 +12,8 @@ class CreateUserSchema(BaseSchema):
     password: str = Field(min_length=8)
     role: Role
 
+    model_config = ConfigDict(use_enum_values=True)
+
 
 class UpdateUserSchema(BaseSchema):
     email: EmailStr = Field("", max_length=254)
@@ -19,7 +21,9 @@ class UpdateUserSchema(BaseSchema):
     firstname: str = Field("", max_length=50)
     middlename: str = Field("", max_length=50)
     password: str = Field("", min_length=8)
-    role: Role
+    role: Role = Field(Role.USER)
+
+    model_config = ConfigDict(use_enum_values=True)
 
 
 class UserSchema(CreateUserSchema):
