@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     PAGINATION_SIZE: int = 10
     MEDIA_DIR: str = "media"
     MEDIA_MAX_SIZE: int = 1024 * 30
+    UV_LINK_MODE: str | None = None
 
     DATABASE: DatabaseSettings = Field(alias="POSTGRES")
 
