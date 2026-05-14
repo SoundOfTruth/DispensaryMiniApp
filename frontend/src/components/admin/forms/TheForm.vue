@@ -18,8 +18,12 @@ const emits = defineEmits(["submit"]);
 
 <style lang="scss" scoped>
 .form-container {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 600px;
   padding: 20px;
+  margin-left: 20%;
+  @media (max-width: 500px) {
+    margin: 0px;
+  }
+  
 }
 </style>

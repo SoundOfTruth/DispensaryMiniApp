@@ -1,8 +1,10 @@
 <template>
   <div class="equipment-card">
-    <img :src="equipment.image" />
-    <div class="name">
-      {{ props.equipment.name }}
+    <div class="image-container">
+      <img :src="equipment.image" :alt="equipment.name" loading="lazy" />
+    </div>
+    <div class="content">
+      <div class="name">{{ equipment.name }}</div>
     </div>
   </div>
 </template>
@@ -10,27 +12,74 @@
 <script lang="ts" setup>
 import type { Equipment } from "@/types/equipments";
 
-const props = defineProps<{ equipment: Equipment }>();
+defineProps<{ equipment: Equipment }>();
 </script>
 
 <style lang="scss" scoped>
 .equipment-card {
   display: flex;
-  background: white;
   align-items: center;
-  gap: 10px;
-  border: 1px solid transparent;
+  gap: 20px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
   border-radius: 16px;
-  .name {
-    font-size: clamp(75%, 3.7vw, 110%);
-    padding-right: 3px;
+  padding: 16px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #b0b0b0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
-  img {
-    width: 292px;
-    height: 270px;
-    max-width: 40vw;
-    max-height: 40vw;
-    border-radius: 16px;
+
+  .image-container {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+  }
+
+  .content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .name {
+    font-size: 110%;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+    line-height: 1.4;
+  }
+
+  @media (min-width: 768px) {
+    gap: 24px;
+    padding: 20px;
+
+    .image-container {
+      width: 100px;
+      height: 100px;
+    }
+
+    .name {
+      font-size: 125%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .image-container {
+      width: 120px;
+      height: 120px;
+    }
   }
 }
 </style>

@@ -18,13 +18,15 @@ const userStore = useUserStore();
 
 const userId = ref<number>();
 
+const roles = ["user", "admin", "superuser"];
+
 interface FormData {
   email: string;
   lastname: string;
   firstname: string;
   middlename: string;
   password?: string;
-  is_superuser: boolean;
+  role: "user" | "admin" | "superuser";
 }
 const formData = ref<FormData>({
   email: "",
@@ -32,7 +34,7 @@ const formData = ref<FormData>({
   firstname: "",
   middlename: "",
   password: props.mode !== "edit" ? "" : undefined,
-  is_superuser: false,
+  role: "user",
 });
 
 const getPatchPayload = (): Partial<CreateUser> | null => {
@@ -214,18 +216,16 @@ onMounted(async () => {
     </div>
 
     <div class="group">
-      <label for="name">Администратор? </label>
-      <input type="checkbox" v-model="formData.is_superuser" />
+      <label for="name">Роль </label>
+      <select v-model="formData.role" class="field">
+        <option :value="role" v-for="role in roles">
+          {{ role }}
+        </option>
+      </select>
     </div>
 
     <FormActions :mode="mode" @cancel="handleCancel" />
   </TheForm>
-  <Teleport to="#modals">
-    <AdminErrorModal
-      :errors="userStore.errors"
-      @close="userStore.errors = []"
-    />
-  </Teleport>
 </template>
 
 <style lang="scss" scoped>

@@ -3,17 +3,13 @@
     <div class="err-handler" v-for="err in errors" v-if="errCondition">
       {{ err.message }}
     </div>
-    <div v-else>
-      <div v-for="type in types">
-        <div>
-          <div class="equipment-type">{{ type.name }}</div>
-          <div class="equipments-list">
-            <EquipmentCard
-              :equipment="equipment"
-              v-for="equipment in type.equipments"
-            />
-          </div>
-        </div>
+    <div v-for="type in types" v-else>
+      <div class="equipment-type">{{ type.name }}</div>
+      <div class="equipments-list">
+        <EquipmentCard
+          :equipment="equipment"
+          v-for="equipment in type.equipments"
+        />
       </div>
     </div>
   </div>
@@ -41,8 +37,8 @@ onMounted(async () => {
   padding: 20px 15px;
 }
 .equipment-type {
-  font-weight: 500;
-  font-size: 140%;
+  font-weight: 600;
+  font-size: 150%;
   padding-bottom: 20px;
 }
 .err-handler {

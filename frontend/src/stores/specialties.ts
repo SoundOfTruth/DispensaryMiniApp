@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 import SpecialitiesApi from "@/api/specialities";
 import type { Speciality, CreateSpeciality } from "@/types/specialities";
 import { parseApiErrors, type ApiError } from "@/utils/api";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 interface ApiParams {
   search?: number;
@@ -16,7 +16,6 @@ interface Filters {
 
 export const useSpecialityStore = defineStore("specialityStore", () => {
   const route = useRoute();
-  const router = useRouter();
 
   const specialties = ref<Speciality[]>([]);
   const speciality = ref<Speciality>();
@@ -52,28 +51,28 @@ export const useSpecialityStore = defineStore("specialityStore", () => {
         ];
       }
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const loadById = async (id: number) => {
     try {
       speciality.value = await SpecialitiesApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const create = async (payload: CreateSpeciality) => {
     try {
       return await SpecialitiesApi.create(payload);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const update = async (id: number, payload: CreateSpeciality) => {
     try {
       return await SpecialitiesApi.update(id, payload);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -81,7 +80,7 @@ export const useSpecialityStore = defineStore("specialityStore", () => {
     try {
       await SpecialitiesApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -89,7 +88,7 @@ export const useSpecialityStore = defineStore("specialityStore", () => {
     try {
       await SpecialitiesApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   return {

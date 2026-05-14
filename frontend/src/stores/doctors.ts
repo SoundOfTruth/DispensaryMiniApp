@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 
 import DoctorApi from "@/api/doctors";
@@ -29,7 +29,6 @@ import type {
 
 export const useDoctorStore = defineStore("doctorStore", () => {
   const route = useRoute();
-  const router = useRouter();
 
   const doctors = ref<SimpleDoctor[]>([]);
   const doctor = ref<Doctor>();
@@ -85,7 +84,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
         ];
       }
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -96,7 +95,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
       apiDoctor.value = doctorApi;
       doctor.value = getComputedDoctor(doctorApi);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -104,7 +103,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     try {
       await DoctorApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -112,7 +111,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     try {
       await DoctorApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -120,7 +119,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     try {
       return await DoctorApi.create(data);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -128,7 +127,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     try {
       return await DoctorApi.update(id, data);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 

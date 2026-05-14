@@ -29,7 +29,6 @@ const columns: Columns[] = [
   { key: "firstname", text: "Имя" },
   { key: "middlename", text: "Отчество" },
   { key: "speciality", text: "Специальность", secondKey: "name" },
-  { key: "department", text: "Отделение", secondKey: "name" },
 ];
 
 const doctorStore = useDoctorStore();

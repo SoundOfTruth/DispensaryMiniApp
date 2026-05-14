@@ -2,13 +2,9 @@ import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 
 import EquipmentApi from "../api/equipments";
-import type {
-  EquipmentsGroupedByType,
-  Equipment,
-  CreateEquipment,
-} from "../types/equipments";
+import type { Equipment, CreateEquipment } from "../types/equipments";
 import { parseApiErrors, type ApiError } from "@/utils/api";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 interface ApiParams {
   search?: number;
@@ -20,9 +16,7 @@ interface Filters {
 
 export const useEquipmentStore = defineStore("equipmentStore", () => {
   const route = useRoute();
-  const router = useRouter();
 
-  const equipmentsGroupedByType = ref<EquipmentsGroupedByType[]>();
   const equipments = ref<Equipment[]>([]);
   const equipment = ref<Equipment>();
 
@@ -57,28 +51,28 @@ export const useEquipmentStore = defineStore("equipmentStore", () => {
         ];
       }
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const loadById = async (id: number) => {
     try {
       equipment.value = await EquipmentApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const create = async (payload: CreateEquipment) => {
     try {
       return await EquipmentApi.create(payload);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const update = async (id: number, payload: Partial<CreateEquipment>) => {
     try {
       return await EquipmentApi.update(id, payload);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -86,7 +80,7 @@ export const useEquipmentStore = defineStore("equipmentStore", () => {
     try {
       await EquipmentApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -94,13 +88,12 @@ export const useEquipmentStore = defineStore("equipmentStore", () => {
     try {
       await EquipmentApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   return {
     equipment,
     equipments,
-    equipmentsGroupedByType,
     count,
     errors,
     loadList,

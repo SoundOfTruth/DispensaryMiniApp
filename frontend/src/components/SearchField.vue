@@ -5,17 +5,17 @@
     </div>
     <input
       type="text"
-      v-model.lazy="pattern"
+      v-model="pattern"
       :placeholder="props.title"
       class="input-field"
-      @keyup.enter="handleSearch()"
+      @input="handleSearch()"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
 import SearchSvg from "./svg/SearchSvg.vue";
-
+import { debounce } from "lodash";
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
@@ -29,7 +29,7 @@ const pattern = ref<string>(route.query.search?.toString() ?? "");
 
 const props = defineProps<inputData>();
 
-const handleSearch = () => {
+const handleSearch = debounce(() => {
   let query = { ...route.query };
   if (pattern.value) {
     query = { ...query, search: pattern.value, page: "1" };
@@ -40,7 +40,7 @@ const handleSearch = () => {
     path: route.path,
     query: query,
   });
-};
+}, 350);
 </script>
 
 <style lang="scss" scoped>
@@ -50,6 +50,7 @@ const handleSearch = () => {
   height: min-content;
 }
 .search-field {
+  box-sizing: border-box;
   width: 100%;
   display: flex;
   border: 1px solid #bababa;

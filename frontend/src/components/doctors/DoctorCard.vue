@@ -1,34 +1,47 @@
 <template>
-  <div class="doctor-card" @click="openDoctor(props.doctor.id)">
-    <div class="avatar-container">
-      <img src="/src/images/avatar.png" class="img" v-if="!doctor.photo" />
-      <img :src="doctor.photo" class="img" v-else />
-    </div>
-    <div class="info">
-      <div class="fullname">
-        {{ `${doctor?.lastname}  ${doctor?.firstname} ${doctor?.middlename}` }}
+  <RouterLink
+    :to="{
+      name: 'doctors.detail',
+      params: { doctorId: doctor.id },
+    }"
+  >
+    <div class="doctor-card">
+      <div class="avatar-container">
+        <img
+          :src="
+            !doctor.photo || !doctor.photo.includes('http')
+              ? '/src/images/avatar.png'
+              : doctor.photo
+          "
+          class="img"
+        />
       </div>
-      <div class="speciality">{{ doctor?.speciality.name }}</div>
+      <div class="info">
+        <div class="fullname">
+          {{
+            `${doctor?.lastname}  ${doctor?.firstname} ${doctor?.middlename}`
+          }}
+        </div>
+        <div class="speciality">{{ doctor?.speciality.name }}</div>
+      </div>
     </div>
-  </div>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRouter } from "vue-router";
 
 import type { SimpleDoctor } from "@/types/doctors";
 
-const router = useRouter();
 const props = defineProps<{ doctor: SimpleDoctor }>();
 const doctor = computed(() => props.doctor);
-
-const openDoctor = (doctorId: number) => {
-  router.push(`doctors/${doctorId}`);
-};
 </script>
 
 <style scoped lang="scss">
+a {
+  text-decoration: none;
+  color: black;
+}
 .doctor-card {
   height: 110px;
   background: white;
@@ -52,10 +65,12 @@ const openDoctor = (doctorId: number) => {
     gap: 8px;
     padding-left: 14px;
     .fullname {
-      font-size: 105%;
+      font-weight: 500;
+      font-size: 110%;
     }
     .speciality {
-      font-size: 85%;
+      font-size: 100%;
+      font-weight: 400;
     }
   }
 }

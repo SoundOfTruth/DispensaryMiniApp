@@ -1,6 +1,6 @@
 <template>
   <div class="mini-app">
-    <TheHeader />
+    <TheHeader :index-link="indexLink" :links="links" />
     <div class="content" id="content">
       <RouterView />
     </div>
@@ -9,6 +9,33 @@
 
 <script setup lang="ts">
 import TheHeader from "../components/TheHeader.vue";
+
+interface Link {
+  title: string;
+  routeName: string;
+}
+const indexLink = {
+  title: "Клинический онкологический диспансер",
+  routeName: "index",
+};
+const links: Link[] = [
+  {
+    title: "О нас",
+    routeName: "index",
+  },
+  {
+    title: "Врачи",
+    routeName: "doctors",
+  },
+  {
+    title: "Обследования",
+    routeName: "inspections",
+  },
+  {
+    title: "Оборудование",
+    routeName: "equipments",
+  },
+];
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <RouterLink :to="{ name: linkName }">
+    <RouterLink :to="{ name: routeName }">
       <span class="icon"></span>
       <span class="model-name">{{ title }}</span>
     </RouterLink>
@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ title: string; linkName: string }>();
+const props = defineProps<{ title: string; routeName: string }>();
 </script>
 
 <style lang="css" scoped>

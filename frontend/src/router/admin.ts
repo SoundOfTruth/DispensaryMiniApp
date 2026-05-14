@@ -24,6 +24,11 @@ export const adminRoutes: RouteRecordRaw = {
       component: () => import("@/views/admin/IndexView.vue"),
     },
     {
+      path: "login",
+      name: "admin.login",
+      component: () => import("@/views/admin/AdminLoginView.vue"),
+    },
+    {
       path: ":pathMatch(.*)*",
       name: "admin.notFound",
       props: { urlName: "admin.index" },

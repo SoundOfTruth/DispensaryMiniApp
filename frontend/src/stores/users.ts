@@ -1,5 +1,5 @@
-import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 
 import UserApi from "@/api/users";
@@ -17,11 +17,18 @@ interface Filters {
 }
 
 import type { CreateUser, User } from "@/types/users";
+import { useAuthStore } from "./auth";
 
 export const useUserStore = defineStore("userStore", () => {
+  const authStore = useAuthStore();
   const route = useRoute();
-  const router = useRouter();
 
+  const currentUser = ref<User>();
+  const isAdmin = computed(
+    () =>
+      currentUser.value?.role === "superuser" ||
+      currentUser.value?.role === "admin",
+  );
   const users = ref<User[]>([]);
   const user = ref<User>();
 
@@ -55,6 +62,17 @@ export const useUserStore = defineStore("userStore", () => {
     return params;
   };
 
+  const loadCurrentUser = async () => {
+    errors.value = [];
+    if (authStore.isAuthenticated) {
+      try {
+        currentUser.value = await UserApi.getMe();
+      } catch (error) {
+        errors.value = parseApiErrors(error);
+      }
+    }
+  };
+
   const loadList = async () => {
     errors.value = [];
     const params = getAllowedParams(route.query);
@@ -68,7 +86,7 @@ export const useUserStore = defineStore("userStore", () => {
         ];
       }
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -77,7 +95,7 @@ export const useUserStore = defineStore("userStore", () => {
     try {
       user.value = await UserApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -85,7 +103,7 @@ export const useUserStore = defineStore("userStore", () => {
     try {
       await UserApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -93,7 +111,7 @@ export const useUserStore = defineStore("userStore", () => {
     try {
       await UserApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -101,7 +119,7 @@ export const useUserStore = defineStore("userStore", () => {
     try {
       return await UserApi.create(data);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -109,16 +127,24 @@ export const useUserStore = defineStore("userStore", () => {
     try {
       return await UserApi.update(id, data);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
+  const logout = async () => {
+    currentUser.value = undefined;
+    await authStore.logout();
+  };
+
   return {
+    currentUser,
+    isAdmin,
     user,
     users,
     count,
     limit,
     errors,
+    loadCurrentUser,
     loadById,
     loadList,
     setLimit,
@@ -126,5 +152,6 @@ export const useUserStore = defineStore("userStore", () => {
     update,
     deleteById,
     deleteList,
+    logout,
   };
 });

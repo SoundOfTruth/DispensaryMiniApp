@@ -4,6 +4,7 @@
     <div class="content" v-if="isOpen">
       <button class="btn">CSV</button>
       <button class="btn">JSON</button>
+      <div class="modal-backdrop" @click="isOpen = !isOpen"></div>
     </div>
   </div>
 </template>
@@ -15,6 +16,14 @@ const isOpen = ref<boolean>(false);
 </script>
 
 <style lang="scss" scoped>
+.modal-backdrop {
+  z-index: 99;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
 .dropdown-container {
   position: relative;
   display: inline-block;
@@ -51,6 +60,7 @@ const isOpen = ref<boolean>(false);
   flex-direction: column;
   z-index: 10;
   .btn {
+    z-index: 100;
     border: none;
     border-radius: 4px;
     background: white;

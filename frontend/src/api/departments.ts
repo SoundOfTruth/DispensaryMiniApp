@@ -2,8 +2,9 @@ import axios from "axios";
 
 import { baseApiUrl } from "./base";
 
-import type { AxiosInstance } from "axios";
+import type { AxiosError, AxiosInstance } from "axios";
 import type { Department, CreateDepartment } from "@/types/departments";
+import { refreshTokenOnFall, setAuthToken } from "@/utils/api";
 
 class DepartmentApi {
   client: AxiosInstance;
@@ -14,6 +15,14 @@ class DepartmentApi {
       headers: headers,
       timeout: 7000,
     });
+    this.client.interceptors.request.use(
+      (config) => setAuthToken(config),
+      (error) => Promise.reject(error),
+    );
+    this.client.interceptors.response.use(
+      (response) => response,
+      async (error: AxiosError) => await refreshTokenOnFall(this.client, error),
+    );
   }
 
   async getAll(params: Record<string, any> = {}) {

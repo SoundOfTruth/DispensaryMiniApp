@@ -2,23 +2,19 @@
   <header>
     <div class="hat">
       <MenuButton @click="toggleMenu()" />
-      <RouterLink to="/" class="link"
-        ><h1 class="title">Клинический онкологический диспансер</h1></RouterLink
+      <RouterLink
+        :to="{ name: indexLink.routeName }"
+        class="link"
+        @click="isMenuOpen = false"
+        ><h1 class="title">{{ indexLink.title }}</h1></RouterLink
       >
     </div>
     <nav class="menu" :class="{ active: isMenuOpen }">
       <ul>
-        <li @click="toggleMenu()">
-          <RouterLink to="/">О нас</RouterLink>
-        </li>
-        <li @click="toggleMenu()">
-          <RouterLink to="/doctors">Врачи</RouterLink>
-        </li>
-        <li @click="toggleMenu()">
-          <RouterLink to="/inspections">Обследования</RouterLink>
-        </li>
-        <li @click="toggleMenu()">
-          <RouterLink to="/equipments">Оборудование</RouterLink>
+        <li @click="toggleMenu()" v-for="link in links">
+          <RouterLink :to="{ name: link.routeName }">{{
+            link.title
+          }}</RouterLink>
         </li>
       </ul>
     </nav>
@@ -31,7 +27,14 @@ import MenuButton from "./MenuButton.vue";
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
 
+interface Link {
+  title: string;
+  routeName: string;
+}
+const props = defineProps<{ indexLink: Link; links: Link[] }>();
+
 const isMenuOpen = ref<boolean>(false);
+
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
@@ -51,6 +54,7 @@ header {
   .hat {
     display: flex;
     gap: 30px;
+    align-items: center;
   }
   .title {
     color: #222;
@@ -86,7 +90,7 @@ header {
     display: block;
     padding: 16px;
     text-decoration: none;
-    color: #222;
+    color: black;
     font-size: 16px;
     transition: background 0.2s black;
   }

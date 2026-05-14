@@ -2,8 +2,9 @@ import axios from "axios";
 
 import { baseApiUrl } from "./base";
 
-import type { AxiosInstance } from "axios";
+import type { AxiosError, AxiosInstance } from "axios";
 import type { Speciality, CreateSpeciality } from "@/types/specialities";
+import { refreshTokenOnFall, setAuthToken } from "@/utils/api";
 
 class SpecialtiesApi {
   protected client: AxiosInstance;
@@ -17,6 +18,14 @@ class SpecialtiesApi {
         indexes: null,
       },
     });
+    this.client.interceptors.request.use(
+      (config) => setAuthToken(config),
+      (error) => Promise.reject(error),
+    );
+    this.client.interceptors.response.use(
+      (response) => response,
+      async (error: AxiosError) => await refreshTokenOnFall(this.client, error),
+    );
   }
 
   async getAll(params: Record<string, any> = {}) {

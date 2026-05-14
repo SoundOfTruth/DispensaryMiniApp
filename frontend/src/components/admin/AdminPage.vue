@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="isAdmin">
     <div class="card">
       <div class="hat">
         <div class="header">
@@ -35,7 +35,7 @@
       />
     </div>
   </div>
-  <Teleport to="#modals">
+  <Teleport to="#modals" v-if="isAdmin">
     <AdminDeteleModal
       :open="deleteOpen"
       :id="deleteId"
@@ -57,15 +57,23 @@ import ExportButton from "./buttons/ExportButton.vue";
 
 import type { BaseStore } from "../../stores/base";
 
-import { onMounted, watch, ref } from "vue";
+import { onMounted, watch, ref, computed } from "vue";
 import { useRoute } from "vue-router";
+import { useUserStore } from "@/stores/users";
+
+const userStore = useUserStore();
+const isAdmin = computed(() => userStore.isAdmin);
 
 const deleteId = ref<number | undefined>(undefined);
 const deleteOpen = ref<boolean>(false);
 
 const openDelete = (id?: number) => {
   deleteId.value = id;
-  deleteOpen.value = true;
+  if (!deleteId.value && selectedItems.value.size === 0) {
+    props.store.errors.push({ message: "Ничего не выбрано." });
+  } else {
+    deleteOpen.value = true;
+  }
 };
 
 const closeDelete = () => {
@@ -146,6 +154,7 @@ watch(
   padding-top: 20px;
   padding-left: 10px;
   padding-right: 30px;
+  padding-bottom: 20px;
   @media (min-width: 800px) {
     padding-top: 30px;
   }
@@ -170,6 +179,9 @@ watch(
       .title {
         font-size: 115%;
         font-weight: 500;
+        @media (max-width: 420px) {
+          font-size: 100%;
+        }
       }
       .actions {
         position: relative;
@@ -188,16 +200,36 @@ watch(
           transition: border-color 0.25s;
           color: white;
           background: #206bc4;
+          @media (max-width: 320px) {
+            font-size: 0.6em;
+            padding: 0.5em 0.5em;
+          }
+          @media (max-width: 440px) {
+            font-size: 0.9em;
+          }
+          @media (min-width: 441px) and (max-width: 500px) {
+            font-size: 0.9em;
+            padding: 0.7em 1em;
+          }
         }
       }
     }
     .filters {
       position: relative;
       display: flex;
-      padding: 15px;
+      padding-top: 15px;
+      padding-bottom: 15px;
+      padding-inline: 10px;
       border-bottom: 1px solid #e6e7e9;
       .search {
         margin-left: auto;
+        @media (max-width: 500px) {
+          margin-left: 0px;
+        }
+      }
+      @media (max-width: 500px) {
+        gap: 15px;
+        flex-direction: column;
       }
     }
   }

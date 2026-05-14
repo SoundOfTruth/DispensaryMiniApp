@@ -2,12 +2,13 @@ import axios from "axios";
 
 import { baseApiUrl } from "./base";
 
-import type { AxiosInstance } from "axios";
+import type { AxiosError, AxiosInstance } from "axios";
 import type {
   SimpleEquipmentType,
   EquipmentType,
   CreateEquipmentType,
 } from "@/types/equipmentTypes";
+import { refreshTokenOnFall, setAuthToken } from "@/utils/api";
 
 class EquipmentTypeApi {
   client: AxiosInstance;
@@ -18,6 +19,14 @@ class EquipmentTypeApi {
       headers: headers,
       timeout: 7000,
     });
+    this.client.interceptors.request.use(
+      (config) => setAuthToken(config),
+      (error) => Promise.reject(error),
+    );
+    this.client.interceptors.response.use(
+      (response) => response,
+      async (error: AxiosError) => await refreshTokenOnFall(this.client, error),
+    );
   }
 
   async getAllDetail() {

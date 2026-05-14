@@ -61,6 +61,9 @@ const passedCount = computed(() => {
 .count {
   font-size: 95%;
   color: rgba(97, 104, 118, 1) !important;
+  @media (max-width: 500px) {
+    display: none;
+  }
 }
 .dropdown {
   position: absolute;
@@ -80,15 +83,19 @@ const passedCount = computed(() => {
   font-size: 90%;
   font-weight: 500;
   cursor: pointer;
-  box-shadow:
-    0 1px 0 black,
-    inset 0 -1px 0 rgba(29, 39, 59, 0.2);
+  border-bottom: 1px solid black;
+  @media (max-width: 500px) {
+    display: none;
+  }
 }
 .table-footer {
   display: flex;
   align-items: center;
   background: inherit;
   justify-content: space-between;
+  @media (max-width: 500px) {
+    justify-content: center;
+  }
   .right {
     display: flex;
     gap: 10px;

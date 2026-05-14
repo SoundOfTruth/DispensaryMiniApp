@@ -4,15 +4,17 @@
       <MenuButton />
     </div>
     <aside class="nav-panel" v-if="menuOpen">
-      <RouterLink class="title" to="/admin"> Панель администратора</RouterLink>
+      <RouterLink class="title" :to="{ name: 'admin.index' }">
+        Панель администратора</RouterLink
+      >
       <nav class="nav">
         <AdminNavItem
-          :title="model.title"
-          :link-name="model.linkName"
-          v-for="model in models"
+          :title="link.title"
+          :route-name="link.routeName"
+          v-for="link in links"
         />
       </nav>
-      <button class="logout-btn">Выйти</button>
+      <RouterLink :to="{ name: 'logout' }" class="logout-btn">Выйти</RouterLink>
     </aside>
   </div>
 </template>
@@ -22,38 +24,13 @@ import MenuButton from "@/components/MenuButton.vue";
 import AdminNavItem from "./AdminNavItem.vue";
 import { ref } from "vue";
 
-const menuOpen = ref<boolean>(true);
+interface Link {
+  title: string;
+  routeName: string;
+}
 
-const models = [
-  {
-    title: "Врачи",
-    linkName: "admin.doctors",
-  },
-  {
-    title: "Обследования",
-    linkName: "admin.inspections",
-  },
-  {
-    title: "Оборудование",
-    linkName: "admin.equipments",
-  },
-  {
-    title: "Типы оборудования",
-    linkName: "admin.equipments-types",
-  },
-  {
-    title: "Специальности",
-    linkName: "admin.specialties",
-  },
-  {
-    title: "Отделения",
-    linkName: "admin.departments",
-  },
-  {
-    title: "Пользователи",
-    linkName: "admin.users",
-  },
-];
+const props = defineProps<{ links: Link[] }>();
+const menuOpen = ref<boolean>(true);
 </script>
 
 <style scoped lang="scss">
@@ -92,6 +69,7 @@ const models = [
   }
 }
 .logout-btn {
+  text-align: center;
   border-radius: 4px;
   padding: 0.4em;
   background: #616876;

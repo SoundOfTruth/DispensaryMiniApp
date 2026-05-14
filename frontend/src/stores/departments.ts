@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 
 import DepartmentApi from "@/api/departments";
@@ -17,7 +17,6 @@ interface Filters {
 
 export const useDepartmentStore = defineStore("departmentStore", () => {
   const route = useRoute();
-  const router = useRouter();
 
   const departments = ref<Department[]>([]);
   const department = ref<Department>();
@@ -52,28 +51,28 @@ export const useDepartmentStore = defineStore("departmentStore", () => {
         ];
       }
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const loadById = async (id: number) => {
     try {
       department.value = await DepartmentApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const create = async (payload: CreateDepartment) => {
     try {
       return await DepartmentApi.create(payload);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const update = async (id: number, payload: CreateDepartment) => {
     try {
       return await DepartmentApi.update(id, payload);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -81,7 +80,7 @@ export const useDepartmentStore = defineStore("departmentStore", () => {
     try {
       await DepartmentApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -89,7 +88,7 @@ export const useDepartmentStore = defineStore("departmentStore", () => {
     try {
       await DepartmentApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   return {

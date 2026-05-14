@@ -4,7 +4,7 @@ export interface CreateUser {
   firstname: string;
   middlename: string;
   password: string;
-  is_superuser: boolean;
+  role: "user" | "admin" | "superuser";
 }
 
 export interface User extends CreateUser {

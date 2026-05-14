@@ -1,9 +1,10 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 import { baseApiUrl } from "./base";
 
 import type { AxiosInstance } from "axios";
 import type { CreateUser, User, PaginatedUsers } from "@/types/users";
+import { refreshTokenOnFall, refreshAndSetToken } from "@/utils/api";
 
 class UserApi {
   protected client: AxiosInstance;
@@ -17,6 +18,14 @@ class UserApi {
         indexes: null,
       },
     });
+    this.client.interceptors.request.use(
+      (config) => refreshAndSetToken(config),
+      (error) => Promise.reject(error),
+    );
+    this.client.interceptors.response.use(
+      (response) => response,
+      async (error: AxiosError) => await refreshTokenOnFall(this.client, error),
+    );
   }
 
   async getAll(params: Record<string, any> = {}) {
@@ -29,6 +38,11 @@ class UserApi {
 
   async get(id: number) {
     const response = await this.client.get<User>(`/users/${id}/`);
+    return response.data;
+  }
+
+  async getMe() {
+    const response = await this.client.get<User>("/users/me/");
     return response.data;
   }
 

@@ -128,7 +128,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <TheForm :store="equipmentStore"  @submit="handleSubmit">
+  <TheForm :store="equipmentStore" @submit="handleSubmit">
     <h3 class="form-title">
       {{
         mode === "detail"
@@ -173,16 +173,15 @@ onMounted(async () => {
         v-model="formData.type_id"
         :disabled="mode === 'detail' || typeStore.types.length == 0"
       >
-        <option
-          :value="type.id"
-          v-for="type in typeStore.types"
-          v-if="typeStore.types.length > 0"
-        >
-          {{ type.name }}
+        <option :value="0" disabled v-if="typeStore.types.length > 0">
+          Выберите тип оборудования
         </option>
         <option :value="0" disabled v-else>
           Нет доступных типов, вы не можете сохранять данные, пока не создадите
           тип
+        </option>
+        <option :value="type.id" v-for="type in typeStore.types">
+          {{ type.name }}
         </option>
       </select>
     </div>
@@ -200,10 +199,6 @@ onMounted(async () => {
   img {
     max-width: 300px;
   }
-}
-.form-title {
-  margin: 0 auto;
-  padding-bottom: 15px;
 }
 .group {
   margin-bottom: 20px;

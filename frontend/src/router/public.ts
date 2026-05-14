@@ -37,6 +37,11 @@ export const publicRoutes: RouteRecordRaw = {
       component: () => import("@/views/public/EquipmentsView.vue"),
     },
     {
+      path: "/logout",
+      name: "logout",
+      component: () => import("@/views/public/LogoutView.vue"),
+    },
+    {
       path: "/:pathMatch(.*)*",
       name: "notFound",
       props: { urlName: "index" },

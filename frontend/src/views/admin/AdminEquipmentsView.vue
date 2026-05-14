@@ -23,7 +23,6 @@ interface Columns {
 const columns: Columns[] = [
   { key: "id", text: "id" },
   { key: "name", text: "Название" },
-  { key: "image", text: "Фото" },
   { key: "type_id", text: "Тип" },
 ];
 

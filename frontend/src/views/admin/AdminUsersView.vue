@@ -26,7 +26,7 @@ const columns: Columns[] = [
   { key: "lastname", text: "Фамилия" },
   { key: "firstname", text: "Имя" },
   { key: "middlename", text: "Отчество" },
-  { key: "is_superuser", text: "Администратор?" },
+  { key: "role", text: "Роль" },
 ];
 
 const store = useUserStore();

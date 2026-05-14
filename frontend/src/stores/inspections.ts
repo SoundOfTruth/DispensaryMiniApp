@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 
 import InspectionApi from "../api/inspections";
@@ -23,7 +23,6 @@ interface Filters {
 
 export const useInspectionStore = defineStore("inspectionStore", () => {
   const route = useRoute();
-  const router = useRouter();
 
   const inspections = ref<SimpleInspection[]>([]);
   const inspection = ref<Inspection>();
@@ -66,7 +65,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
         ];
       }
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -75,7 +74,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     try {
       inspection.value = await InspectionApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -83,7 +82,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     try {
       return await InspectionApi.create(data);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -91,7 +90,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     try {
       return await InspectionApi.update(id, data);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -99,7 +98,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     try {
       await InspectionApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -107,7 +106,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     try {
       await InspectionApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 

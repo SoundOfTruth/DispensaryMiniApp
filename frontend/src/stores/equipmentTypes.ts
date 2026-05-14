@@ -1,5 +1,5 @@
 import { computed, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 
 import EquipmentTypeApi from "@/api/equipmentTypes";
@@ -21,7 +21,6 @@ interface Filters {
 
 export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
   const route = useRoute();
-  const router = useRouter();
 
   const detailTypes = ref<EquipmentType[]>([]);
   const types = ref<SimpleEquipmentType[]>([]);
@@ -51,7 +50,7 @@ export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
     try {
       detailTypes.value = await EquipmentTypeApi.getAllDetail();
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -66,28 +65,28 @@ export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
         ];
       }
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const loadById = async (id: number) => {
     try {
       type.value = await EquipmentTypeApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const create = async (payload: CreateEquipmentType) => {
     try {
       return await EquipmentTypeApi.create(payload);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   const update = async (id: number, payload: CreateEquipmentType) => {
     try {
       return await EquipmentTypeApi.update(id, payload);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -95,7 +94,7 @@ export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
     try {
       await EquipmentTypeApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
 
@@ -103,7 +102,7 @@ export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
     try {
       await EquipmentTypeApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error, route, router);
+      errors.value = parseApiErrors(error);
     }
   };
   return {

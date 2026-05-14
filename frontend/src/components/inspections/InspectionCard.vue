@@ -1,24 +1,29 @@
 <template>
-  <div class="research-card" @click="openResearch(props.inspection.id)">
-    <div class="info">
-      <div class="title">{{ props.inspection.title }}</div>
+  <RouterLink
+    :to="{
+      name: 'inspections.detail',
+      params: { inspectionId: inspection.id },
+    }"
+  >
+    <div class="research-card">
+      <div class="info">
+        <div class="title">{{ props.inspection.title }}</div>
+      </div>
     </div>
-  </div>
+  </RouterLink>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import type { SimpleInspection } from "@/types/inspections";
 
-const router = useRouter();
 const props = defineProps<{ inspection: SimpleInspection }>();
-
-const openResearch = (inspectionId: number) => {
-  router.push(`inspections/${inspectionId}`);
-};
 </script>
 
 <style scoped lang="scss">
+a {
+  text-decoration: none;
+  color: black;
+}
 .research-card {
   background: white;
   display: flex;
@@ -31,6 +36,7 @@ const openResearch = (inspectionId: number) => {
     padding: 14px;
     .title {
       font-size: 110%;
+      font-weight: 500;
     }
   }
 }

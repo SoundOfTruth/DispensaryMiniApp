@@ -382,14 +382,13 @@ watch(
         class="field"
         :disabled="mode === 'detail' || specialities.length == 0"
       >
-        <option
-          :value="speciality.id"
-          v-for="speciality in specialities"
-          v-if="specialities.length > 0"
-        >
+        <option :value="0" v-if="specialities.length !== 0">
+          Выберите специальность
+        </option>
+        <option :value="speciality.id" v-for="speciality in specialities">
           {{ speciality.name }}
         </option>
-        <option :value="0" disabled v-else>
+        <option :value="0" disabled v-if="specialities.length === 0">
           Нет доступных специальностей, вы не можете сохранять данные, пока не
           создадите специальность
         </option>
@@ -403,16 +402,19 @@ watch(
         class="field"
         :disabled="mode === 'detail' || departments.length == 0"
       >
+        <option :value="0" v-if="specialities.length > 0">
+          Выберите отделение
+        </option>
+        <option :value="0" disabled v-else>
+          Нет доступных отделений, вы не можете сохранять данные, пока не
+          создадите отделение
+        </option>
         <option
           :value="department.id"
           v-for="department in departments"
           v-if="departments.length > 0"
         >
           {{ department.name }}
-        </option>
-        <option :value="0" disabled v-else>
-          Нет доступных отделений, вы не можете сохранять данные, пока не
-          создадите отделение
         </option>
       </select>
     </div>
@@ -636,7 +638,7 @@ watch(
   flex-wrap: wrap;
   flex-direction: column;
   width: max-content;
-  max-width: 100%;
+  max-width: 80vw;
   gap: 8px;
   .education-data {
     display: flex;

@@ -7,11 +7,13 @@
       <div class="doctor-header">
         <div class="doctor-img-container">
           <img
-            src="/src/images/avatar.png"
+            :src="
+              !doctor.photo || !doctor.photo.includes('http')
+                ? '/src/images/avatar.png'
+                : doctor.photo
+            "
             class="doctor-img"
-            v-if="!doctor.photo"
           />
-          <img :src="doctor.photo" class="doctor-img" v-else />
         </div>
         <div class="doctor-header-info">
           <div class="doctor-fullname">
