@@ -28,6 +28,10 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 
+
+[project.scripts]
+createsuperuser = "cli.create_superuser:main"
+
 [dependency-groups]
 dev = [
     "aiosqlite>=0.22.1",
