@@ -56,10 +56,9 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     const routeParams = getApiParams(route.query);
     const params = getApiParams(filters);
     try {
-      const paginatedData = await InspectionApi.getAll({
-        ...routeParams,
-        ...params,
-      });
+      const paginatedData = await InspectionApi.getAll(
+        Object.keys(filters).length !== 0 ? params : routeParams,
+      );
       inspections.value = paginatedData.results;
       count.value = paginatedData.count;
     } catch (error) {

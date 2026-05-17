@@ -72,10 +72,9 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     const routeParams = getApiParams(route.query);
     const params = getApiParams(filters);
     try {
-      const paginatedData = await DoctorApi.getAll({
-        ...routeParams,
-        ...params,
-      });
+      const paginatedData = await DoctorApi.getAll(
+        Object.keys(filters).length !== 0 ? params : routeParams,
+      );
       doctors.value = paginatedData.results;
       count.value = paginatedData.count;
     } catch (error) {
