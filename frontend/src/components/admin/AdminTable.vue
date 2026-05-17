@@ -60,6 +60,7 @@
         </tbody>
       </table>
     </div>
+    <div class="error-block" v-if="errorMessage">{{ errorMessage }}</div>
     <AdminTableFooter :table-count="data?.length" :store="store" />
   </div>
 </template>
@@ -77,6 +78,7 @@ const route = useRoute();
 const routeName = String(route.name);
 
 import type { BaseStore } from "../../stores/base";
+import { computed } from "vue";
 
 interface Columns {
   key: string;
@@ -94,6 +96,13 @@ interface Props {
 
 const props = defineProps<Props>();
 const emits = defineEmits(["openDelete", "selectAll", "selectOne"]);
+
+const errorMessage = computed(() => {
+  const search = route.query.search;
+  if (props.data?.length === 0 && search) {
+    return "Ничего не найдено по заданным параметрам.";
+  }
+});
 </script>
 
 <style lang="scss" scoped>
@@ -164,5 +173,11 @@ tr {
       outline: none !important;
     }
   }
+}
+.error-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 </style>

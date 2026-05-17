@@ -27,6 +27,8 @@ from src.repositories.exceptions import (
 from src.services.exceptions import (
     EmptyPatchError,
     InvalidFileExtensionError,
+    InvalidImageUrlError,
+    InvalidPasswordError,
     LoginError,
     NotFoundError,
     UnauthenticatedError,
@@ -238,7 +240,7 @@ def add_exception_handlers(app: FastAPI):
     def handle_permissions(request: Request, exc: PermissionError):
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
-            content={"detail": "forbiden."},
+            content={"detail": "Недостаточно прав."},
         )
 
     @app.exception_handler(IssuedExcessUserPermissionsError)
@@ -255,4 +257,18 @@ def add_exception_handlers(app: FastAPI):
         return JSONResponse(
             status_code=status.HTTP_403_FORBIDDEN,
             content={"detail": "Вы не можете удалить свой аккаунт."},
+        )
+
+    @app.exception_handler(InvalidPasswordError)
+    def handle_invalid_password(request: Request, exc: InvalidPasswordError):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"detail": "Неверный пароль."},
+        )
+
+    @app.exception_handler(InvalidImageUrlError)
+    def handle_invalid_image(request: Request, exc: InvalidImageUrlError):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"detail": "Неверный url изображения."},
         )

@@ -10,6 +10,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useEquipmentStore } from "@/stores/equipments";
 import { useEquipmentTypeStore } from "@/stores/equipmentTypes";
 import type { CreateEquipment } from "@/types/equipments";
+import { useErrorStore } from "@/stores/errors";
 
 const props = defineProps<{
   mode: "create" | "edit" | "detail";
@@ -17,6 +18,8 @@ const props = defineProps<{
 
 const route = useRoute();
 const router = useRouter();
+
+const errorStore = useErrorStore();
 const equipmentStore = useEquipmentStore();
 const typeStore = useEquipmentTypeStore();
 
@@ -36,9 +39,7 @@ const getPatchPayload = (): Partial<CreateEquipment> | null => {
   const payload = { ...form } as Partial<CreateEquipment>;
   const equipment = equipmentStore.equipment;
   if (!equipment) {
-    equipmentStore.errors.push({
-      message: "Непредвиденная ошибка",
-    });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
     return null;
   }
   const entries = Object.entries(form) as [
@@ -51,9 +52,7 @@ const getPatchPayload = (): Partial<CreateEquipment> | null => {
     }
   });
   if (JSON.stringify(payload) === "{}") {
-    equipmentStore.errors.push({
-      message: "Nothing to update.",
-    });
+    errorStore.addErrorMessage("Nothing to update.");
     return null;
   }
   return payload;
@@ -63,21 +62,17 @@ const validateForm = (): boolean => {
   const form = formData.value;
   let isValid: boolean = true;
   if (form.name.length < 1) {
-    equipmentStore.errors.push({
-      message: "Название оборудования не может содержать менее 1 символа.",
-    });
+    errorStore.addErrorMessage(
+      "Название оборудования не может содержать менее 1 символа.",
+    );
     isValid = false;
   }
   if (form.image.length < 1) {
-    equipmentStore.errors.push({
-      message: "Изображение не загружено.",
-    });
+    errorStore.addErrorMessage("Изображение не загружено.");
     isValid = false;
   }
   if (form.type_id == 0) {
-    equipmentStore.errors.push({
-      message: "Некорректный тип оборудования.",
-    });
+    errorStore.addErrorMessage("Некорректный тип оборудования.");
     isValid = false;
   }
   return isValid;
@@ -90,7 +85,7 @@ const updateEquipment = async () => {
       return await equipmentStore.update(equipmentId.value, updatePayload);
     }
   } else {
-    equipmentStore.errors.push({ message: "Непредвиденная ошибка." });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
   }
 };
 
@@ -128,7 +123,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <TheForm :store="equipmentStore" @submit="handleSubmit">
+  <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
         mode === "detail"

@@ -2,8 +2,8 @@
   <div class="inspection-page">
     <div
       class="err-handler"
-      v-for="err in inspectionStore.errors"
-      v-if="!inspection"
+      v-for="err in errors"
+      v-if="!inspection || inspection.id !== inspectionId"
     >
       {{ err.message }}
     </div>
@@ -36,14 +36,18 @@ import { onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 
 import { useInspectionStore } from "@/stores/inspections";
-
-const inspectionStore = useInspectionStore();
-const inspection = computed(() => inspectionStore.inspection);
+import { useErrorStore } from "@/stores/errors";
 
 const route = useRoute();
+const inspectionId = Number(route.params.inspectionId);
+
+const inspectionStore = useInspectionStore();
+const errorStore = useErrorStore();
+
+const inspection = computed(() => inspectionStore.inspection);
+const errors = computed(() => errorStore.errors);
 
 onMounted(async () => {
-  const inspectionId = Number(route.params.inspectionId);
   await inspectionStore.loadById(inspectionId);
 });
 </script>

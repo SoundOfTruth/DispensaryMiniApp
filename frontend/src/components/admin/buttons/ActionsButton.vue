@@ -42,6 +42,7 @@ const deleteItems = () => {
   }
 }
 .btn {
+  padding-inline: 14px;
   background: white;
   border: 1px solid gray;
   border-radius: 4px;

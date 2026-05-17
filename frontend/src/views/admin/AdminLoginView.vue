@@ -3,13 +3,20 @@ import LoginForm from "@/components/LoginForm.vue";
 
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/users";
+import { useErrorStore } from "@/stores/errors";
 
 const router = useRouter();
+
 const userStore = useUserStore();
+const errorStore = useErrorStore();
 
 const afterSubmit = async () => {
   await userStore.loadCurrentUser();
-  router.push({ name: "admin.index" });
+  if (userStore.isAdmin) {
+    router.push({ name: "admin.index" });
+  } else if (userStore.currentUser && errorStore.errors.length === 0) {
+    errorStore.addErrorMessage("Недостаточно прав.");
+  }
 };
 </script>
 

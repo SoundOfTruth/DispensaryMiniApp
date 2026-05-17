@@ -1,6 +1,10 @@
 <template>
   <div class="doctor-page">
-    <div class="err-handler" v-for="err in doctorStore.errors" v-if="!doctor">
+    <div
+      class="err-handler"
+      v-for="err in errors"
+      v-if="!doctor || doctor.id !== doctorId"
+    >
       {{ err.message }}
     </div>
     <div class="doctor-container" v-else>
@@ -70,10 +74,15 @@ import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 
 import { useDoctorStore } from "@/stores/doctors";
+import { useErrorStore } from "@/stores/errors";
 
 const route = useRoute();
+const doctorId: number = Number(route.params.doctorId);
+
+const errorStore = useErrorStore();
 const doctorStore = useDoctorStore();
 const doctor = computed(() => doctorStore.doctor);
+const errors = computed(() => errorStore.errors);
 
 const infoExists = computed(() =>
   Boolean(
@@ -86,7 +95,6 @@ const infoExists = computed(() =>
 );
 
 onMounted(async () => {
-  const doctorId: number = Number(route.params.doctorId);
   await doctorStore.loadById(doctorId);
 });
 </script>

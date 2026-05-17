@@ -13,17 +13,18 @@ import AdminPage from "@/components/admin/AdminPage.vue";
 
 import { useEquipmentStore } from "@/stores/equipments";
 
-import type { Equipment } from "@/types/equipments";
+import type { Equipment, SimpleEquipmentType } from "@/types/equipments";
 
 interface Columns {
   key: keyof Equipment;
   text: string;
+  secondKey?: keyof SimpleEquipmentType;
 }
 
 const columns: Columns[] = [
   { key: "id", text: "id" },
   { key: "name", text: "Название" },
-  { key: "type_id", text: "Тип" },
+  { key: "type", text: "Тип", secondKey: "name" },
 ];
 
 const equipmentStore = useEquipmentStore();

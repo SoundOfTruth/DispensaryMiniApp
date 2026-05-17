@@ -7,7 +7,8 @@ import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { useEquipmentTypeStore } from "@/stores/equipmentTypes";
-import type { CreateEquipmentType } from "@/types/equipmentTypes";
+import type { CreateEquipmentType } from "@/types/equipments";
+import { useErrorStore } from "@/stores/errors";
 
 const props = defineProps<{
   mode: "create" | "edit" | "detail";
@@ -15,6 +16,8 @@ const props = defineProps<{
 
 const route = useRoute();
 const router = useRouter();
+
+const errorStore = useErrorStore();
 const typeStore = useEquipmentTypeStore();
 
 const typeId = ref<number>();
@@ -24,9 +27,9 @@ const validateForm = (): boolean => {
   const form = formData.value;
   let isValid: boolean = true;
   if (form.name.length < 1) {
-    typeStore.errors.push({
-      message: "Название типа не может содержать менее 1 символа.",
-    });
+    errorStore.addErrorMessage(
+      "Название типа не может содержать менее 1 символа.",
+    );
     isValid = false;
   }
   return isValid;
@@ -36,7 +39,7 @@ const updateType = async () => {
   if (typeId.value) {
     return await typeStore.update(typeId.value, formData.value);
   } else {
-    typeStore.errors.push({ message: "Непредвиденная ошибка." });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
   }
 };
 
@@ -75,7 +78,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <TheForm :store="typeStore" @submit="handleSubmit">
+  <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
         mode === "detail"

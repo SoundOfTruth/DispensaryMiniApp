@@ -12,11 +12,13 @@ router = APIRouter(prefix="/equipment-types", tags=["Equipment Types"])
 
 @router.get("/")
 async def get_equipment_types(
-    service: EquipmentTypeServiceDep, detail: Annotated[bool | None, Query()] = None
+    service: EquipmentTypeServiceDep,
+    detail: Annotated[bool | None, Query()] = None,
+    search: str | None = None,
 ):
     if detail:
         return await service.get_all_with_relations()
-    return await service.get_all()
+    return await service.get_all(search)
 
 
 @router.get("/{id}/", dependencies=[Depends(has_admin_permissions)])

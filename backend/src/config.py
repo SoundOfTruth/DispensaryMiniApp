@@ -30,12 +30,12 @@ class DatabaseSettings(BaseModel):
 
 class Settings(BaseSettings):
     ALLOWED_HOSTS: list[str] = [
-        "http://localhost",
-        "http://localhost:5173",
-        "http://127.0.0.1",
-        "http://127.0.0.1:5173",
-        "http://192.168.0.11",
-        "http://192.168.0.11:5173",
+        "localhost",
+        "localhost:5173",
+        "127.0.0.1",
+        "127.0.0.1:5173",
+        "192.168.0.11",
+        "192.168.0.11:5173",
     ]
 
     SECRET: str

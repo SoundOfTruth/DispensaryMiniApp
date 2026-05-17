@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import TheForm from "./TheForm.vue";
 import FormActions from "./FormActions.vue";
-import FormSearchField from "./FormSearchField.vue";
 import FileInput from "./FileInput.vue";
+import LoadContainer from "@/components/LoadContainer.vue";
 
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { useDoctorStore } from "@/stores/doctors";
@@ -14,6 +14,7 @@ import { useInspectionStore } from "@/stores/inspections";
 
 import type { CreateDoctor, CreateDoctorForm } from "@/types/doctors";
 import type { SimpleInspection } from "@/types/inspections";
+import { useErrorStore } from "@/stores/errors";
 
 const props = defineProps<{
   mode: "create" | "edit" | "detail";
@@ -22,6 +23,7 @@ const props = defineProps<{
 const route = useRoute();
 const router = useRouter();
 
+const errorStore = useErrorStore();
 const doctorStore = useDoctorStore();
 const departmentStore = useDepartmentStore();
 const specialityStore = useSpecialityStore();
@@ -29,11 +31,17 @@ const inspectionStore = useInspectionStore();
 
 const departments = computed(() => departmentStore.departments);
 const specialities = computed(() => specialityStore.specialties);
-const inspections = computed(() => inspectionStore.inspections);
+const inspections = ref<SimpleInspection[]>([]);
 
-const inspectionSearch = computed(
-  () => route.query.search as string | undefined,
-);
+const searchInspections = async (search: string) => {
+  await inspectionStore.loadList({ search: search });
+  inspections.value = [...inspectionStore.inspections];
+};
+
+const loadInspections = async (filters: { page?: number; search?: string }) => {
+  await inspectionStore.loadList(filters);
+  inspections.value.push(...inspectionStore.inspections);
+};
 
 const doctorId = ref<number>();
 const formData = ref<CreateDoctorForm>({
@@ -59,15 +67,15 @@ const setPhoto = (url: string) => {
 
 const addEducation = (set: Set<string>, title: string) => {
   if (set.has(title)) {
-    doctorStore.errors.push({ message: `${title} уже в добавлено.` });
+    errorStore.addErrorMessage(`${title} уже в добавлено.`);
     return;
   }
   if (title.length > 0) {
     set.add(title);
   } else {
-    doctorStore.errors.push({
-      message: "Добавленное образование содержит менее 1 символа.",
-    });
+    errorStore.addErrorMessage(
+      "Добавленное образование содержит менее 1 символа.",
+    );
   }
 };
 
@@ -105,9 +113,7 @@ const validateForm = (): boolean => {
 
   if (typeof payload.experience_start === "number") {
     if (payload.experience_start < 1920) {
-      doctorStore.errors.push({
-        message: "Начало стажа некорректно.",
-      });
+      errorStore.addErrorMessage("Начало стажа некорректно.");
       isValid = false;
     }
   } else {
@@ -119,28 +125,24 @@ const validateForm = (): boolean => {
     payload.firstname.length < 1 ||
     payload.middlename.length < 1
   ) {
-    doctorStore.errors.push({
-      message: "Фамилия/имя/очество не может содержать менее 1 символа.",
-    });
+    errorStore.addErrorMessage(
+      "Фамилия/имя/очество не может содержать менее 1 символа.",
+    );
     isValid = false;
   }
   if (payload.qualification && payload.qualification.length < 1) {
-    doctorStore.errors.push({
-      message: "Поле квалификация не может содержать менее 1 символа.",
-    });
+    errorStore.addErrorMessage(
+      "Поле квалификация не может содержать менее 1 символа.",
+    );
     isValid = false;
   }
 
   if (payload.department_id == 0) {
-    doctorStore.errors.push({
-      message: "Отделение некорректно.",
-    });
+    errorStore.addErrorMessage("Отделение некорректно.");
     isValid = false;
   }
   if (payload.speciality_id == 0) {
-    doctorStore.errors.push({
-      message: "Специальность некорректна.",
-    });
+    errorStore.addErrorMessage("Специальность некорректна.");
     isValid = false;
   }
   return isValid;
@@ -149,9 +151,7 @@ const validateForm = (): boolean => {
 const getPatchPayload = (): Partial<CreateDoctor> | null => {
   const doctor = doctorStore.doctor;
   if (!doctor) {
-    inspectionStore.errors.push({
-      message: "Непредвиденная ошибка.",
-    });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
     return null;
   }
   const {
@@ -217,9 +217,7 @@ const getPatchPayload = (): Partial<CreateDoctor> | null => {
     }
   });
   if (JSON.stringify(payload) === "{}") {
-    doctorStore.errors.push({
-      message: "Nothing to update.",
-    });
+    errorStore.addErrorMessage("Nothing to update.");
     return null;
   }
   return payload;
@@ -248,7 +246,7 @@ const updateDoctor = async () => {
       return await doctorStore.update(doctorId.value, updatePayload);
     }
   } else {
-    doctorStore.errors.push({ message: "Непредвиденная ошибка." });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
   }
 };
 
@@ -277,11 +275,12 @@ onMounted(async () => {
   await specialityStore.loadList();
   if (props.mode != "detail") {
     await inspectionStore.loadList();
+    inspections.value.push(...inspectionStore.inspections);
   }
   if (props.mode != "create") {
     doctorId.value = Number(route.params.id);
     if (!doctorId.value) {
-      doctorStore.errors.push({ message: "Непредвиденная ошибка." });
+      errorStore.addErrorMessage("Непредвиденная ошибка.");
       return;
     }
     await doctorStore.loadById(doctorId.value);
@@ -306,18 +305,10 @@ onMounted(async () => {
     }
   }
 });
-
-watch(
-  () => [inspectionSearch],
-  async () => {
-    await inspectionStore.loadList();
-  },
-  { deep: true },
-);
 </script>
 
 <template>
-  <TheForm :store="doctorStore" @submit="handleSubmit">
+  <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
         mode === "detail"
@@ -528,7 +519,7 @@ watch(
         <button
           v-for="inspection in formData.inspections"
           :key="inspection.id"
-          class="item"
+          class="selection-item"
           @click="removeInspection(inspection.id)"
           :disabled="mode === 'detail'"
         >
@@ -542,36 +533,25 @@ watch(
     <div v-if="mode !== 'detail'" class="group">
       <label>Доступные обследования</label>
 
-      <div class="item-search">
-        <FormSearchField title="Найти обследование" />
-      </div>
-
       <div class="group">
-        <div class="selection">
+        <LoadContainer
+          :count="inspectionStore.count"
+          :limit="inspectionStore.limit"
+          @load="loadInspections"
+          @search="searchInspections"
+        >
           <button
             v-for="inspection in availableInspection"
             :key="inspection.id"
-            class="item"
+            class="selection-item"
             @click="selectInspection(inspection)"
           >
             <div class="item-info">
               <strong>{{ inspection.title }}</strong>
             </div>
           </button>
-        </div>
+        </LoadContainer>
       </div>
-    </div>
-
-    <div
-      v-if="
-        availableInspection?.length === 0 && formData.inspections.length === 0
-      "
-    >
-      {{
-        inspectionSearch !== undefined
-          ? "Ничего не найдено..."
-          : "В базе нет обследований."
-      }}
     </div>
 
     <FormActions :mode="mode" @cancel="handleCancel" />
@@ -603,9 +583,6 @@ watch(
   }
 }
 
-.item-search {
-  margin-bottom: 16px;
-}
 .item-info {
   font-size: 14px;
   display: flex;
@@ -637,9 +614,9 @@ watch(
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
-  width: max-content;
-  max-width: 80vw;
+  width: 100%;
   gap: 8px;
+
   .education-data {
     display: flex;
     align-items: center;
@@ -650,12 +627,19 @@ watch(
     font-size: 13px;
     border: 1px solid #b3d7ff;
     font-family: sans-serif;
+    min-width: 0;
+    overflow: hidden;
+
     span {
       padding: 7px 1.5em;
       text-indent: 0;
       word-wrap: break-word;
       overflow-wrap: break-word;
+      word-break: break-all;
+      min-width: 0;
+      overflow: hidden;
     }
+
     .remove-education-btn {
       background: transparent;
       border: none;
@@ -668,8 +652,9 @@ watch(
       line-height: 1;
       border-radius: 20%;
       font-family: sans-serif;
-
+      flex-shrink: 0;
       transition: background-color 0.2s;
+
       &:hover {
         background-color: rgba(220, 53, 69, 0.1);
       }
@@ -683,16 +668,18 @@ watch(
   border: 1px solid #ddd;
   border-radius: 6px;
   margin-bottom: 16px;
-  .item {
-    display: flex;
-    width: 100%;
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    &:hover {
-      background-color: #f8f9fa;
-    }
+}
+
+.selection-item {
+  box-sizing: border-box;
+  display: flex;
+  width: 100%;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  &:hover {
+    background-color: #f8f9fa;
   }
 }
 </style>

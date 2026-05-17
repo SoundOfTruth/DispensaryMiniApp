@@ -65,6 +65,13 @@ class UserApi {
       params: { ids: ids },
     });
   }
+
+  async changePassword(currentPassword: string, newPassword: string) {
+    await this.client.post("/users/change-password/", {
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+  }
 }
 
 export default new UserApi(baseApiUrl, {

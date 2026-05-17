@@ -21,11 +21,11 @@ class DoctorService:
         self.doctor_rep = DoctorRepository(session)
 
     async def create(self, schema: CreateDoctorSchema):
-        doctor = await self.doctor_rep.create(schema.model_dump())
+        doctor = await self.doctor_rep.create(schema.model_dump(mode="json"))
         return DoctorSchema.model_validate(doctor)
 
     async def update(self, id: int, schema: UpdateDoctorSchema):
-        payload = schema.model_dump(exclude_unset=True)
+        payload = schema.model_dump(mode="json", exclude_unset=True)
         if not payload:
             raise EmptyPatchError
         doctor = await self.doctor_rep.update(id, payload)

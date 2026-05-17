@@ -16,7 +16,7 @@ class UpdateEquipmentTypeSchema(BaseModel):
 class CreateEquipmentSchema(BaseModel):
     name: str = Field(max_length=255)
     type_id: int
-    image: HttpUrl | None = None
+    image: HttpUrl
 
     model_config = ConfigDict(str_min_length=1)
 
@@ -24,13 +24,21 @@ class CreateEquipmentSchema(BaseModel):
 class UpdateEquipmentSchema(BaseModel):
     name: str = Field(default="", max_length=255)
     type_id: int = Field(default=0, gt=0)
-    image: HttpUrl | None = None
+    image: HttpUrl = HttpUrl("http://localhost/err.png")
 
     model_config = ConfigDict(str_min_length=1)
 
 
+class SimpleEquipmentSchema(CreateEquipmentSchema):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class EquipmentSchema(CreateEquipmentSchema):
     id: int
+    type_id: int = Field(exclude=True)
+    type: "SimpleEquipmentTypeSchema"
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -38,7 +46,7 @@ class EquipmentSchema(CreateEquipmentSchema):
 class EquipmentItemSchema(BaseModel):
     id: int
     name: str
-    image: str | None
+    image: str
 
     model_config = ConfigDict(from_attributes=True)
 

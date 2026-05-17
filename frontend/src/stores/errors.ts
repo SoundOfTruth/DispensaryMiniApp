@@ -1,26 +1,66 @@
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { defineStore } from "pinia";
 
-import type { ApiError } from "@/utils/api";
+import { AxiosError } from "axios";
 
-export const useErrorsStore = defineStore("errorsStore", () => {
-  const _errors = ref<ApiError[]>([]);
-  const errors = computed(() => {
-    const copy = { ..._errors.value };
-    _errors.value = [];
-    return copy;
-  });
+export interface ApiError {
+  field?: string;
+  message: string;
+}
+
+export const useErrorStore = defineStore("errorStore", () => {
+  const errors = ref<ApiError[]>([]);
+
   const addErrorMessage = (message: string) => {
-    _errors.value.push({ message: message });
+    errors.value.push({ message: message });
   };
   const setErrorMessage = (message: string) => {
-    _errors.value = [{ message: message }];
+    errors.value = [{ message: message }];
   };
-  const addError = (error: ApiError) => {
-    _errors.value.push(error);
+  const clearErrors = () => {
+    errors.value = [];
   };
-  const setError = (error: ApiError) => {
-    _errors.value = [error];
+
+  const parseApiError = (error: unknown) => {
+    if (error instanceof AxiosError) {
+      if (error.code == "ETIMEDOUT") {
+        errors.value = [{ message: "Сервер перегружен." }];
+        return;
+      }
+      if (error.code == "ERR_NETWORK") {
+        errors.value = [{ message: "Удалённый сервер не отвечает." }];
+        return;
+      }
+      if (error.code == "ERR_BAD_RESPONSE") {
+        errors.value = [{ message: "Внутренняя ошибка сервера." }];
+        return;
+      }
+      if (error.code == "ERR_BAD_REQUEST") {
+        const detail = error.response?.data?.detail;
+        if (error.status == 400 && typeof detail === "string") {
+          errors.value = [{ message: detail }];
+          return;
+        }
+        if (error.status == 422) {
+          if (!Array.isArray(detail)) {
+            errors.value = [{ message: "Непредвиденная ошибка." }];
+            return;
+          }
+          errors.value = detail.map((err: any) => ({
+            field: err.loc?.slice(1).join("."),
+            message: err.msg,
+          }));
+          return;
+        }
+      }
+      errors.value = [{ message: "Непредвиденная ошибка." }];
+    }
   };
-  return { errors, addErrorMessage, setErrorMessage, addError, setError };
+  return {
+    errors,
+    addErrorMessage,
+    setErrorMessage,
+    clearErrors,
+    parseApiError,
+  };
 });

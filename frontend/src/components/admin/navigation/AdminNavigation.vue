@@ -14,7 +14,6 @@
           v-for="link in links"
         />
       </nav>
-      <RouterLink :to="{ name: 'logout' }" class="logout-btn">Выйти</RouterLink>
     </aside>
   </div>
 </template>

@@ -7,6 +7,7 @@ import { useRoute, useRouter } from "vue-router";
 
 import { useUserStore } from "@/stores/users";
 import type { CreateUser } from "@/types/users";
+import { useErrorStore } from "@/stores/errors";
 
 const props = defineProps<{
   mode: "create" | "edit" | "detail";
@@ -14,6 +15,8 @@ const props = defineProps<{
 
 const route = useRoute();
 const router = useRouter();
+
+const errorStore = useErrorStore();
 const userStore = useUserStore();
 
 const userId = ref<number>();
@@ -43,9 +46,7 @@ const getPatchPayload = (): Partial<CreateUser> | null => {
   const user = userStore.user;
 
   if (!user) {
-    userStore.errors.push({
-      message: "Непредвиденная ошибка.",
-    });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
     return null;
   }
 
@@ -60,9 +61,7 @@ const getPatchPayload = (): Partial<CreateUser> | null => {
   });
 
   if (JSON.stringify(payload) === "{}") {
-    userStore.errors.push({
-      message: "Nothing to update.",
-    });
+    errorStore.addErrorMessage("Nothing to update.");
     return null;
   }
   return payload;
@@ -76,18 +75,17 @@ const validateForm = (): boolean => {
     form.firstname.length < 1 ||
     form.middlename.length < 1
   ) {
-    userStore.errors.push({
-      message: "Фамилия/имя/очество не может содержать менее 1 символа.",
-    });
+    errorStore.addErrorMessage(
+      "Фамилия/имя/очество не может содержать менее 1 символа.",
+    );
+
     formValid = false;
   }
   if (
     (props.mode === "create" && !form.password) ||
     (form.password && form.password.length < 8)
   ) {
-    userStore.errors.push({
-      message: "Пароль должен состоять минимум из 8 символов.",
-    });
+    errorStore.addErrorMessage("Пароль должен состоять минимум из 8 символов.");
     formValid = false;
   }
   return formValid;
@@ -100,7 +98,7 @@ const updateUser = async () => {
       return await userStore.update(userId.value, updatePayload);
     }
   } else {
-    userStore.errors.push({ message: "Непредвиденная ошибка." });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
   }
 };
 
@@ -136,7 +134,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <TheForm :store="userStore" @submit="handleSubmit">
+  <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
         mode === "detail"

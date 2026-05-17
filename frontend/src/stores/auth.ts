@@ -4,8 +4,11 @@ import { defineStore } from "pinia";
 import AuthApi from "@/api/auth";
 import { AxiosError } from "axios";
 import type { LoginSchema } from "@/types/auth";
+import { useErrorStore } from "./errors";
 
 export const useAuthStore = defineStore("authStore", () => {
+  const errorStore = useErrorStore();
+
   const accessToken = ref<string | null>(null);
   const isAuthenticated = ref<boolean>(
     localStorage.getItem("isAuthenticated") === "true" ? true : false,
@@ -29,9 +32,7 @@ export const useAuthStore = defineStore("authStore", () => {
       const tokenResponse = await AuthApi.login(data.email, data.password);
       setAccessToken(tokenResponse.access_token, tokenResponse.token_type);
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.log(error);
-      }
+      errorStore.parseApiError(error);
     }
   };
 
@@ -53,6 +54,7 @@ export const useAuthStore = defineStore("authStore", () => {
         } else {
           accessToken.value = null;
         }
+        errorStore.parseApiError(error);
       }
     } finally {
       isRefreshing.value = false;
@@ -63,7 +65,9 @@ export const useAuthStore = defineStore("authStore", () => {
     try {
       await AuthApi.logout();
       setAccessToken(null);
-    } catch (error) {}
+    } catch (error) {
+      errorStore.parseApiError(error);
+    }
   };
   return { accessToken, isAuthenticated, login, refreshAccessToken, logout };
 });

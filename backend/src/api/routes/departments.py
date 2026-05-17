@@ -12,8 +12,8 @@ router = APIRouter(
 
 
 @router.get("/")
-async def get_departments(service: DepartmentServiceDep):
-    return await service.get_all()
+async def get_departments(service: DepartmentServiceDep, search: str | None = None):
+    return await service.get_all(search)
 
 
 @router.get("/{id}/")

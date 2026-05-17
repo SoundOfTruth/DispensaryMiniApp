@@ -18,7 +18,7 @@ class UserRepository(DeleteOnlyRepository[User]):
             raise UserEmailIsUsingError
         raise err
 
-    def get_search_expressions(self, search: str | None):
+    def get_expressions(self, search: str | None):
         expressions = []
         if search:
             expressions.append(
@@ -39,7 +39,7 @@ class UserRepository(DeleteOnlyRepository[User]):
         limit: int | None = None,
         offset: int | None = None,
     ) -> Sequence[User]:
-        expressions = self.get_search_expressions(search)
+        expressions = self.get_expressions(search)
         statement = (
             select(self.model)
             .where(*expressions)
@@ -53,7 +53,7 @@ class UserRepository(DeleteOnlyRepository[User]):
     async def count(
         self, filters: dict[str, int] = {}, search: str | None = None
     ) -> int:
-        expressions = self.get_search_expressions(search)
+        expressions = self.get_expressions(search)
         return await self._count(filters, expressions)
 
     async def create(self, data: dict) -> User:

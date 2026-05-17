@@ -28,3 +28,7 @@ class InvalidFileExtensionError(ServiceError):
 
 class EmptyPatchError(ServiceError):
     pass
+
+
+class InvalidImageUrlError(ServiceError):
+    pass

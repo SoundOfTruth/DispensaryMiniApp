@@ -29,22 +29,40 @@ import { computed, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 
 import { useInspectionStore } from "@/stores/inspections";
+import { useErrorStore } from "@/stores/errors";
 
 const route = useRoute();
+
+const errorStore = useErrorStore();
 const inspectionStore = useInspectionStore();
+
 const inspections = computed(() => inspectionStore.inspections);
-const errors = computed(() => inspectionStore.errors);
+const errors = computed(() => errorStore.errors);
 const errCondition = computed(
-  () => inspections.value == undefined || inspections.value?.length == 0,
+  () => inspections.value === undefined || inspections.value?.length == 0,
 );
+
+const afterLoad = () => {
+  const search = route.query.search;
+  if (inspections.value.length === 0) {
+    if (!search) {
+      errorStore.addErrorMessage("Ничего не найдено...");
+    } else {
+      errorStore.addErrorMessage("Ничего не найдено по заданным параметрам.");
+    }
+  }
+};
+
 onMounted(async () => {
   await inspectionStore.loadList();
+  afterLoad();
 });
 
 watch(
   () => route.query,
   async () => {
     await inspectionStore.loadList();
+    afterLoad();
   },
 );
 </script>

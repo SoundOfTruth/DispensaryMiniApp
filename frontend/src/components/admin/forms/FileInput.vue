@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import DeleteSvg from "@/components/svg/DeleteSvg.vue";
+import { useErrorStore } from "@/stores/errors";
 
 import { useFilesStore } from "@/stores/files";
 import { ref, watch } from "vue";
@@ -9,6 +10,7 @@ const emits = defineEmits<{
 }>();
 const props = defineProps<{ hidden?: boolean; previewUrl?: string | null }>();
 
+const errorStore = useErrorStore();
 const filesStore = useFilesStore();
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
@@ -17,9 +19,6 @@ const previewUrl = ref<string | null>();
 
 const clearPreview = () => {
   if (!props.hidden) {
-    // if (previewUrl.value) {
-    //   URL.revokeObjectURL(previewUrl.value);
-    // }
     previewUrl.value = undefined;
     emits("on-select", "");
   }
@@ -37,11 +36,11 @@ const handleFileSelect = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
   if (!file) {
-    console.log("no file");
+    errorStore.addErrorMessage("Файл не загружен на клиент.");
     return;
   }
   if (!fileTypes.some((type) => type == file.type)) {
-    console.log(file.type);
+    errorStore.addErrorMessage("Вы не можете загрузить файл данного типа.");
     return;
   }
   const created = await filesStore.create(file);
@@ -94,11 +93,11 @@ watch(
   gap: 20px;
   .choise-btn {
     padding: 10px 6px;
-    border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 14px;
     transition: border-color 0.2s;
     border: 1px solid black;
+    width: 140px;
   }
 }
 

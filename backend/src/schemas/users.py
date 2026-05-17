@@ -34,8 +34,8 @@ class UserSchema(CreateUserSchema):
 
 
 class PasswordChangeSchema(BaseSchema):
-    new_password: str = Field(min_length=8)
     current_password: str
+    new_password: str = Field(min_length=8)
 
 
 class PaginatedUserSchema(BaseSchema):

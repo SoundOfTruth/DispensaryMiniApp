@@ -42,7 +42,7 @@ const emits = defineEmits(["cancel"]);
       }
     }
     &.cancel {
-      background-color: #6c757d;
+      background: #6c757d;
       color: white;
 
       &:hover {

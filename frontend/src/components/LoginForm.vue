@@ -6,7 +6,7 @@
       v-model="formData.email"
       placeholder="Email"
       id="name"
-      class="field"
+      class="field mb"
     />
 
     <input
@@ -17,17 +17,24 @@
       id="name"
       class="field"
     />
+
+    <ErrorBlock />
     <button class="submit-btn">Войти</button>
   </form>
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from "@/stores/auth";
+import ErrorBlock from "./ErrorBlock.vue";
+
 import { ref } from "vue";
+
+import { useAuthStore } from "@/stores/auth";
+import { useErrorStore } from "@/stores/errors";
 
 const emits = defineEmits(["afterSubmit"]);
 
 const authStore = useAuthStore();
+const errorStore = useErrorStore();
 
 const formData = ref<{ email: string; password: string }>({
   email: "",
@@ -35,17 +42,23 @@ const formData = ref<{ email: string; password: string }>({
 });
 
 const onSubmit = async () => {
+  errorStore.clearErrors();
   await authStore.login(formData.value);
   emits("afterSubmit");
 };
 </script>
 
 <style lang="scss" scoped>
+.mb {
+  margin-bottom: 24px;
+}
+.errors-position {
+  padding-top: 5px;
+}
 .form-container {
   font-size: 14px;
   display: flex;
   flex-direction: column;
-  gap: 30px;
 }
 .field {
   box-sizing: border-box;
@@ -62,6 +75,7 @@ const onSubmit = async () => {
   }
 }
 .submit-btn {
+  margin-top: 24px;
   box-sizing: border-box;
   padding: 14px 0px;
   border: none;

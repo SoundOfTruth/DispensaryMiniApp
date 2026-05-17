@@ -7,7 +7,7 @@ import type {
   SimpleEquipmentType,
   EquipmentType,
   CreateEquipmentType,
-} from "@/types/equipmentTypes";
+} from "@/types/equipments";
 import { refreshTokenOnFall, setAuthToken } from "@/utils/api";
 
 class EquipmentTypeApi {

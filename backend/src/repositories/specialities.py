@@ -12,6 +12,12 @@ from src.repositories.exceptions import (
 class SpecialityRepository(DefaultRepository[Speciality]):
     model = Speciality
 
+    def get_expressions(self, search: str | None):
+        expressions = []
+        if search:
+            expressions.append(self.model.name.icontains(search))
+        return expressions
+
     async def handle_error(self, err: IntegrityError):
         await self.session.rollback()
         orig_err = str(err.orig)
@@ -20,9 +26,6 @@ class SpecialityRepository(DefaultRepository[Speciality]):
         if "doctors_speciality_id_fkey" in orig_err:
             raise SpecialityIsUsingError
         raise err
-
-    async def count(self) -> int:
-        return await super()._count()
 
     async def create(self, data: dict) -> Speciality:
         instance = self.model(**data)

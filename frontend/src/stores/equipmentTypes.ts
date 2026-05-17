@@ -3,13 +3,13 @@ import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 
 import EquipmentTypeApi from "@/api/equipmentTypes";
-import { parseApiErrors, type ApiError } from "@/utils/api";
 
 import type {
   SimpleEquipmentType,
   EquipmentType,
   CreateEquipmentType,
-} from "@/types/equipmentTypes";
+} from "@/types/equipments";
+import { useErrorStore } from "./errors";
 
 interface ApiParams {
   search?: number;
@@ -21,13 +21,13 @@ interface Filters {
 
 export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
   const route = useRoute();
+  const errorStore = useErrorStore();
 
   const detailTypes = ref<EquipmentType[]>([]);
   const types = ref<SimpleEquipmentType[]>([]);
   const type = ref<SimpleEquipmentType>();
 
   const count = computed(() => types.value.length || 0);
-  const errors = ref<ApiError[]>([]);
 
   const getAllowedParams = (filters: Filters): ApiParams => {
     const allowedParams: (keyof Filters)[] = ["search"];
@@ -50,43 +50,37 @@ export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
     try {
       detailTypes.value = await EquipmentTypeApi.getAllDetail();
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
   const loadList = async () => {
-    errors.value = [];
     const params = getAllowedParams(route.query);
     try {
       types.value = await EquipmentTypeApi.getAll(params);
-      if (types.value.length == 0 && params.search) {
-        errors.value = [
-          { message: "Ничего не найдено по заданным параметрам." },
-        ];
-      }
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   const loadById = async (id: number) => {
     try {
       type.value = await EquipmentTypeApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   const create = async (payload: CreateEquipmentType) => {
     try {
       return await EquipmentTypeApi.create(payload);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   const update = async (id: number, payload: CreateEquipmentType) => {
     try {
       return await EquipmentTypeApi.update(id, payload);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -94,7 +88,7 @@ export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
     try {
       await EquipmentTypeApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -102,14 +96,13 @@ export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
     try {
       await EquipmentTypeApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   return {
     detailTypes,
     types,
     type,
-    errors,
     count,
     loadById,
     loadDetailList,

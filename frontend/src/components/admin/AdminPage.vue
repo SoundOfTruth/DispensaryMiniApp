@@ -43,7 +43,10 @@
       :store="props.store"
       @close="closeDelete"
     />
-    <AdminErrorModal :errors="store.errors" @close="store.errors = []" />
+    <AdminErrorModal
+      :errors="errorStore.errors"
+      @close="errorStore.clearErrors()"
+    />
   </Teleport>
 </template>
 
@@ -55,12 +58,14 @@ import AdminTable from "./AdminTable.vue";
 import SearchField from "../SearchField.vue";
 import ExportButton from "./buttons/ExportButton.vue";
 
-import type { BaseStore } from "../../stores/base";
+import type { BaseStore } from "@/stores/base";
 
 import { onMounted, watch, ref, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useUserStore } from "@/stores/users";
+import { useErrorStore } from "@/stores/errors";
 
+const errorStore = useErrorStore();
 const userStore = useUserStore();
 const isAdmin = computed(() => userStore.isAdmin);
 
@@ -70,7 +75,7 @@ const deleteOpen = ref<boolean>(false);
 const openDelete = (id?: number) => {
   deleteId.value = id;
   if (!deleteId.value && selectedItems.value.size === 0) {
-    props.store.errors.push({ message: "Ничего не выбрано." });
+    errorStore.setErrorMessage("Ничего не выбрано.");
   } else {
     deleteOpen.value = true;
   }
@@ -173,14 +178,18 @@ watch(
     display: flex;
     flex-direction: column;
     .header {
+      align-items: center;
       padding: 1rem;
       display: flex;
       border-bottom: 1px solid #e6e7e9;
       .title {
-        font-size: 115%;
+        font-size: 120%;
         font-weight: 500;
-        @media (max-width: 420px) {
-          font-size: 100%;
+        @media (max-width: 320px) {
+          font-size: 90%;
+        }
+        @media (max-width: 440px) {
+          font-size: 105%;
         }
       }
       .actions {
@@ -192,7 +201,7 @@ watch(
         .add-btn {
           border-radius: 8px;
           border: 1px solid transparent;
-          padding: 0.5em 1em;
+          padding: 0.5em 0.6em;
           font-size: 1em;
           font-weight: 500;
           font-family: inherit;
@@ -205,7 +214,8 @@ watch(
             padding: 0.5em 0.5em;
           }
           @media (max-width: 440px) {
-            font-size: 0.9em;
+            font-size: 70%;
+            padding: 0.5em 0.4em;
           }
           @media (min-width: 441px) and (max-width: 500px) {
             font-size: 0.9em;

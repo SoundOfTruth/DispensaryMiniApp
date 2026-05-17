@@ -31,15 +31,19 @@ class BaseRepository[RawTable]:
 
 
 class ReadOnlyRepository(BaseRepository[Table]):
+    def get_expressions(self, search: str | None):
+        return []
+
     async def get(self, pk: int, options: list = []) -> Table | None:
         return await self.session.get(self.model, pk, options=options)
 
     async def get_all(
         self,
-        expressions: list[ColumnElement[Any]] = [],
+        search: str | None = None,
         filters: dict[str, Any] = {},
         options: list = [],
     ) -> Sequence[Table]:
+        expressions = self.get_expressions(search)
         statement = (
             select(self.model)
             .where(*expressions)

@@ -15,6 +15,12 @@ from src.repositories.exceptions import (
 class EquipmentRepository(DefaultRepository[Equipment]):
     model = Equipment
 
+    def get_expressions(self, search: str | None) -> list:
+        expressions = []
+        if search:
+            expressions.append(self.model.name.icontains(search))
+        return expressions
+
     async def handle_error(self, err: IntegrityError):
         await self.session.rollback()
         orig_err = str(err.orig)
@@ -52,10 +58,8 @@ class EquipmentRepository(DefaultRepository[Equipment]):
         else:
             return res.scalar_one_or_none()
 
-    async def get_all_with_relations(self) -> Sequence[Equipment]:
-        statement = select(self.model).options(joinedload(self.model.type))
-        res = await self.session.execute(statement)
-        return res.scalars().all()
+    async def get_all_with_relations(self, search: str | None) -> Sequence[Equipment]:
+        return await self.get_all(search=search, options=[joinedload(self.model.type)])
 
     async def get_with_relations(self, id: int) -> Equipment | None:
         statement = (

@@ -8,7 +8,7 @@ import type {
   Inspection,
   SimpleInspection,
 } from "../types/inspections";
-import { parseApiErrors, type ApiError } from "@/utils/api";
+import { useErrorStore } from "./errors";
 
 interface ApiParams {
   limit: number;
@@ -23,22 +23,22 @@ interface Filters {
 
 export const useInspectionStore = defineStore("inspectionStore", () => {
   const route = useRoute();
+  const errorStore = useErrorStore();
 
   const inspections = ref<SimpleInspection[]>([]);
   const inspection = ref<Inspection>();
 
   const count = ref<number>(0);
   const limit = ref<number>(10);
-  const errors = ref<ApiError[]>([]);
 
-  const getAllowedParams = (filters: Filters): ApiParams => {
+  const getApiParams = (params: Filters): ApiParams => {
     const allowedParams: (keyof Filters)[] = ["search"];
-    const page = filters?.page || 1;
-    const params: ApiParams = {
+    const page = params?.page || 1;
+    const apiParams: ApiParams = {
       offset: (page - 1) * limit.value,
       limit: limit.value,
     };
-    Object.entries(filters).forEach(([key, value]) => {
+    Object.entries(params).forEach(([key, value]) => {
       const param = key as keyof Filters;
       if (
         param != "page" &&
@@ -46,35 +46,32 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
         value !== undefined &&
         value !== null
       ) {
-        params[param] = value;
+        apiParams[param] = value;
       }
     });
-    return params;
+    return apiParams;
   };
 
-  const loadList = async () => {
-    errors.value = [];
-    const params = getAllowedParams(route.query);
+  const loadList = async (filters: Filters = {}) => {
+    const routeParams = getApiParams(route.query);
+    const params = getApiParams(filters);
     try {
-      const paginatedData = await InspectionApi.getAll(params);
+      const paginatedData = await InspectionApi.getAll({
+        ...routeParams,
+        ...params,
+      });
       inspections.value = paginatedData.results;
       count.value = paginatedData.count;
-      if (paginatedData.count == 0 && params.search) {
-        errors.value = [
-          { message: "Ничего не найдено по заданным параметрам" },
-        ];
-      }
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
   const loadById = async (id: number) => {
-    errors.value = [];
     try {
       inspection.value = await InspectionApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -82,7 +79,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     try {
       return await InspectionApi.create(data);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -90,7 +87,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     try {
       return await InspectionApi.update(id, data);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -98,7 +95,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     try {
       await InspectionApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -106,7 +103,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     try {
       await InspectionApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -115,7 +112,6 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     inspections,
     count,
     limit,
-    errors,
     loadById,
     loadList,
     create,

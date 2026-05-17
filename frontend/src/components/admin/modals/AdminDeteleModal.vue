@@ -1,7 +1,7 @@
 <template>
   <CenterModal :open="props.open" @close="emits('close')">
-    <div>
-      <div class="title">Подтвердите действие</div>
+    <div class="modal-header">
+      <h3>Удалить выбранное ({{ id ? "1 элемент" : `${elementWord}` }})</h3>
     </div>
     <div class="actions">
       <button type="submit" class="btn delete" @click="processDelete()">
@@ -15,9 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import CenterModal from "./CenterModal.vue";
+import CenterModal from "../../CenterModal.vue";
 import type { BaseStore } from "@/stores/base";
-import { inject, ref } from "vue";
+import { computed, inject, ref } from "vue";
 
 const props = defineProps<{
   open: boolean;
@@ -31,6 +31,26 @@ inject("data", data);
 
 const emits = defineEmits(["close"]);
 
+const elementWord = computed(() => {
+  const count = props.selectedItems.size;
+  const lastDigit = count % 10;
+  const lastTwoDigits = count % 100;
+
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) {
+    return `${count} элементов`;
+  }
+
+  if (lastDigit === 1) {
+    return `${count} элемент`;
+  }
+
+  if (lastDigit >= 2 && lastDigit <= 4) {
+    return `${count} элемента`;
+  }
+
+  return `${count} элементов`;
+});
+
 const processDelete = async () => {
   if (props.id) {
     await props.store.deleteById(props.id);
@@ -43,36 +63,16 @@ const processDelete = async () => {
 </script>
 
 <style lang="scss" scoped>
-.modal {
-  z-index: 101;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 100vw;
+.modal-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  .modal-container {
-    z-index: 100;
-  }
-}
-.modal-content {
-  background: white;
-  padding-inline: 20px;
-  padding-bottom: 20px;
-  background: white;
-  border-radius: 16px;
-  width: 320px;
-  .title {
-    padding-top: 15px;
-    text-align: center;
-    font-size: 110%;
-    font-weight: 500;
-  }
-  .modal-content {
-    padding: 10px;
-    text-align: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.25rem;
   }
 }
 
@@ -80,7 +80,7 @@ const processDelete = async () => {
   display: flex;
   justify-content: center;
   gap: 40px;
-  padding-top: 20px;
+  padding: 20px;
   .btn {
     padding: 10px;
     width: 110px;
@@ -99,16 +99,5 @@ const processDelete = async () => {
     background-color: #6c757d;
     color: white;
   }
-}
-
-.modal-backdrop {
-  z-index: 99;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: black;
-  opacity: 0.5;
 }
 </style>

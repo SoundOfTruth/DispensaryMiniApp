@@ -15,6 +15,12 @@ from src.repositories.exceptions import (
 class EquipmentTypeRepository(DefaultRepository):
     model = EquipmentType
 
+    def get_expressions(self, search: str | None):
+        expressions = []
+        if search:
+            expressions.append(self.model.name.icontains(search))
+        return expressions
+
     async def handle_error(self, err: IntegrityError):
         await self.session.rollback()
         orig_err = str(err.orig)

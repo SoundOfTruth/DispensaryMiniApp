@@ -27,8 +27,8 @@ class SpecialityService:
             raise NotFoundError
         return SpecialitySchema.model_validate(speciality)
 
-    async def get_all(self) -> list[SpecialitySchema]:
-        specialities = await self.speciality_rep.get_all()
+    async def get_all(self, search: str | None) -> list[SpecialitySchema]:
+        specialities = await self.speciality_rep.get_all(search=search)
         return [
             SpecialitySchema.model_validate(speciality) for speciality in specialities
         ]

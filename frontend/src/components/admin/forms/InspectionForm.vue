@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import TheForm from "./TheForm.vue";
 
-import FormSearchField from "./FormSearchField.vue";
 import FormActions from "./FormActions.vue";
 
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 
 import { useInspectionStore } from "@/stores/inspections";
@@ -12,6 +11,8 @@ import { useDoctorStore } from "@/stores/doctors";
 
 import type { SimpleDoctor } from "@/types/doctors";
 import type { CreateInspection } from "@/types/inspections";
+import { useErrorStore } from "@/stores/errors";
+import LoadContainer from "@/components/LoadContainer.vue";
 const props = defineProps<{
   mode: "create" | "edit" | "detail";
 }>();
@@ -20,10 +21,10 @@ const emits = defineEmits(["cancel"]);
 const route = useRoute();
 const router = useRouter();
 const inspectionId = ref<number>();
+
+const errorStore = useErrorStore();
 const inspectionStore = useInspectionStore();
 const doctorStore = useDoctorStore();
-
-const doctors = computed(() => doctorStore.doctors);
 
 interface FormData {
   title: string;
@@ -39,7 +40,17 @@ const formData = ref<FormData>({
   doctors: [],
 });
 
-const doctorSearch = computed(() => route.query.search as string | undefined);
+const doctors = ref<SimpleDoctor[]>([]);
+
+const searchDoctors = async (search: string) => {
+  await doctorStore.loadList({ search: search });
+  doctors.value = [...doctorStore.doctors];
+};
+
+const loadDoctors = async (filters: { page?: number; search?: string }) => {
+  await doctorStore.loadList(filters);
+  doctors.value.push(...doctorStore.doctors);
+};
 
 const availableDoctors = computed(() => {
   return doctors.value.filter((doctor) => {
@@ -68,15 +79,13 @@ const validateForm = (): boolean => {
   const form = formData.value;
   let isValid = true;
   if (form.title.length < 1) {
-    inspectionStore.errors.push({
-      message: "Заголовок не может содержать менее 1 символа.",
-    });
+    errorStore.addErrorMessage("Заголовок не может содержать менее 1 символа.");
     isValid = false;
   }
   if (form.preparation.length < 1) {
-    inspectionStore.errors.push({
-      message: "Подготовка не может содержать менее 1 символа.",
-    });
+    errorStore.addErrorMessage(
+      "Подготовка не может содержать менее 1 символа.",
+    );
     isValid = false;
   }
   return isValid;
@@ -85,9 +94,7 @@ const validateForm = (): boolean => {
 const getPatchPayload = (): Partial<CreateInspection> | null => {
   const inspection = inspectionStore.inspection;
   if (!inspection) {
-    inspectionStore.errors.push({
-      message: "Непредвиденная ошибка.",
-    });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
     return null;
   }
 
@@ -115,9 +122,7 @@ const getPatchPayload = (): Partial<CreateInspection> | null => {
   });
 
   if (JSON.stringify(payload) === "{}") {
-    inspectionStore.errors.push({
-      message: "Nothing to update.",
-    });
+    errorStore.addErrorMessage("Nothing to update.");
     return null;
   }
   return payload;
@@ -142,7 +147,7 @@ const updateInspection = async () => {
       return await inspectionStore.update(inspectionId.value, updatePayload);
     }
   } else {
-    inspectionStore.errors.push({ message: "Непредвиденная ошибка." });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
   }
 };
 
@@ -169,6 +174,7 @@ const handleCancel = () => {
 onMounted(async () => {
   if (props.mode != "detail") {
     await doctorStore.loadList();
+    doctors.value = [...doctorStore.doctors];
   }
   if (props.mode !== "create") {
     inspectionId.value = Number(route.params.id);
@@ -179,18 +185,10 @@ onMounted(async () => {
     }
   }
 });
-
-watch(
-  () => [doctorSearch],
-  async () => {
-    await doctorStore.loadList();
-  },
-  { deep: true },
-);
 </script>
 
 <template>
-  <TheForm :store="inspectionStore" @submit="handleSubmit">
+  <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
         mode === "detail"
@@ -245,7 +243,7 @@ watch(
         <div
           v-for="doctor in formData.doctors"
           :key="doctor.id"
-          class="item"
+          class="selection-item"
           @click="removeDoctor(doctor.id)"
         >
           <div class="item-info">
@@ -268,16 +266,16 @@ watch(
 
       <div v-if="mode !== 'detail'">
         <label>Выбрать врача</label>
-
-        <div class="item-search">
-          <FormSearchField title="Найти врача" :pattern="doctorSearch" />
-        </div>
-
-        <div class="selection">
+        <LoadContainer
+          :count="doctorStore.count"
+          :limit="doctorStore.limit"
+          @load="loadDoctors"
+          @search="searchDoctors"
+        >
           <div
             v-for="doctor in availableDoctors"
             :key="doctor.id"
-            class="item"
+            class="selection-item"
             @click="selectDoctor(doctor)"
           >
             <div class="item-info">
@@ -296,15 +294,7 @@ watch(
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div v-if="availableDoctors.length === 0">
-        {{
-          doctorSearch !== undefined
-            ? "Ничего не найдено..."
-            : "В базе нет врачей..."
-        }}
+        </LoadContainer>
       </div>
     </div>
 
@@ -353,20 +343,13 @@ textarea.field {
   margin-bottom: 16px;
 }
 
-.selection {
-  max-height: 300px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  .item {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    &:hover {
-      background-color: #f8f9fa;
-    }
+.selection-item {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  &:hover {
+    background-color: #f8f9fa;
   }
 }
 

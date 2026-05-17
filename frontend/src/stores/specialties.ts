@@ -3,8 +3,8 @@ import { defineStore } from "pinia";
 
 import SpecialitiesApi from "@/api/specialities";
 import type { Speciality, CreateSpeciality } from "@/types/specialities";
-import { parseApiErrors, type ApiError } from "@/utils/api";
 import { useRoute } from "vue-router";
+import { useErrorStore } from "./errors";
 
 interface ApiParams {
   search?: number;
@@ -16,12 +16,12 @@ interface Filters {
 
 export const useSpecialityStore = defineStore("specialityStore", () => {
   const route = useRoute();
+  const errorStore = useErrorStore();
 
   const specialties = ref<Speciality[]>([]);
   const speciality = ref<Speciality>();
 
   const count = computed(() => specialties.value.length || 0);
-  const errors = ref<ApiError[]>([]);
 
   const getAllowedParams = (filters: Filters): ApiParams => {
     const allowedParams: (keyof Filters)[] = ["search"];
@@ -41,38 +41,32 @@ export const useSpecialityStore = defineStore("specialityStore", () => {
   };
 
   const loadList = async () => {
-    errors.value = [];
     const params = getAllowedParams(route.query);
     try {
       specialties.value = await SpecialitiesApi.getAll(params);
-      if (specialties.value.length == 0 && params.search) {
-        errors.value = [
-          { message: "Ничего не найдено по заданным параметрам." },
-        ];
-      }
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   const loadById = async (id: number) => {
     try {
       speciality.value = await SpecialitiesApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   const create = async (payload: CreateSpeciality) => {
     try {
       return await SpecialitiesApi.create(payload);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   const update = async (id: number, payload: CreateSpeciality) => {
     try {
       return await SpecialitiesApi.update(id, payload);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -80,7 +74,7 @@ export const useSpecialityStore = defineStore("specialityStore", () => {
     try {
       await SpecialitiesApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -88,14 +82,13 @@ export const useSpecialityStore = defineStore("specialityStore", () => {
     try {
       await SpecialitiesApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   return {
     speciality,
     specialties,
     count,
-    errors,
     loadById,
     loadList,
     create,

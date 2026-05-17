@@ -7,6 +7,7 @@ import { useRoute, useRouter } from "vue-router";
 
 import { useDepartmentStore } from "@/stores/departments";
 import type { CreateDepartment } from "@/types/departments";
+import { useErrorStore } from "@/stores/errors";
 
 const props = defineProps<{
   mode: "create" | "edit" | "detail";
@@ -14,6 +15,7 @@ const props = defineProps<{
 
 const route = useRoute();
 const router = useRouter();
+const errorStore = useErrorStore();
 const departmentStore = useDepartmentStore();
 
 const departmentId = ref<number>();
@@ -23,9 +25,9 @@ const validateForm = (): boolean => {
   const form = formData.value;
   let isValid: boolean = true;
   if (form.name.length < 1) {
-    departmentStore.errors.push({
-      message: "Название отделения не может содержать менее 1 символа.",
-    });
+    errorStore.addErrorMessage(
+      "Название отделения не может содержать менее 1 символа.",
+    );
     isValid = false;
   }
   return isValid;
@@ -35,7 +37,7 @@ const updateDepartment = async () => {
   if (departmentId.value) {
     return await departmentStore.update(departmentId.value, formData.value);
   } else {
-    departmentStore.errors.push({ message: "Непредвиденная ошибка." });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
   }
 };
 
@@ -72,7 +74,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <TheForm :store="departmentStore" @submit="handleSubmit">
+  <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
         mode === "detail"

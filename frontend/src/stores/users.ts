@@ -3,7 +3,6 @@ import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 
 import UserApi from "@/api/users";
-import { parseApiErrors, type ApiError } from "@/utils/api";
 
 interface ApiParams {
   limit: number;
@@ -18,9 +17,11 @@ interface Filters {
 
 import type { CreateUser, User } from "@/types/users";
 import { useAuthStore } from "./auth";
+import { useErrorStore } from "./errors";
 
 export const useUserStore = defineStore("userStore", () => {
   const authStore = useAuthStore();
+  const errorStore = useErrorStore();
   const route = useRoute();
 
   const currentUser = ref<User>();
@@ -34,7 +35,6 @@ export const useUserStore = defineStore("userStore", () => {
 
   const count = ref<number>(0);
   const limit = ref<number>(10);
-  const errors = ref<ApiError[]>([]);
 
   const setLimit = (val: number) => {
     limit.value = val;
@@ -63,39 +63,31 @@ export const useUserStore = defineStore("userStore", () => {
   };
 
   const loadCurrentUser = async () => {
-    errors.value = [];
     if (authStore.isAuthenticated) {
       try {
         currentUser.value = await UserApi.getMe();
       } catch (error) {
-        errors.value = parseApiErrors(error);
+        errorStore.parseApiError(error);
       }
     }
   };
 
   const loadList = async () => {
-    errors.value = [];
     const params = getAllowedParams(route.query);
     try {
       const paginatedData = await UserApi.getAll(params);
       users.value = paginatedData.results;
       count.value = paginatedData.count;
-      if (paginatedData.count == 0 && params.search) {
-        errors.value = [
-          { message: "Ничего не найдено по заданным параметрам." },
-        ];
-      }
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
   const loadById = async (id: number) => {
-    errors.value = [];
     try {
       user.value = await UserApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -103,7 +95,7 @@ export const useUserStore = defineStore("userStore", () => {
     try {
       await UserApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -111,7 +103,7 @@ export const useUserStore = defineStore("userStore", () => {
     try {
       await UserApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -119,7 +111,7 @@ export const useUserStore = defineStore("userStore", () => {
     try {
       return await UserApi.create(data);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -127,8 +119,15 @@ export const useUserStore = defineStore("userStore", () => {
     try {
       return await UserApi.update(id, data);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
+  };
+
+  const changePassword = async (
+    currentPassword: string,
+    newPassword: string,
+  ) => {
+    return await UserApi.changePassword(currentPassword, newPassword);
   };
 
   const logout = async () => {
@@ -143,7 +142,6 @@ export const useUserStore = defineStore("userStore", () => {
     users,
     count,
     limit,
-    errors,
     loadCurrentUser,
     loadById,
     loadList,
@@ -153,5 +151,6 @@ export const useUserStore = defineStore("userStore", () => {
     deleteById,
     deleteList,
     logout,
+    changePassword,
   };
 });

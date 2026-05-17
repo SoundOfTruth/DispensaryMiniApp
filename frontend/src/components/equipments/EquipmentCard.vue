@@ -10,9 +10,9 @@
 </template>
 
 <script lang="ts" setup>
-import type { Equipment } from "@/types/equipments";
+import type { EquipmentItem } from "@/types/equipments";
 
-defineProps<{ equipment: Equipment }>();
+defineProps<{ equipment: EquipmentItem }>();
 </script>
 
 <style lang="scss" scoped>

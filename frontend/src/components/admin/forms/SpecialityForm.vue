@@ -8,6 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 
 import { useSpecialityStore } from "@/stores/specialties";
 import type { CreateSpeciality } from "@/types/specialities";
+import { useErrorStore } from "@/stores/errors";
 
 const props = defineProps<{
   mode: "create" | "edit" | "detail";
@@ -15,6 +16,7 @@ const props = defineProps<{
 
 const route = useRoute();
 const router = useRouter();
+const errorStore = useErrorStore();
 const specialityStore = useSpecialityStore();
 
 const specialityId = ref<number>();
@@ -23,9 +25,9 @@ const formData = ref<CreateSpeciality>({ name: "" });
 const validateForm = (payload: CreateSpeciality): boolean => {
   let isValid: boolean = true;
   if (payload.name.length < 1) {
-    specialityStore.errors.push({
-      message: "Название специальности не может содержать менее 1 символа",
-    });
+    errorStore.addErrorMessage(
+      "Название специальности не может содержать менее 1 символа",
+    );
     isValid = false;
   }
   return isValid;
@@ -35,7 +37,7 @@ const updateSpeciality = async () => {
   if (specialityId.value) {
     return await specialityStore.update(specialityId.value, formData.value);
   } else {
-    specialityStore.errors.push({ message: "Непредвиденная ошибка." });
+    errorStore.addErrorMessage("Непредвиденная ошибка.");
   }
 };
 
@@ -73,7 +75,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <TheForm :store="specialityStore" @submit="handleSubmit">
+  <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
         mode === "detail"

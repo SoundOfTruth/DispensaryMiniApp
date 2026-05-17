@@ -1,7 +1,7 @@
 <template>
   <AdminPage
-    title="Тип оборудования"
-    add-button-name="Добавить тип оборудования"
+    title="Типы оборудования"
+    add-button-name="Добавить тип"
     :columns="columns"
     :data="typeStore.types"
     :store="typeStore"
@@ -13,7 +13,7 @@ import AdminPage from "@/components/admin/AdminPage.vue";
 
 import { useEquipmentTypeStore } from "@/stores/equipmentTypes";
 
-import type { SimpleEquipmentType } from "@/types/equipmentTypes";
+import type { SimpleEquipmentType } from "@/types/equipments";
 
 interface Columns {
   key: keyof SimpleEquipmentType;

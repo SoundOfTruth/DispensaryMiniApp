@@ -22,8 +22,8 @@ class DepartmentService:
             raise NotFoundError
         return DepartmentSchema.model_validate(department)
 
-    async def get_all(self) -> list[DepartmentSchema]:
-        departments = await self.department_rep.get_all()
+    async def get_all(self, search: str | None) -> list[DepartmentSchema]:
+        departments = await self.department_rep.get_all(search=search)
         return [
             DepartmentSchema.model_validate(department) for department in departments
         ]

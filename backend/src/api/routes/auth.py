@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Cookie, Response
 
 from config import settings
-from src.schemas.auth import LoginUserSchema, TokenResponse
+from src.schemas.auth import LoginUserSchema
 from src.services.auth import JwtAuthServiceDep
 
 router = APIRouter(prefix="/auth", tags=["JWT"])
 
 
-@router.post("/login/", response_model=TokenResponse)
+@router.post("/login/")
 async def create_jwt(
     service: JwtAuthServiceDep, schema: LoginUserSchema, response: Response
 ):
@@ -37,7 +37,7 @@ async def create_jwt(
     return token_schema
 
 
-@router.post("/refresh/", response_model=TokenResponse)
+@router.post("/refresh/")
 async def refresh_jwt(service: JwtAuthServiceDep, app_rt=Cookie(default=None)):
     return await service.refresh(refresh_token=app_rt)
 

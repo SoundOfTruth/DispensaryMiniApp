@@ -34,8 +34,8 @@ class EquipmentTypeService:
             for equipment_type in equipment_types
         ]
 
-    async def get_all(self):
-        equipment_types = await self.equipment_rep.get_all()
+    async def get_all(self, search: str | None):
+        equipment_types = await self.equipment_rep.get_all(search)
         return [
             SimpleEquipmentTypeSchema.model_validate(equipment_type)
             for equipment_type in equipment_types

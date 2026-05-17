@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from src.api.dependencies import has_admin_permissions, has_superuser_permissions
 from src.api.params import QueryIds
@@ -13,8 +13,8 @@ router = APIRouter(
 
 
 @router.get("/")
-async def get_equiments(service: EquipmentServiceDep):
-    return await service.get_all()
+async def get_equiments(service: EquipmentServiceDep, search: str | None = None):
+    return await service.get_all(search)
 
 
 @router.get("/{id}/")
@@ -23,15 +23,20 @@ async def get_equipment(service: EquipmentServiceDep, id: int):
 
 
 @router.post("/", status_code=201)
-async def create_equipment(schema: CreateEquipmentSchema, service: EquipmentServiceDep):
-    return await service.create(schema)
+async def create_equipment(
+    service: EquipmentServiceDep, schema: CreateEquipmentSchema, request: Request
+):
+    return await service.create(schema, str(request.base_url))
 
 
 @router.patch("/{id}/")
 async def update_equipment(
-    id: int, schema: UpdateEquipmentSchema, service: EquipmentServiceDep
+    service: EquipmentServiceDep,
+    id: int,
+    schema: UpdateEquipmentSchema,
+    request: Request,
 ):
-    return await service.update(id, schema)
+    return await service.update(id, schema, str(request.base_url))
 
 
 @router.delete(

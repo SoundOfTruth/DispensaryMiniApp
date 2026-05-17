@@ -1,9 +1,9 @@
 <template>
   <div class="equipments">
-    <div class="err-handler" v-for="err in errors" v-if="errCondition">
+    <div class="err-handler" v-for="err in errors">
       {{ err.message }}
     </div>
-    <div v-for="type in types" v-else>
+    <div v-for="type in types">
       <div class="equipment-type">{{ type.name }}</div>
       <div class="equipments-list">
         <EquipmentCard
@@ -20,15 +20,19 @@ import EquipmentCard from "@/components/equipments/EquipmentCard.vue";
 import { computed, onMounted } from "vue";
 
 import { useEquipmentTypeStore } from "@/stores/equipmentTypes";
+import { useErrorStore } from "@/stores/errors";
 
 const typeStore = useEquipmentTypeStore();
+const errorStore = useErrorStore();
+
 const types = computed(() => typeStore.detailTypes);
-const errors = computed(() => typeStore.errors);
-const errCondition = computed(
-  () => types.value == undefined || types.value?.length == 0,
-);
+const errors = computed(() => errorStore.errors);
+
 onMounted(async () => {
   await typeStore.loadDetailList();
+  if (errors.value.length === 0 && types.value.length === 0) {
+    errorStore.addErrorMessage("Ничего не найдено...");
+  }
 });
 </script>
 

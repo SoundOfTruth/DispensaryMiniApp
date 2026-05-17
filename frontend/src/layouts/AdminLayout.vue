@@ -1,7 +1,12 @@
 <template>
   <div :class="isAdmin ? 'admin-page' : ''">
-    <AdminNavigation :links="links" />
-    <TheHeader :index-link="indexLink" :links="links" class="mobile-nav" />
+    <AdminNavigation :links="links" v-if="isAdmin" />
+    <TheHeader
+      :index-link="indexLink"
+      :links="links"
+      class="mobile-nav"
+      v-if="isAdmin"
+    />
     <div class="content" id="content">
       <RouterView />
     </div>
@@ -70,11 +75,7 @@ const isAdmin = computed(() => userStore.isAdmin);
     display: none;
   }
 }
-.desctop.nav {
-  @media (max-width: 800px) {
-    display: none;
-  }
-}
+
 .content {
   padding-top: 25px;
   display: flex;

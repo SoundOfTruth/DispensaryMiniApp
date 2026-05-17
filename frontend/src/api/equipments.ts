@@ -3,7 +3,11 @@ import axios from "axios";
 import { baseApiUrl } from "./base";
 
 import type { AxiosError, AxiosInstance } from "axios";
-import type { CreateEquipment, Equipment } from "@/types/equipments";
+import type {
+  CreateEquipment,
+  Equipment,
+  SimpleEquipment,
+} from "@/types/equipments";
 import { refreshTokenOnFall, setAuthToken } from "@/utils/api";
 
 class EquipmentApi {
@@ -29,7 +33,9 @@ class EquipmentApi {
   }
 
   async get(id: number) {
-    const response = await this.client.get<Equipment>(`/equipments/${id}/`);
+    const response = await this.client.get<SimpleEquipment>(
+      `/equipments/${id}/`,
+    );
     return response.data;
   }
 
@@ -41,13 +47,16 @@ class EquipmentApi {
   }
 
   async create(data: CreateEquipment) {
-    const response = await this.client.post<Equipment>("/equipments/", data);
+    const response = await this.client.post<SimpleEquipment>(
+      "/equipments/",
+      data,
+    );
     return response.data;
   }
 
   async update(id: number, data: Partial<CreateEquipment>) {
-    const response = await this.client.patch<Equipment>(
-      `/equipments/${id}`,
+    const response = await this.client.patch<SimpleEquipment>(
+      `/equipments/${id}/`,
       data,
     );
     return response.data;

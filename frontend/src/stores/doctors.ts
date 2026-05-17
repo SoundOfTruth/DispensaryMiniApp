@@ -3,7 +3,6 @@ import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 
 import DoctorApi from "@/api/doctors";
-import { parseApiErrors, type ApiError } from "@/utils/api";
 
 interface ApiParams {
   limit: number;
@@ -26,9 +25,11 @@ import type {
   ApiDoctor,
   CreateDoctor,
 } from "../types/doctors";
+import { useErrorStore } from "./errors";
 
 export const useDoctorStore = defineStore("doctorStore", () => {
   const route = useRoute();
+  const errorStore = useErrorStore();
 
   const doctors = ref<SimpleDoctor[]>([]);
   const doctor = ref<Doctor>();
@@ -36,13 +37,12 @@ export const useDoctorStore = defineStore("doctorStore", () => {
 
   const count = ref<number>(0);
   const limit = ref<number>(10);
-  const errors = ref<ApiError[]>([]);
 
   const setLimit = (val: number) => {
     limit.value = val;
   };
 
-  const getAllowedParams = (filters: Filters): ApiParams => {
+  const getApiParams = (filters: Filters): ApiParams => {
     const allowedParams: (keyof Filters)[] = [
       "department_id",
       "speciality_id",
@@ -68,34 +68,28 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     return params;
   };
 
-  const loadList = async () => {
-    errors.value = [];
-    const params = getAllowedParams(route.query);
+  const loadList = async (filters: Filters = {}) => {
+    const routeParams = getApiParams(route.query);
+    const params = getApiParams(filters);
     try {
-      const paginatedData = await DoctorApi.getAll(params);
+      const paginatedData = await DoctorApi.getAll({
+        ...routeParams,
+        ...params,
+      });
       doctors.value = paginatedData.results;
       count.value = paginatedData.count;
-      if (
-        paginatedData.count == 0 &&
-        (params.search || params.department_id || params.speciality_id)
-      ) {
-        errors.value = [
-          { message: "Ничего не найдено по заданным параметрам" },
-        ];
-      }
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
   const loadById = async (id: number) => {
-    errors.value = [];
     try {
       const doctorApi = await DoctorApi.get(id);
       apiDoctor.value = doctorApi;
       doctor.value = getComputedDoctor(doctorApi);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -103,7 +97,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     try {
       await DoctorApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -111,7 +105,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     try {
       await DoctorApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -119,7 +113,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     try {
       return await DoctorApi.create(data);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -127,7 +121,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     try {
       return await DoctorApi.update(id, data);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -137,7 +131,6 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     doctors,
     count,
     limit,
-    errors,
     loadById,
     loadList,
     setLimit,

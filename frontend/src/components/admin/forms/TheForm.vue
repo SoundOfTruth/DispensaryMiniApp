@@ -5,25 +5,33 @@
     </form>
   </div>
   <Teleport to="#modals">
-    <AdminErrorModal :errors="store.errors" @close="store.errors = []" />
+    <AdminErrorModal
+      :errors="errorStore.errors"
+      @close="errorStore.clearErrors()"
+    />
   </Teleport>
 </template>
 
 <script lang="ts" setup>
+import { useErrorStore } from "@/stores/errors";
 import AdminErrorModal from "../modals/AdminErrorModal.vue";
-import type { BaseStore } from "@/stores/base";
-const props = defineProps<{ store: BaseStore }>();
+
+const errorStore = useErrorStore();
+
 const emits = defineEmits(["submit"]);
 </script>
 
 <style lang="scss" scoped>
 .form-container {
   max-width: 600px;
+  width: 100%;
   padding: 20px;
-  margin-left: 20%;
+  margin-left: 10%;
+  box-sizing: border-box;
+  overflow: hidden;
+
   @media (max-width: 500px) {
     margin: 0px;
   }
-  
 }
 </style>

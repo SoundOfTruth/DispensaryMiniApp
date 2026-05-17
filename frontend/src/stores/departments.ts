@@ -3,9 +3,9 @@ import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 
 import DepartmentApi from "@/api/departments";
-import { parseApiErrors, type ApiError } from "@/utils/api";
 
 import type { Department, CreateDepartment } from "@/types/departments";
+import { useErrorStore } from "./errors";
 
 interface ApiParams {
   search?: number;
@@ -17,12 +17,12 @@ interface Filters {
 
 export const useDepartmentStore = defineStore("departmentStore", () => {
   const route = useRoute();
+  const errorStore = useErrorStore();
 
   const departments = ref<Department[]>([]);
   const department = ref<Department>();
 
   const count = computed(() => departments.value.length || 0);
-  const errors = ref<ApiError[]>([]);
 
   const getAllowedParams = (filters: Filters): ApiParams => {
     const allowedParams: (keyof Filters)[] = ["search"];
@@ -41,38 +41,32 @@ export const useDepartmentStore = defineStore("departmentStore", () => {
   };
 
   const loadList = async () => {
-    errors.value = [];
     const params = getAllowedParams(route.query);
     try {
       departments.value = await DepartmentApi.getAll(params);
-      if (departments.value.length == 0 && params.search) {
-        errors.value = [
-          { message: "Ничего не найдено по заданным параметрам." },
-        ];
-      }
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   const loadById = async (id: number) => {
     try {
       department.value = await DepartmentApi.get(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   const create = async (payload: CreateDepartment) => {
     try {
       return await DepartmentApi.create(payload);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   const update = async (id: number, payload: CreateDepartment) => {
     try {
       return await DepartmentApi.update(id, payload);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -80,7 +74,7 @@ export const useDepartmentStore = defineStore("departmentStore", () => {
     try {
       await DepartmentApi.delete(id);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
 
@@ -88,13 +82,12 @@ export const useDepartmentStore = defineStore("departmentStore", () => {
     try {
       await DepartmentApi.deleteBulk(ids);
     } catch (error) {
-      errors.value = parseApiErrors(error);
+      errorStore.parseApiError(error);
     }
   };
   return {
     department,
     departments,
-    errors,
     count,
     loadById,
     loadList,

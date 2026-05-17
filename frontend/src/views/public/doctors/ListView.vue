@@ -31,26 +31,42 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 import { useDoctorStore } from "@/stores/doctors";
+import { useErrorStore } from "@/stores/errors";
 
 const filterOpen = ref<boolean>(false);
 
 const route = useRoute();
 const doctorStore = useDoctorStore();
+const errorStore = useErrorStore();
+
 const doctors = computed(() => doctorStore.doctors);
-const errors = computed(() => doctorStore.errors);
+const errors = computed(() => errorStore.errors);
 const errCondition = computed(
   () => doctors.value == undefined || doctors.value?.length == 0,
 );
 
+const afterLoad = () => {
+  const search = route.query.search;
+  if (doctors.value.length === 0) {
+    if (!search) {
+      errorStore.addErrorMessage("Ничего не найдено...");
+    } else {
+      errorStore.addErrorMessage("Ничего не найдено по заданным параметрам.");
+    }
+  }
+};
+
 onMounted(() => {
   doctorStore.setLimit(8);
   doctorStore.loadList();
+  afterLoad();
 });
 
 watch(
   () => route.query,
   async () => {
     await doctorStore.loadList();
+    afterLoad();
   },
   { deep: true },
 );
