@@ -1,0 +1,55 @@
+volumes:
+  pg_data:
+  media:
+  static:
+
+services:
+  db:
+    image: postgres:17
+    env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    container_name: OKD-backend
+    build: ../backend
+    env_file: .env
+    command:
+      - sh
+      - -c
+      - |
+        uv run alembic upgrade head
+        uv run src/main.py
+    volumes:
+      - media:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    container_name: OKD-frontend
+    build: ../frontend
+    volumes:
+      - static:/app/static
+      - ../frontend/:/app/result_build/
+
+  nginx:
+    container_name: OKD-proxy
+    build: ../nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ../frontend/dist:/usr/share/nginx/html
+      - media:/usr/share/nginx/media/
+      - static:/usr/share/nginx/static/
+    depends_on:
+      - backend

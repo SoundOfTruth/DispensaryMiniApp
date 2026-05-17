@@ -14,17 +14,7 @@ async def create_jwt(
     token_schema = await service.create(schema)
     refresh_token = token_schema.refresh_token
     if refresh_token:
-        if not settings.DEBUG:
-            response.set_cookie(
-                key="app_rt",
-                value=refresh_token,
-                httponly=True,
-                secure=True,
-                samesite="strict",
-                max_age=604800,
-                path="/api/refresh/",
-            )
-        else:
+        if settings.DEBUG:
             response.set_cookie(
                 key="app_rt",
                 value=refresh_token,
@@ -33,6 +23,16 @@ async def create_jwt(
                 samesite="lax",
                 max_age=604800,
                 path="/",
+            )
+        else:
+            response.set_cookie(
+                key="app_rt",
+                value=refresh_token,
+                httponly=True,
+                secure=False,
+                samesite="strict",
+                max_age=604800,
+                path="/api/auth/refresh/",
             )
     return token_schema
 
@@ -44,7 +44,7 @@ async def refresh_jwt(service: JwtAuthServiceDep, app_rt=Cookie(default=None)):
 
 @router.post("/logout/")
 async def logout(response: Response):
-    if not settings.DEBUG:
-        response.delete_cookie(key="app_rt", path="/api/refresh")
-    else:
+    if settings.DEBUG:
         response.delete_cookie(key="app_rt", path="/")
+    else:
+        response.delete_cookie(key="app_rt", path="/api/auth/refresh/")
