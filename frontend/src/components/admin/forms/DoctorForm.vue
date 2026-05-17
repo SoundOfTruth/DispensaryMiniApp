@@ -61,7 +61,7 @@ const formData = ref<CreateDoctorForm>({
 const educationInput = ref<string>("");
 const extraEducationInput = ref<string>("");
 
-const setPhoto = (url: string) => {
+const setPhoto = (url: string | null) => {
   formData.value.photo = url;
 };
 
@@ -212,8 +212,8 @@ const getPatchPayload = (): Partial<CreateDoctor> | null => {
     keyof (typeof form)[keyof typeof form],
   ][];
   entries.forEach(([key, val]) => {
-    if (doctor[key] === val) {
-      payload[key] = undefined;
+    if (doctor[key] !== val) {
+      payload[key] = val;
     }
   });
   if (JSON.stringify(payload) === "{}") {
@@ -328,6 +328,7 @@ onMounted(async () => {
       <label for="name">Фото</label>
       <FileInput
         @on-select="setPhoto"
+        @on-delete="setPhoto(null)"
         :hidden="mode === 'detail'"
         :preview-url="formData.photo"
       />

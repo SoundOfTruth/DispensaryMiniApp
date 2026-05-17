@@ -38,7 +38,7 @@ const links: Link[] = [
 ];
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .mini-app {
   max-width: 1000px;
   margin: 0 auto;
@@ -55,5 +55,9 @@ const links: Link[] = [
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  @media (min-width: 800px) {
+    width: 65%;
+    padding-left: 5%;
+  }
 }
 </style>

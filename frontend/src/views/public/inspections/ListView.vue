@@ -44,11 +44,11 @@ const errCondition = computed(
 
 const afterLoad = () => {
   const search = route.query.search;
-  if (inspections.value.length === 0) {
+  if (inspections.value.length === 0 && errors.value.length === 0) {
     if (!search) {
-      errorStore.addErrorMessage("Ничего не найдено...");
+      errorStore.setErrorMessage("Ничего не найдено...");
     } else {
-      errorStore.addErrorMessage("Ничего не найдено по заданным параметрам.");
+      errorStore.setErrorMessage("Ничего не найдено по заданным параметрам.");
     }
   }
 };

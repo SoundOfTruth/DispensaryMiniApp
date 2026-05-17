@@ -156,6 +156,7 @@ onMounted(async () => {
       <label for="name">Изображение *</label>
       <FileInput
         @on-select="setImage"
+        @on-delete="setImage('')"
         :hidden="mode === 'detail'"
         :preview-url="formData.image"
       />

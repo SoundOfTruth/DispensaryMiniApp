@@ -10,7 +10,7 @@
         <img
           :src="
             !doctor.photo || !doctor.photo.includes('http')
-              ? '/src/images/avatar.png'
+              ? 'static/doctor.png'
               : doctor.photo
           "
           class="img"

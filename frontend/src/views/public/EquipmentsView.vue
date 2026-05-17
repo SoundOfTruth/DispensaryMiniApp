@@ -31,7 +31,7 @@ const errors = computed(() => errorStore.errors);
 onMounted(async () => {
   await typeStore.loadDetailList();
   if (errors.value.length === 0 && types.value.length === 0) {
-    errorStore.addErrorMessage("Ничего не найдено...");
+    errorStore.setErrorMessage("Ничего не найдено...");
   }
 });
 </script>

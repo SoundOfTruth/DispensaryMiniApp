@@ -7,6 +7,7 @@ import { ref, watch } from "vue";
 
 const emits = defineEmits<{
   (e: "on-select", url: string): void;
+  (e: "on-delete"): void;
 }>();
 const props = defineProps<{ hidden?: boolean; previewUrl?: string | null }>();
 
@@ -20,11 +21,11 @@ const previewUrl = ref<string | null>();
 const clearPreview = () => {
   if (!props.hidden) {
     previewUrl.value = undefined;
-    emits("on-select", "");
+    emits("on-delete");
   }
 };
 
-const handleCancel = () => {
+const handleDelete = () => {
   clearPreview();
   if (fileInputRef.value && fileInputRef.value instanceof HTMLInputElement) {
     fileInputRef.value.value = "";
@@ -67,7 +68,7 @@ watch(
     style="display: none"
   />
   <div class="file-input">
-    <div v-if="filesStore.loading || previewUrl" @click="handleCancel()">
+    <div v-if="filesStore.loading || previewUrl" @click="handleDelete()">
       <div class="image-wrapper">
         <img :src="previewUrl" class="image" v-if="previewUrl" />
         <div class="loading" v-if="filesStore.loading"></div>

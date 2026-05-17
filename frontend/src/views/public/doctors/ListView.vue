@@ -47,18 +47,18 @@ const errCondition = computed(
 
 const afterLoad = () => {
   const search = route.query.search;
-  if (doctors.value.length === 0) {
+  if (doctors.value.length === 0 && errors.value.length === 0) {
     if (!search) {
-      errorStore.addErrorMessage("Ничего не найдено...");
+      errorStore.setErrorMessage("Ничего не найдено...");
     } else {
-      errorStore.addErrorMessage("Ничего не найдено по заданным параметрам.");
+      errorStore.setErrorMessage("Ничего не найдено по заданным параметрам.");
     }
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   doctorStore.setLimit(8);
-  doctorStore.loadList();
+  await doctorStore.loadList();
   afterLoad();
 });
 
@@ -83,10 +83,6 @@ watch(
   display: flex;
   flex-direction: column;
 
-  @media (min-width: 800px) {
-    width: 65%;
-    padding-left: 5%;
-  }
   .doctors-list {
     flex: 1;
     display: flex;
