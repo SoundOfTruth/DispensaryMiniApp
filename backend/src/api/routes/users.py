@@ -8,7 +8,11 @@ from src.api.dependencies import (
     SuperuserTokenDep,
     has_admin_permissions,
 )
-from src.api.exceptions import AdminRoleUpdatePasswordError, IssuedExcessUserPermissionsError, UserSelfDeleteError
+from src.api.exceptions import (
+    IssuedExcessUserPermissionsError,
+    UpdateSelfPasswordError,
+    UserSelfDeleteError,
+)
 from src.api.params import PaginationParams, QueryIds
 from src.models.users import Role
 from src.schemas.users import CreateUserSchema, PasswordChangeSchema, UpdateUserSchema
@@ -50,7 +54,7 @@ async def update_user(
     service: UserServiceDep, id: int, schema: UpdateUserSchema, token: SuperuserTokenDep
 ):
     if token.sub == id and schema.password:
-        raise 
+        raise UpdateSelfPasswordError
     return await service.update(id, schema)
 
 

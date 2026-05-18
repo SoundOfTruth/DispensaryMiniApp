@@ -13,5 +13,6 @@ class IssuedExcessUserPermissionsError(ApiError):
 class UserSelfDeleteError(ApiError):
     pass
 
+
 class UpdateSelfPasswordError(ApiError):
     pass
