@@ -48,11 +48,26 @@ services:
     container_name: OKD-proxy
     build:
       context: ./nginx/
+    env_file: .env
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./frontend/dist:/usr/share/nginx/html
       - media:/usr/share/nginx/media/
       - static:/usr/share/nginx/static/
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     depends_on:
       - backend
+      - certbot
+
+  certbot:
+    container_name: OKD-certbot
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    depends_on:
+      - nginx
