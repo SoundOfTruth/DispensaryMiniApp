@@ -8,7 +8,7 @@ from src.api.dependencies import (
     SuperuserTokenDep,
     has_admin_permissions,
 )
-from src.api.exceptions import IssuedExcessUserPermissionsError, UserSelfDeleteError
+from src.api.exceptions import AdminRoleUpdatePasswordError, IssuedExcessUserPermissionsError, UserSelfDeleteError
 from src.api.params import PaginationParams, QueryIds
 from src.models.users import Role
 from src.schemas.users import CreateUserSchema, PasswordChangeSchema, UpdateUserSchema
@@ -47,10 +47,10 @@ async def create_user(
 
 @router.patch("/{id}/")
 async def update_user(
-    service: UserServiceDep, id: int, schema: UpdateUserSchema, token: AdminTokenDep
+    service: UserServiceDep, id: int, schema: UpdateUserSchema, token: SuperuserTokenDep
 ):
-    if token.role == Role.ADMIN.value and schema.role != Role.USER.value:
-        raise IssuedExcessUserPermissionsError
+    if token.sub == id and schema.password:
+        raise 
     return await service.update(id, schema)
 
 

@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from src.api.exceptions import (
     IssuedExcessUserPermissionsError,
     PermissionError,
+    UpdateSelfPasswordError,
     UserSelfDeleteError,
 )
 from src.repositories.exceptions import (
@@ -271,4 +272,11 @@ def add_exception_handlers(app: FastAPI):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"detail": "Неверный url изображения."},
+        )
+
+    @app.exception_handle(UpdateSelfPasswordError)
+    def handle_admin_update_password(request: Request, exc: UpdateSelfPasswordError):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={"detail": "Сменить свой пароль вы можете только в профиле."},
         )
