@@ -1,14 +1,21 @@
 <template>
   <div class="mini-app">
     <TheHeader :index-link="indexLink" :links="links" />
-    <div class="content" id="content">
+    <div
+      class="content"
+      :class="route.name !== 'index' ? 'content-media' : ''"
+      id="content"
+    >
       <RouterView />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useRoute } from "vue-router";
 import TheHeader from "../components/TheHeader.vue";
+
+const route = useRoute();
 
 interface Link {
   title: string;
@@ -55,6 +62,8 @@ const links: Link[] = [
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+}
+.content-media {
   @media (min-width: 800px) {
     width: 65%;
     padding-left: 5%;

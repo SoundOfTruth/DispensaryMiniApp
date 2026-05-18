@@ -82,4 +82,15 @@
     }
   }
 }
+.content {
+  padding-top: 87px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  @media (min-width: 800px) {
+    width: 100% !important;
+  }
+}
 </style>

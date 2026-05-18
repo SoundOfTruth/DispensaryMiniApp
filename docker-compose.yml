@@ -19,7 +19,8 @@ services:
 
   backend:
     container_name: OKD-backend
-    build: ../backend
+    build:
+      context: ./backend/
     env_file: .env
     command:
       - sh
@@ -37,18 +38,20 @@ services:
 
   frontend:
     container_name: OKD-frontend
-    build: ../frontend
+    build:
+      context: ./frontend/
     volumes:
       - static:/app/static
-      - ../frontend/:/app/result_build/
+      - ./frontend/:/app/result_build/
 
   nginx:
     container_name: OKD-proxy
-    build: ../nginx
+    build:
+      context: ./nginx/
     ports:
       - "80:80"
     volumes:
-      - ../frontend/dist:/usr/share/nginx/html
+      - ./frontend/dist:/usr/share/nginx/html
       - media:/usr/share/nginx/media/
       - static:/usr/share/nginx/static/
     depends_on:
