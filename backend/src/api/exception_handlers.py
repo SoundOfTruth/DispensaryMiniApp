@@ -274,7 +274,7 @@ def add_exception_handlers(app: FastAPI):
             content={"detail": "Неверный url изображения."},
         )
 
-    @app.exception_handle(UpdateSelfPasswordError)
+    @app.exception_handler(UpdateSelfPasswordError)
     def handle_admin_update_password(request: Request, exc: UpdateSelfPasswordError):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,

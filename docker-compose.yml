@@ -18,7 +18,7 @@ services:
       - pg_data:/var/lib/postgresql/data
 
   backend:
-    container_name: OKD-backend
+    container_name: KOD-backend
     build:
       context: ./backend/
     env_file: .env
@@ -37,7 +37,7 @@ services:
         condition: service_healthy
 
   frontend:
-    container_name: OKD-frontend
+    container_name: KOD-frontend
     build:
       context: ./frontend/
     volumes:
@@ -45,7 +45,7 @@ services:
       - ./frontend/:/app/result_build/
 
   nginx:
-    container_name: OKD-proxy
+    container_name: KOD-proxy
     build:
       context: ./nginx/
     env_file: .env
@@ -63,10 +63,9 @@ services:
       - certbot
 
   certbot:
-    container_name: OKD-certbot
+    container_name: KOD-certbot
     image: certbot/certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-

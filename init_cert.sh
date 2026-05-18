@@ -4,9 +4,13 @@ set -a
 source .env
 set +a
 
-docker compose run --rm certbot certonly \
-  --webroot \
-  --webroot-path=/var/www/certbot \
+docker stop OKD-proxy
+
+docker run -it --rm \
+  -v $(pwd)/certbot/conf:/etc/letsencrypt \
+  -v $(pwd)/certbot/www:/var/www/certbot \
+  certbot/certbot certonly \
+  --standalone \
   -d "$DOMAIN" \
   -d "www.$DOMAIN" \
   --email "$EMAIL" \
