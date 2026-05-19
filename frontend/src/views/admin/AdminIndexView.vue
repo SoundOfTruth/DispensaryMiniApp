@@ -7,27 +7,27 @@
         <div class="info-grid">
           <div class="info-item">
             <label>Email</label>
-            <p>{{ userData.email }}</p>
+            <p>{{ currentUser?.email }}</p>
           </div>
 
           <div class="info-item">
             <label>Имя</label>
-            <p>{{ userData.firstname }}</p>
+            <p>{{ currentUser?.firstname }}</p>
           </div>
 
           <div class="info-item">
             <label>Фамилия</label>
-            <p>{{ userData.lastname }}</p>
+            <p>{{ currentUser?.lastname }}</p>
           </div>
 
           <div class="info-item">
             <label>Отчество</label>
-            <p>{{ userData.middlename }}</p>
+            <p>{{ currentUser?.middlename }}</p>
           </div>
 
           <div class="info-item">
             <label>Роль</label>
-            <p>{{ userData.role }}</p>
+            <p>{{ currentUser?.role }}</p>
           </div>
         </div>
       </div>
@@ -54,16 +54,12 @@
 <script setup lang="ts">
 import AdminChangePasswordModal from "@/components/admin/modals/AdminChangePasswordModal.vue";
 import LockSvg from "@/components/svg/LockSvg.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
-const userData = ref({
-  email: "test@mail.ru",
-  firstname: "test",
-  lastname: "test",
-  middlename: "test",
-  role: "superuser",
-});
+import { useUserStore } from "@/stores/users";
 
+const userStore = useUserStore();
+const currentUser = computed(() => userStore.currentUser);
 const changePasswordOpen = ref(false);
 const passwordError = ref("");
 
