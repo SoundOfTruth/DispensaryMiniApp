@@ -47,7 +47,7 @@ class SpecialtiesApi {
 
   async update(id: number, data: CreateSpeciality) {
     const response = await this.client.put<Speciality>(
-      `/specialities/${id}/`,
+      `/specialties/${id}/`,
       data,
     );
     return response.data;
