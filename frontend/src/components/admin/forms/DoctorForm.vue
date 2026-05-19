@@ -65,13 +65,31 @@ const setPhoto = (url: string | null) => {
   formData.value.photo = url;
 };
 
-const addEducation = (set: Set<string>, title: string) => {
-  if (set.has(title)) {
+const addEducation = () => {
+  const title = educationInput.value;
+  if (formData.value.education.has(title)) {
     errorStore.addErrorMessage(`${title} уже в добавлено.`);
     return;
   }
   if (title.length > 0) {
-    set.add(title);
+    formData.value.education.add(title);
+    educationInput.value = "";
+  } else {
+    errorStore.addErrorMessage(
+      "Добавленное образование содержит менее 1 символа.",
+    );
+  }
+};
+
+const addExtraducation = () => {
+  const title = extraEducationInput.value;
+  if (formData.value.extra_education.has(title)) {
+    errorStore.addErrorMessage(`${title} уже в добавлено.`);
+    return;
+  }
+  if (title.length > 0) {
+    formData.value.extra_education.add(title);
+    extraEducationInput.value = "";
   } else {
     errorStore.addErrorMessage(
       "Добавленное образование содержит менее 1 символа.",
@@ -439,16 +457,12 @@ onMounted(async () => {
     <div class="group">
       <label>Образование</label>
       <div class="education-input" v-if="mode !== 'detail'">
-        <input
+        <textarea
           v-model="educationInput"
           class="field"
           placeholder="Введите образование"
         />
-        <button
-          type="button"
-          class="add-btn"
-          @click="addEducation(formData.education, educationInput)"
-        >
+        <button type="button" class="add-btn" @click="addEducation()">
           <span>+</span>
         </button>
       </div>
@@ -477,18 +491,14 @@ onMounted(async () => {
     <div class="group">
       <label>Доп. Образование</label>
       <div class="education-input" v-if="mode !== 'detail'">
-        <input
+        <textarea
           id="extra_education"
           v-model="extraEducationInput"
           type="text"
           class="field"
           placeholder="Введите доп. образование"
         />
-        <button
-          type="button"
-          class="add-btn"
-          @click="addEducation(formData.extra_education, extraEducationInput)"
-        >
+        <button type="button" class="add-btn" @click="addExtraducation()">
           <span>+</span>
         </button>
       </div>
@@ -560,6 +570,12 @@ onMounted(async () => {
 </template>
 
 <style lang="scss" scoped>
+textarea.field {
+  padding-left: 12px;
+  resize: vertical;
+  text-indent: 0px;
+  field-sizing: content;
+}
 .group {
   margin-bottom: 24px;
   label {
