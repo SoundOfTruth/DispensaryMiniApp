@@ -1,8 +1,11 @@
 from datetime import datetime
+from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_serializer
 
 from src.schemas.base import BaseSchema
+
+EducationField = Annotated[str, Field(max_length=512)]
 
 
 class CreateEducationSchema(BaseModel):
@@ -40,10 +43,10 @@ class DepartmentSchema(BaseSchema):
 
 
 class CreateDoctorSchema(BaseModel):
-    firstname: str
-    lastname: str
-    middlename: str
-    qualification: str | None
+    firstname: str = Field(max_length=50)
+    lastname: str = Field(max_length=50)
+    middlename: str = Field(max_length=50)
+    qualification: str | None = Field(max_length=255)
     experience_start: int | None = Field(None, examples=[2000])
     photo: HttpUrl | None = None
 
@@ -51,17 +54,17 @@ class CreateDoctorSchema(BaseModel):
     department_id: int = Field(examples=[1])
 
     inspections: list[CreateDoctorInspectionSchema] = Field(examples=[[]])
-    education: list[str]
-    extra_education: list[str]
+    education: list[EducationField]
+    extra_education: list[EducationField]
 
     model_config = ConfigDict(str_min_length=1)
 
 
 class UpdateDoctorSchema(BaseModel):
-    firstname: str = Field("")
-    lastname: str = Field("")
-    middlename: str = Field("")
-    qualification: str | None = Field(None)
+    firstname: str = Field("", max_length=50)
+    lastname: str = Field("", max_length=50)
+    middlename: str = Field("", max_length=50)
+    qualification: str | None = Field(None, max_length=255)
     experience_start: int | None = Field(None, gt=1920, le=datetime.now().year)
     photo: HttpUrl | None = None
 
@@ -69,8 +72,8 @@ class UpdateDoctorSchema(BaseModel):
     department_id: int = Field(1)
 
     inspections: list[CreateDoctorInspectionSchema] = Field([], examples=[[]])
-    education: list[str] = Field([])
-    extra_education: list[str] | None = Field([])
+    education: list[EducationField] = Field([])
+    extra_education: list[EducationField] | None = Field([])
 
     model_config = ConfigDict(str_min_length=1)
 

@@ -4,5 +4,5 @@ from pydantic import BaseModel, ConfigDict
 class BaseSchema(BaseModel):
     model_config = ConfigDict(
         str_min_length=1,
-        str_max_length=100,
+        str_max_length=10_000,
     )
