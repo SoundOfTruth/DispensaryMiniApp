@@ -22,6 +22,6 @@ export const departmentRoutes: RouteRecordRaw[] = [
     path: "departments/:id(\\d+)",
     name: "admin.departments.detail",
     props: { mode: "detail" },
-    component: () => import("@/components/admin/forms/SpecialityForm.vue"),
+    component: () => import("@/components/admin/forms/DepartmentForm.vue"),
   },
 ];
