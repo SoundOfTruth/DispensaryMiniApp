@@ -44,6 +44,7 @@ onMounted(async () => {
   font-weight: 600;
   font-size: 150%;
   padding-bottom: 20px;
+  padding-left: 15px;
 }
 .err-handler {
   display: flex;

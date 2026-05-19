@@ -1,29 +1,36 @@
 <template>
-  <header>
-    <div class="hat">
-      <MenuButton @click="toggleMenu()" />
-      <RouterLink
-        :to="{ name: indexLink.routeName }"
-        class="link"
-        @click="isMenuOpen = false"
-        ><h1 class="title">{{ indexLink.title }}</h1></RouterLink
-      >
-    </div>
-    <nav class="menu" :class="{ active: isMenuOpen }">
-      <ul>
-        <li @click="toggleMenu()" v-for="link in links">
-          <RouterLink :to="{ name: link.routeName }">{{
-            link.title
-          }}</RouterLink>
-        </li>
-      </ul>
-    </nav>
-  </header>
+  <div class="header-wrapper">
+    <header>
+      <div class="hat">
+        <MenuButton @click="toggleMenu()" />
+        <RouterLink
+          :to="{ name: indexLink.routeName }"
+          class="link"
+          @click="isMenuOpen = false"
+        >
+          <h1 class="title">{{ indexLink.title }}</h1>
+        </RouterLink>
+      </div>
+      <nav class="menu" :class="{ active: isMenuOpen }">
+        <ul>
+          <li @click="toggleMenu()" v-for="link in links" :key="link.routeName">
+            <RouterLink :to="{ name: link.routeName }">{{
+              link.title
+            }}</RouterLink>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <div
+      class="modal-backdrop"
+      v-if="isMenuOpen"
+      @click="toggleMenu()"
+    ></div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import MenuButton from "./MenuButton.vue";
-
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
 
@@ -41,6 +48,21 @@ const toggleMenu = () => {
 </script>
 
 <style scoped lang="scss">
+.header-wrapper {
+  position: relative;
+  z-index: 100;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.10);
+  z-index: 99;
+}
+
 header {
   box-sizing: border-box;
   width: 100%;
@@ -51,11 +73,13 @@ header {
   top: 0;
   z-index: 100;
   background: #f5f7fa;
+  
   .hat {
     display: flex;
     gap: 30px;
     align-items: center;
   }
+  
   .title {
     color: #222;
     font-size: 140%;
@@ -75,31 +99,34 @@ header {
   right: 0;
   background: white;
   border-bottom: 1px solid #e0e0e0;
+  z-index: 101;
+  
   &.active {
     display: block;
   }
+  
   ul {
     list-style: none;
     margin: 0;
     padding: 0;
   }
+  
   li {
     border-bottom: 1px solid #f0f0f0;
   }
+  
   a {
     display: block;
     padding: 16px;
     text-decoration: none;
     color: black;
     font-size: 16px;
-    transition: background 0.2s black;
+    transition: background 0.2s ease;
+    
+    &:hover {
+      background: #f0f0f0;
+    }
   }
 }
 
-@media (max-width: 768px) {
-  .header-title {
-    font-size: 16px;
-    padding: 0 50px;
-  }
-}
 </style>

@@ -14,10 +14,10 @@
         </div>
       </PaginatedPage>
     </div>
+    <Teleport to="#modals">
+      <FilterModal :open="filterOpen" @close="filterOpen = false" />
+    </Teleport>
   </div>
-  <Teleport to="#modals">
-    <FilterModal :open="filterOpen" @close="filterOpen = false" />
-  </Teleport>
 </template>
 
 <script setup lang="ts">

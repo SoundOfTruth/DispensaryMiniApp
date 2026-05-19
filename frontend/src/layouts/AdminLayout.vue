@@ -8,18 +8,22 @@
       v-if="isAdmin"
     />
     <div class="content" id="content">
-      <RouterView />
+      <RouterView v-slot="{ Component }">
+        <TheTransition>
+          <Component :is="Component" />
+        </TheTransition>
+      </RouterView>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import AdminNavigation from "@/components/admin/navigation/AdminNavigation.vue";
-import { computed } from "vue";
-
-import { useUserStore } from "@/stores/users";
-
 import TheHeader from "../components/TheHeader.vue";
+import TheTransition from "@/components/TheTransition.vue";
+import AdminNavigation from "@/components/admin/navigation/AdminNavigation.vue";
+
+import { computed } from "vue";
+import { useUserStore } from "@/stores/users";
 
 interface Link {
   title: string;

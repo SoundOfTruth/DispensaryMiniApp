@@ -3,13 +3,13 @@
     <form @keydown.enter.prevent @submit.prevent="emits('submit')">
       <slot />
     </form>
+    <Teleport to="#modals">
+      <AdminErrorModal
+        :errors="errorStore.errors"
+        @close="errorStore.clearErrors()"
+      />
+    </Teleport>
   </div>
-  <Teleport to="#modals">
-    <AdminErrorModal
-      :errors="errorStore.errors"
-      @close="errorStore.clearErrors()"
-    />
-  </Teleport>
 </template>
 
 <script lang="ts" setup>

@@ -34,20 +34,20 @@
         @open-delete="openDelete"
       />
     </div>
+    <Teleport to="#modals" v-if="isAdmin">
+      <AdminDeteleModal
+        :open="deleteOpen"
+        :id="deleteId"
+        :selected-items="selectedItems"
+        :store="props.store"
+        @close="closeDelete"
+      />
+      <AdminErrorModal
+        :errors="errorStore.errors"
+        @close="errorStore.clearErrors()"
+      />
+    </Teleport>
   </div>
-  <Teleport to="#modals" v-if="isAdmin">
-    <AdminDeteleModal
-      :open="deleteOpen"
-      :id="deleteId"
-      :selected-items="selectedItems"
-      :store="props.store"
-      @close="closeDelete"
-    />
-    <AdminErrorModal
-      :errors="errorStore.errors"
-      @close="errorStore.clearErrors()"
-    />
-  </Teleport>
 </template>
 
 <script lang="ts" setup>

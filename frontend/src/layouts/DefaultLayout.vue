@@ -6,14 +6,20 @@
       :class="route.name !== 'index' ? 'content-media' : ''"
       id="content"
     >
-      <RouterView />
+      <RouterView v-slot="{ Component }">
+        <TheTransition>
+          <Component :is="Component" />
+        </TheTransition>
+      </RouterView>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRoute } from "vue-router";
+import TheTransition from "@/components/TheTransition.vue";
 import TheHeader from "../components/TheHeader.vue";
+
+import { useRoute } from "vue-router";
 
 const route = useRoute();
 

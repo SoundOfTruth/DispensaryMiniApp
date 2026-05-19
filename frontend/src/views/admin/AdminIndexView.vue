@@ -42,13 +42,13 @@
         </RouterLink>
       </div>
     </div>
+    <Teleport to="#modals">
+      <AdminChangePasswordModal
+        :open="changePasswordOpen"
+        @close="closeChangePasswordModal"
+      />
+    </Teleport>
   </div>
-  <Teleport to="#modals">
-    <AdminChangePasswordModal
-      :open="changePasswordOpen"
-      @close="closeChangePasswordModal"
-    />
-  </Teleport>
 </template>
 
 <script setup lang="ts">

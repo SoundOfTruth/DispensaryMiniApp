@@ -115,7 +115,6 @@ watch(
     border: 1px solid black;
   }
   .loading {
-    position: absolute;
     width: 48px;
     height: 48px;
     border: 5px solid black;

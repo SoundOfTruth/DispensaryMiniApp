@@ -37,7 +37,10 @@ export const useErrorStore = defineStore("errorStore", () => {
       }
       if (error.code == "ERR_BAD_REQUEST") {
         const detail = error.response?.data?.detail;
-        if (error.status == 400 && typeof detail === "string") {
+        if (
+          (error.status == 400 || error.status == 403) &&
+          typeof detail === "string"
+        ) {
           errors.value = [{ message: detail }];
           return;
         }

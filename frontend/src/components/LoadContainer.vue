@@ -46,7 +46,6 @@ const handleScroll = async (event: Event) => {
   if (
     Math.ceil(target.scrollTop + target.clientHeight) >= target.scrollHeight
   ) {
-    console.log("da");
     if (currPage.value < pagesCount.value) {
       currPage.value += 1;
       await emits("load", {
