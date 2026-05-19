@@ -67,7 +67,7 @@ class Doctor(Base):
 class Education(RawBase):
     __tablename__ = "education"
 
-    title: Mapped[str] = mapped_column(String(512), primary_key=True)
+    title: Mapped[str] = mapped_column(String(712), primary_key=True)
     doctor_id: Mapped[int] = mapped_column(
         ForeignKey(Doctor.id, ondelete="CASCADE"), primary_key=True
     )
@@ -76,7 +76,7 @@ class Education(RawBase):
 class ExtraEducation(RawBase):
     __tablename__ = "extra_education"
 
-    title: Mapped[str] = mapped_column(String(512), primary_key=True)
+    title: Mapped[str] = mapped_column(String(712), primary_key=True)
     doctor_id: Mapped[int] = mapped_column(
         ForeignKey(Doctor.id, ondelete="CASCADE"), primary_key=True
     )

@@ -179,6 +179,7 @@ const getPatchPayload = (): Partial<CreateDoctor> | null => {
     education,
     extra_education,
     inspections,
+    qualification,
     ...form
   } = formData.value;
 
@@ -197,10 +198,15 @@ const getPatchPayload = (): Partial<CreateDoctor> | null => {
   ): boolean => {
     return set.size === array.length && array.every((val) => set.has(val));
   };
-
+  const validQualification: string | null =
+    qualification === "" ? null : qualification;
   const validExperienceStart: number | null =
     typeof experience_start === "string" ? null : experience_start;
   const payload: Partial<CreateDoctor> = {
+    qualification:
+      doctor?.qualification === validQualification
+        ? undefined
+        : validQualification,
     department_id:
       doctor?.department.id === department_id ? undefined : department_id,
     speciality_id:
@@ -242,10 +248,17 @@ const getPatchPayload = (): Partial<CreateDoctor> | null => {
 };
 
 const createDoctor = async () => {
-  const { inspections, education, extra_education, experience_start, ...data } =
-    formData.value;
+  const {
+    inspections,
+    education,
+    extra_education,
+    experience_start,
+    qualification,
+    ...data
+  } = formData.value;
   const payload: CreateDoctor = {
     ...data,
+    qualification: qualification === "" ? null : qualification,
     experience_start:
       typeof experience_start != "string" ? experience_start : null,
     education: Array.from(education),

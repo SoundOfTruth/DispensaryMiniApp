@@ -171,7 +171,7 @@ onMounted(async () => {
   }
   .doctor-department {
     padding-top: 5px;
-    font-size: 120%;
+    font-size: 100%;
   }
 }
 
@@ -185,28 +185,28 @@ onMounted(async () => {
     font-size: 130%;
     font-weight: 400;
     line-height: 1;
-    padding-bottom: 4px;
+    padding-bottom: 10px;
   }
   .sub-title {
     font-size: 110%;
     color: #b1b2b4;
     line-height: 1;
-    padding-bottom: 4px;
+    padding-bottom: 20px;
   }
   .education-list {
     display: flex;
     flex-direction: column;
+    gap: 8px;
     .title {
-      margin-top: 5px;
-      margin-left: 12px;
+      // margin-left: 12px;
       font-size: 90%;
       position: relative;
-      &:before {
-        content: "•";
-        position: absolute;
-        left: -10px;
-        top: 0px;
-      }
+      // &:before {
+      //   content: "•";
+      //   position: absolute;
+      //   left: -10px;
+      //   top: 0px;
+      // }
     }
   }
   .expirience {

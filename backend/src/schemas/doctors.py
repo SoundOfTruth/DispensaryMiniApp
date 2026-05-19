@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_serializer
 
 from src.schemas.base import BaseSchema
 
-EducationField = Annotated[str, Field(max_length=512)]
+EducationField = Annotated[str, Field(max_length=712)]
 
 
 class CreateEducationSchema(BaseModel):
