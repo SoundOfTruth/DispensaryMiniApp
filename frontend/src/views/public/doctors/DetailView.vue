@@ -42,17 +42,17 @@
         </div>
         <div v-if="doctor?.education?.length">
           <div class="sub-title">Образование</div>
-          <div class="education">
+          <div class="education-list">
             <div v-for="education in doctor?.education">
-              {{ education }}
+              <div class="title">{{ education }}</div>
             </div>
           </div>
         </div>
         <div v-if="doctor?.extra_education?.length">
           <div class="sub-title">Доп. образование</div>
-          <div class="education">
+          <div class="education-list">
             <div v-for="education in doctor?.extra_education">
-              {{ education }}
+              <div class="title">{{ education }}</div>
             </div>
           </div>
         </div>
@@ -193,11 +193,21 @@ onMounted(async () => {
     line-height: 1;
     padding-bottom: 4px;
   }
-  .education {
+  .education-list {
     display: flex;
     flex-direction: column;
-    font-size: 90%;
-    gap: 3px;
+    .title {
+      margin-top: 5px;
+      margin-left: 12px;
+      font-size: 90%;
+      position: relative;
+      &:before {
+        content: "•";
+        position: absolute;
+        left: -10px;
+        top: 0px;
+      }
+    }
   }
   .expirience {
     font-size: 115%;
