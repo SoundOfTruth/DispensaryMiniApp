@@ -12,4 +12,9 @@ async def upload_file(
     file: UploadFile,
     request: Request,
 ):
-    return await service.create(str(request.base_url), file)
+    scheme = request.headers.get("X-Forwarded-Proto", "http")
+    host = request.headers.get("X-Forwarded-Host", request.headers.get("Host", "localhost"))
+    base_url = str(request.base_url)
+    if scheme and host:
+        base_url = f"{scheme}://{host}"
+    return await service.create(base_url, file)
