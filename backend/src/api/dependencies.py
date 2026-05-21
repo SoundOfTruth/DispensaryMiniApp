@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from src.api.exceptions import PermissionError
@@ -12,6 +12,17 @@ from src.utils.auth import get_token_data
 security = HTTPBearer()
 
 TokenDep = Annotated[HTTPAuthorizationCredentials, Depends(security)]
+
+
+def get_base_url(request: Request) -> str:
+    scheme = request.headers.get("X-Forwarded-Proto", "http")
+    host = request.headers.get(
+        "X-Forwarded-Host", request.headers.get("Host", "localhost")
+    )
+    base_url = str(request.base_url)
+    if scheme and host:
+        base_url = f"{scheme}://{host}/"
+    return base_url
 
 
 def get_access_data(token: TokenDep) -> TokenDataSchema:
@@ -35,6 +46,7 @@ def has_admin_permissions(token: TokenDep) -> TokenDataSchema:
     return token_data
 
 
+BaseUrlDep = Annotated[str, Depends(get_base_url)]
 AccessTokenDep = Annotated[TokenDataSchema, Depends(get_access_data)]
 AdminTokenDep = Annotated[TokenDataSchema, Depends(has_admin_permissions)]
 SuperuserTokenDep = Annotated[TokenDataSchema, Depends(has_superuser_permissions)]

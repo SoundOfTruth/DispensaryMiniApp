@@ -17,19 +17,14 @@ class EquipmentsService:
     def __init__(self, session: AsyncScopedSessionDep) -> None:
         self.equipment_rep = EquipmentRepository(session=session)
 
-    async def create(self, schema: CreateEquipmentSchema, base_url: str):
+    async def create(self, schema: CreateEquipmentSchema):
         equipment = await self.equipment_rep.create(schema.model_dump(mode="json"))
-        if base_url not in str(schema.image):
-            raise
         return SimpleEquipmentSchema.model_validate(equipment)
 
-    async def update(self, id: int, schema: UpdateEquipmentSchema, base_url: str):
+    async def update(self, id: int, schema: UpdateEquipmentSchema):
         payload = schema.model_dump(mode="json", exclude_unset=True)
         if not payload:
             raise EmptyPatchError
-        image = payload.get("image")
-        if image and base_url not in image:
-            raise
         equipment = await self.equipment_rep.update(id, payload)
         if not equipment:
             raise NotFoundError

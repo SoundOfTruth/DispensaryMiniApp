@@ -1,9 +1,14 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 
-from src.api.dependencies import has_admin_permissions, has_superuser_permissions
+from src.api.dependencies import (
+    BaseUrlDep,
+    has_admin_permissions,
+    has_superuser_permissions,
+)
 from src.api.params import QueryIds
 from src.schemas.equipments import CreateEquipmentSchema, UpdateEquipmentSchema
 from src.services.equipments import EquipmentServiceDep
+from src.services.exceptions import InvalidImageUrlError
 
 router = APIRouter(
     prefix="/equipments",
@@ -24,9 +29,11 @@ async def get_equipment(service: EquipmentServiceDep, id: int):
 
 @router.post("/", status_code=201)
 async def create_equipment(
-    service: EquipmentServiceDep, schema: CreateEquipmentSchema, request: Request
+    service: EquipmentServiceDep, schema: CreateEquipmentSchema, base_url: BaseUrlDep
 ):
-    return await service.create(schema, str(request.base_url))
+    if base_url not in str(schema.image):
+        raise InvalidImageUrlError
+    return await service.create(schema)
 
 
 @router.patch("/{id}/")
@@ -34,9 +41,11 @@ async def update_equipment(
     service: EquipmentServiceDep,
     id: int,
     schema: UpdateEquipmentSchema,
-    request: Request,
+    base_url: BaseUrlDep,
 ):
-    return await service.update(id, schema, str(request.base_url))
+    if base_url not in str(schema.image):
+        raise InvalidImageUrlError
+    return await service.update(id, schema)
 
 
 @router.delete(
