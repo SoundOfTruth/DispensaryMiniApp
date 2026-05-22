@@ -71,7 +71,7 @@ const links: Link[] = [
 }
 .content-media {
   @media (min-width: 800px) {
-    width: 65%;
+    width: 70%;
     padding-left: 5%;
   }
 }

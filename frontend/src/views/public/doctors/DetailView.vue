@@ -32,7 +32,7 @@
       </div>
       <div class="doctor-extra-info">
         <div class="title" v-if="infoExists">Информация</div>
-        <div class="expirience" v-if="doctor?.experience">
+        <div class="expirience" v-if="doctor?.experience.length !== 0">
           <span>Опыт работы: </span>
           <span>{{ doctor?.experience }}</span>
         </div>
@@ -44,7 +44,7 @@
           <div class="sub-title">Образование</div>
           <div class="education-list">
             <div v-for="education in doctor?.education">
-              <div class="title">{{ education }}</div>
+              <div class="education-title">{{ education }}</div>
             </div>
           </div>
         </div>
@@ -52,7 +52,7 @@
           <div class="sub-title">Доп. образование</div>
           <div class="education-list">
             <div v-for="education in doctor?.extra_education">
-              <div class="title">{{ education }}</div>
+              <div class="education-title">{{ education }}</div>
             </div>
           </div>
         </div>
@@ -100,6 +100,8 @@ onMounted(async () => {
 </script>
 
 <style scoped lang="scss">
+$primary: #0d9ce3;
+$text-secondary: #6c757d;
 .doctor-page {
   overflow-y: auto;
   padding: 15px;
@@ -114,12 +116,12 @@ onMounted(async () => {
   }
 }
 .doctor-header {
+  display: flex;
+  flex-direction: column;
   border-radius: 8px;
   padding: 20px;
   background: white;
-  display: flex;
-  flex-direction: column;
-  @media (min-width: 720px) {
+  @media (min-width: 600px) {
     padding: 8px;
     gap: 26px;
     flex-direction: row;
@@ -127,7 +129,7 @@ onMounted(async () => {
   .doctor-img-container {
     display: grid;
     place-content: center;
-    @media (min-width: 720px) {
+    @media (min-width: 600px) {
       width: 200px;
       padding: 8px;
     }
@@ -136,7 +138,7 @@ onMounted(async () => {
       height: auto;
       max-width: 500px;
       border-radius: 8px;
-      @media (min-width: 720px) {
+      @media (min-width: 600px) {
         max-width: 180px;
       }
     }
@@ -148,69 +150,78 @@ onMounted(async () => {
   padding-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  @media (min-width: 720px) {
+  gap: 4px;
+  @media (min-width: 600px) {
     padding-top: 20px;
   }
   .doctor-fullname {
-    font-size: 170%;
-    font-weight: 500;
-    line-height: 1;
+    font-size: 1.6rem;
+    font-weight: 600;
+    line-height: 1.1;
     display: flex;
     flex-direction: column;
     gap: 2px;
-    @media (min-width: 720px) {
+    @media (min-width: 600px) {
       gap: 7px;
     }
   }
   .doctor-speciality {
-    padding-top: 5px;
-    font-size: 130%;
-    font-weight: 400;
-    color: #0d9ce3;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: $primary;
   }
   .doctor-department {
-    padding-top: 5px;
-    font-size: 100%;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: $text-secondary;
   }
 }
 
 .doctor-extra-info {
-  padding-top: 24px;
-  padding-left: 4px;
+  padding: 0 4px;
   display: flex;
-  gap: 7px;
   flex-direction: column;
+  max-width: 460px;
+
   .title {
-    font-size: 130%;
-    font-weight: 400;
-    line-height: 1;
-    padding-bottom: 10px;
+    padding: 20px 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+    padding-bottom: 8px;
   }
+
   .sub-title {
-    font-size: 110%;
-    color: #b1b2b4;
-    line-height: 1;
-    padding-bottom: 20px;
+    padding-top: 8px;
+    padding-bottom: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
   }
+
   .education-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    .title {
-      // margin-left: 12px;
-      font-size: 90%;
+    gap: 2px;
+
+    .education-title {
+      font-size: 0.95rem;
+      font-weight: 400;
+      padding: 6px 0;
       position: relative;
-      // &:before {
-      //   content: "•";
-      //   position: absolute;
-      //   left: -10px;
-      //   top: 0px;
-      // }
     }
   }
+
   .expirience {
-    font-size: 115%;
+    font-size: 1.05rem;
+  }
+
+  a {
+    color: $primary;
+    text-decoration: none;
+    padding: 0;
+    display: inline-block;
   }
 }
 </style>
