@@ -38,11 +38,12 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .equipments {
-  padding: 20px 15px;
+  padding: 10px 15px;
 }
 .equipment-type {
   font-weight: 600;
   font-size: 150%;
+  padding-top: 10px;
   padding-bottom: 20px;
   padding-left: 15px;
 }

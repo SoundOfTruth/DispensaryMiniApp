@@ -14,6 +14,7 @@
               : doctor.photo
           "
           class="img"
+          loading="lazy"
         />
       </div>
       <div class="info">
