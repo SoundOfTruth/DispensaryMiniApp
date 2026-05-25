@@ -1,18 +1,27 @@
-#!/bin/sh
+#!/bin/bash
 
-set -a
-source .env
-set +a
+if [ -f .env.certbot ]; then
+    export $(grep -v '^#' .env.certbot | xargs)
+else
+    echo "Ошибка: файл .env не найден!"
+    exit 1
+fi
 
-docker stop OKD-proxy
+
+if [ -z "$DOMAIN" ] || [ -z "$EMAIL" ]; then
+    echo "Ошибка: переменные DOMAIN и EMAIL должны быть определены в .env файле"
+    exit 1
+fi
+
 
 docker run -it --rm \
   -v $(pwd)/certbot/conf:/etc/letsencrypt \
   -v $(pwd)/certbot/www:/var/www/certbot \
+  -p 80:80 \
   certbot/certbot certonly \
   --standalone \
-  -d "$DOMAIN" \
-  -d "www.$DOMAIN" \
-  --email "$EMAIL" \
+  -d $DOMAIN \
+  -d www.$DOMAIN \
+  --email $EMAIL \
   --agree-tos \
   --no-eff-email
