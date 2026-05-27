@@ -4,21 +4,18 @@
       <slot />
     </form>
     <Teleport to="#modals">
-      <AdminErrorModal
-        :errors="errorStore.errors"
-        @close="errorStore.clearErrors()"
-      />
+      <AdminErrorModal :errors="errorStore.errors" @close="errorStore.clearErrors()" />
     </Teleport>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useErrorStore } from "@/stores/errors";
-import AdminErrorModal from "../modals/AdminErrorModal.vue";
+import { useErrorStore } from '@/stores/errors';
+import AdminErrorModal from '../modals/AdminErrorModal.vue';
 
 const errorStore = useErrorStore();
 
-const emits = defineEmits(["submit"]);
+const emits = defineEmits(['submit']);
 </script>
 
 <style lang="scss" scoped>

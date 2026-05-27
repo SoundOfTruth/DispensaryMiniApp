@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { EquipmentItem } from "@/types/equipments";
+import type { EquipmentItem } from '@/types/equipments';
 
 defineProps<{ equipment: EquipmentItem }>();
 </script>

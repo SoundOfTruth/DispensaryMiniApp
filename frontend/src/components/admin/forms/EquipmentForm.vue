@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import TheForm from "./TheForm.vue";
-import FormActions from "./FormActions.vue";
-import FileInput from "./FileInput.vue";
+import TheForm from './TheForm.vue';
+import FormActions from './FormActions.vue';
+import FileInput from './FileInput.vue';
 
-import { onMounted, ref } from "vue";
+import { onMounted, ref } from 'vue';
 
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from 'vue-router';
 
-import { useEquipmentStore } from "@/stores/equipments";
-import { useEquipmentTypeStore } from "@/stores/equipmentTypes";
-import type { CreateEquipment } from "@/types/equipments";
-import { useErrorStore } from "@/stores/errors";
+import { useEquipmentStore } from '@/stores/equipments';
+import { useEquipmentTypeStore } from '@/stores/equipmentTypes';
+import type { CreateEquipment } from '@/types/equipments';
+import { useErrorStore } from '@/stores/errors';
 
 const props = defineProps<{
-  mode: "create" | "edit" | "detail";
+  mode: 'create' | 'edit' | 'detail';
 }>();
 
 const route = useRoute();
@@ -25,8 +25,8 @@ const typeStore = useEquipmentTypeStore();
 
 const equipmentId = ref<number>();
 const formData = ref<CreateEquipment>({
-  name: "",
-  image: "",
+  name: '',
+  image: '',
   type_id: 0,
 });
 
@@ -39,7 +39,7 @@ const getPatchPayload = (): Partial<CreateEquipment> | null => {
   const payload = { ...form } as Partial<CreateEquipment>;
   const equipment = equipmentStore.equipment;
   if (!equipment) {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
     return null;
   }
   const entries = Object.entries(form) as [
@@ -51,8 +51,8 @@ const getPatchPayload = (): Partial<CreateEquipment> | null => {
       payload[key] = undefined;
     }
   });
-  if (JSON.stringify(payload) === "{}") {
-    errorStore.addErrorMessage("Nothing to update.");
+  if (JSON.stringify(payload) === '{}') {
+    errorStore.addErrorMessage('Nothing to update.');
     return null;
   }
   return payload;
@@ -62,17 +62,15 @@ const validateForm = (): boolean => {
   const form = formData.value;
   let isValid: boolean = true;
   if (form.name.length < 1) {
-    errorStore.addErrorMessage(
-      "Название оборудования не может содержать менее 1 символа.",
-    );
+    errorStore.addErrorMessage('Название оборудования не может содержать менее 1 символа.');
     isValid = false;
   }
   if (form.image.length < 1) {
-    errorStore.addErrorMessage("Изображение не загружено.");
+    errorStore.addErrorMessage('Изображение не загружено.');
     isValid = false;
   }
   if (form.type_id == 0) {
-    errorStore.addErrorMessage("Некорректный тип оборудования.");
+    errorStore.addErrorMessage('Некорректный тип оборудования.');
     isValid = false;
   }
   return isValid;
@@ -85,19 +83,19 @@ const updateEquipment = async () => {
       return await equipmentStore.update(equipmentId.value, updatePayload);
     }
   } else {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
   }
 };
 
 const handleSubmit = async () => {
   if (validateForm()) {
-    if (props.mode === "create") {
+    if (props.mode === 'create') {
       const created = await equipmentStore.create(formData.value);
       if (created) {
         router.go(-1);
       }
     }
-    if (props.mode === "edit") {
+    if (props.mode === 'edit') {
       const updated = await updateEquipment();
       if (updated) {
         router.go(-1);
@@ -112,7 +110,7 @@ const handleCancel = () => {
 
 onMounted(async () => {
   await typeStore.loadList();
-  if (props.mode !== "create") {
+  if (props.mode !== 'create') {
     equipmentId.value = Number(route.params.id);
     await equipmentStore.loadById(equipmentId.value);
     if (equipmentStore.equipment) {
@@ -126,11 +124,11 @@ onMounted(async () => {
   <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
-        mode === "detail"
-          ? "Просмотр оборудования"
-          : mode === "edit"
-            ? "Редактирование оборудования"
-            : "Добавить оборудование"
+        mode === 'detail'
+          ? 'Просмотр оборудования'
+          : mode === 'edit'
+            ? 'Редактирование оборудования'
+            : 'Добавить оборудование'
       }}
     </h3>
 
@@ -173,8 +171,7 @@ onMounted(async () => {
           Выберите тип оборудования
         </option>
         <option :value="0" disabled v-else>
-          Нет доступных типов, вы не можете сохранять данные, пока не создадите
-          тип
+          Нет доступных типов, вы не можете сохранять данные, пока не создадите тип
         </option>
         <option :value="type.id" v-for="type in typeStore.types">
           {{ type.name }}

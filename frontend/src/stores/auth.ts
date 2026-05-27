@@ -1,28 +1,28 @@
-import { ref } from "vue";
-import { defineStore } from "pinia";
+import { ref } from 'vue';
+import { defineStore } from 'pinia';
 
-import AuthApi from "@/api/auth";
-import { AxiosError } from "axios";
-import type { LoginSchema } from "@/types/auth";
-import { useErrorStore } from "./errors";
+import AuthApi from '@/api/auth';
+import { AxiosError } from 'axios';
+import type { LoginSchema } from '@/types/auth';
+import { useErrorStore } from './errors';
 
-export const useAuthStore = defineStore("authStore", () => {
+export const useAuthStore = defineStore('authStore', () => {
   const errorStore = useErrorStore();
 
   const accessToken = ref<string | null>(null);
   const isAuthenticated = ref<boolean>(
-    localStorage.getItem("isAuthenticated") === "true" ? true : false,
+    localStorage.getItem('isAuthenticated') === 'true' ? true : false
   );
   const isRefreshing = ref<boolean>(false);
 
   const setAccessToken = (token: string | null, tokenType?: string) => {
     if (tokenType && token) {
       accessToken.value = `${tokenType} ${token}`;
-      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem('isAuthenticated', 'true');
       isAuthenticated.value = true;
     } else {
       accessToken.value = null;
-      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem('isAuthenticated');
       isAuthenticated.value = false;
     }
   };
@@ -38,10 +38,10 @@ export const useAuthStore = defineStore("authStore", () => {
 
   const refreshAccessToken = async () => {
     if (isRefreshing.value) {
-      throw new Error("isRefreshing");
+      throw new Error('isRefreshing');
     }
     if (!isAuthenticated.value) {
-      throw new Error("not authenticated");
+      throw new Error('not authenticated');
     }
     isRefreshing.value = true;
     try {

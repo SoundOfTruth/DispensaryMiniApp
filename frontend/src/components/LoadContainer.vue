@@ -15,8 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { debounce } from "lodash";
-import { computed, ref } from "vue";
+import { debounce } from 'lodash';
+import { computed, ref } from 'vue';
 
 interface Filters {
   page?: number;
@@ -25,11 +25,11 @@ interface Filters {
 
 const props = defineProps<{ count: number; limit: number }>();
 const emits = defineEmits<{
-  (e: "load", filters: Filters): Promise<void>;
-  (e: "search", search: string): Promise<void>;
+  (e: 'load', filters: Filters): Promise<void>;
+  (e: 'search', search: string): Promise<void>;
 }>();
 
-const searchPattern = ref<string>("");
+const searchPattern = ref<string>('');
 
 const pagesCount = computed(() => {
   return Math.ceil(props.count / props.limit);
@@ -38,17 +38,15 @@ const currPage = ref<number>(1);
 
 const handleSearch = debounce(async () => {
   currPage.value = 1;
-  await emits("search", searchPattern.value);
+  await emits('search', searchPattern.value);
 }, 350);
 
 const handleScroll = async (event: Event) => {
   const target = event.target as HTMLElement;
-  if (
-    Math.ceil(target.scrollTop + target.clientHeight) >= target.scrollHeight
-  ) {
+  if (Math.ceil(target.scrollTop + target.clientHeight) >= target.scrollHeight) {
     if (currPage.value < pagesCount.value) {
       currPage.value += 1;
-      await emits("load", {
+      await emits('load', {
         page: currPage.value,
         search: searchPattern.value ? searchPattern.value : undefined,
       });

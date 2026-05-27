@@ -1,21 +1,14 @@
-import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
-import { defineStore } from "pinia";
+import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { defineStore } from 'pinia';
 
-import DepartmentApi from "@/api/departments";
+import DepartmentApi from '@/api/departments';
 
-import type { Department, CreateDepartment } from "@/types/departments";
-import { useErrorStore } from "./errors";
+import type { Department, CreateDepartment } from '@/types/departments';
+import { useErrorStore } from './errors';
+import type { ApiSearchParams } from '@/api/base';
 
-interface ApiParams {
-  search?: number;
-}
-
-interface Filters {
-  search?: string;
-}
-
-export const useDepartmentStore = defineStore("departmentStore", () => {
+export const useDepartmentStore = defineStore('departmentStore', () => {
   const route = useRoute();
   const errorStore = useErrorStore();
 
@@ -24,24 +17,15 @@ export const useDepartmentStore = defineStore("departmentStore", () => {
 
   const count = computed(() => departments.value.length || 0);
 
-  const getAllowedParams = (filters: Filters): ApiParams => {
-    const allowedParams: (keyof Filters)[] = ["search"];
-    const params: ApiParams = {};
-    Object.entries(filters).forEach(([key, value]) => {
-      const param = key as keyof Filters;
-      if (
-        allowedParams.includes(param) &&
-        value !== undefined &&
-        value !== null
-      ) {
-        params[param] = value;
-      }
-    });
-    return params;
+  const getRouteParams = (): ApiSearchParams => {
+    const routeSearch = route.query.search;
+    const search = routeSearch ? String(routeSearch) : undefined;
+    return {
+      search: search ? search : undefined,
+    };
   };
-
   const loadList = async () => {
-    const params = getAllowedParams(route.query);
+    const params = getRouteParams();
     try {
       departments.value = await DepartmentApi.getAll(params);
     } catch (error) {

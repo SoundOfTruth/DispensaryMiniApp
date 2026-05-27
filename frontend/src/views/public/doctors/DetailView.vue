@@ -1,10 +1,6 @@
 <template>
   <div class="doctor-page">
-    <div
-      class="err-handler"
-      v-for="err in errors"
-      v-if="!doctor || doctor.id !== doctorId"
-    >
+    <div class="err-handler" v-for="err in errors" v-if="!doctor || doctor.id !== doctorId">
       {{ err.message }}
     </div>
     <div class="doctor-container" v-else>
@@ -12,9 +8,7 @@
         <div class="doctor-img-container">
           <img
             :src="
-              !doctor.photo || !doctor.photo.includes('http')
-                ? '/static/doctor.png'
-                : doctor.photo
+              !doctor.photo || !doctor.photo.includes('http') ? '/static/doctor.png' : doctor.photo
             "
             class="doctor-img"
           />
@@ -56,13 +50,9 @@
             </div>
           </div>
         </div>
-        <div class="sub-title" v-if="doctor?.inspections?.length > 0">
-          Проводит обследования:
-        </div>
+        <div class="sub-title" v-if="doctor?.inspections?.length > 0">Проводит обследования:</div>
         <div v-for="inspection in doctor?.inspections">
-          <RouterLink :to="`/inspections/${inspection.id}`">{{
-            `${inspection.title}`
-          }}</RouterLink>
+          <RouterLink :to="`/inspections/${inspection.id}`">{{ `${inspection.title}` }}</RouterLink>
         </div>
       </div>
     </div>
@@ -70,11 +60,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
-import { useDoctorStore } from "@/stores/doctors";
-import { useErrorStore } from "@/stores/errors";
+import { useDoctorStore } from '@/stores/doctors';
+import { useErrorStore } from '@/stores/errors';
 
 const route = useRoute();
 const doctorId: number = Number(route.params.doctorId);
@@ -90,8 +80,8 @@ const infoExists = computed(() =>
     doctor.value?.qualification ||
     doctor.value?.education.length != 0 ||
     doctor.value?.extra_education.length != 0 ||
-    doctor.value.inspections.length != 0,
-  ),
+    doctor.value.inspections.length != 0
+  )
 );
 
 onMounted(async () => {

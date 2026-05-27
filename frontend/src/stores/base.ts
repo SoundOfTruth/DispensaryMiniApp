@@ -9,3 +9,11 @@ export interface BaseStore {
   deleteById: (id: number) => Promise<void>;
   deleteList: (ids: number[]) => Promise<void>;
 }
+
+export interface SearchFilters {
+  search?: string;
+}
+
+export interface Filters extends SearchFilters {
+  page?: number;
+}

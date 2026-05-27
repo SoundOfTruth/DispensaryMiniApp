@@ -24,27 +24,27 @@
 </template>
 
 <script setup lang="ts">
-import ErrorBlock from "./ErrorBlock.vue";
+import ErrorBlock from './ErrorBlock.vue';
 
-import { ref } from "vue";
+import { ref } from 'vue';
 
-import { useAuthStore } from "@/stores/auth";
-import { useErrorStore } from "@/stores/errors";
+import { useAuthStore } from '@/stores/auth';
+import { useErrorStore } from '@/stores/errors';
 
-const emits = defineEmits(["afterSubmit"]);
+const emits = defineEmits(['afterSubmit']);
 
 const authStore = useAuthStore();
 const errorStore = useErrorStore();
 
 const formData = ref<{ email: string; password: string }>({
-  email: "",
-  password: "",
+  email: '',
+  password: '',
 });
 
 const onSubmit = async () => {
   errorStore.clearErrors();
   await authStore.login(formData.value);
-  emits("afterSubmit");
+  emits('afterSubmit');
 };
 </script>
 

@@ -1,7 +1,7 @@
-import type { SimpleInspection } from "./inspections";
+import type { SimpleInspection } from './inspections';
 
-import { type Speciality } from "./specialities";
-import { type Department } from "./departments";
+import { type Speciality } from './specialities';
+import { type Department } from './departments';
 
 export interface SimpleDoctor {
   id: number;

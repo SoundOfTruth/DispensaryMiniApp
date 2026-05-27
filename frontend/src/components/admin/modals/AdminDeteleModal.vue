@@ -1,23 +1,19 @@
 <template>
   <CenterModal :open="props.open" @close="emits('close')">
     <div class="modal-header">
-      <h3>Удалить выбранное ({{ id ? "1 элемент" : `${elementWord}` }})</h3>
+      <h3>Удалить выбранное ({{ id ? '1 элемент' : `${elementWord}` }})</h3>
     </div>
     <div class="actions">
-      <button type="submit" class="btn delete" @click="processDelete()">
-        Удалить
-      </button>
-      <button type="button" class="btn reset" @click="emits('close')">
-        Отмена
-      </button>
+      <button type="submit" class="btn delete" @click="processDelete()">Удалить</button>
+      <button type="button" class="btn reset" @click="emits('close')">Отмена</button>
     </div>
   </CenterModal>
 </template>
 
 <script setup lang="ts">
-import CenterModal from "../../CenterModal.vue";
-import type { BaseStore } from "@/stores/base";
-import { computed, inject, ref } from "vue";
+import CenterModal from '../../CenterModal.vue';
+import type { BaseStore } from '@/stores/base';
+import { computed, inject, ref } from 'vue';
 
 const props = defineProps<{
   open: boolean;
@@ -27,9 +23,9 @@ const props = defineProps<{
 }>();
 
 const data = ref<any[]>();
-inject("data", data);
+inject('data', data);
 
-const emits = defineEmits(["close"]);
+const emits = defineEmits(['close']);
 
 const elementWord = computed(() => {
   const count = props.selectedItems.size;
@@ -58,7 +54,7 @@ const processDelete = async () => {
     await props.store.deleteList(Array.from(props.selectedItems));
   }
   await props.store.loadList();
-  emits("close");
+  emits('close');
 };
 </script>
 

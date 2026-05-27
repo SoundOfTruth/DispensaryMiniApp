@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import TheForm from "./TheForm.vue";
+import TheForm from './TheForm.vue';
 
-import FormActions from "./FormActions.vue";
+import FormActions from './FormActions.vue';
 
-import { ref, computed, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { ref, computed, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
-import { useInspectionStore } from "@/stores/inspections";
-import { useDoctorStore } from "@/stores/doctors";
+import { useInspectionStore } from '@/stores/inspections';
+import { useDoctorStore } from '@/stores/doctors';
 
-import type { SimpleDoctor } from "@/types/doctors";
-import type { CreateInspection } from "@/types/inspections";
-import { useErrorStore } from "@/stores/errors";
-import LoadContainer from "@/components/LoadContainer.vue";
+import type { SimpleDoctor } from '@/types/doctors';
+import type { CreateInspection } from '@/types/inspections';
+import { useErrorStore } from '@/stores/errors';
+import LoadContainer from '@/components/LoadContainer.vue';
 const props = defineProps<{
-  mode: "create" | "edit" | "detail";
+  mode: 'create' | 'edit' | 'detail';
 }>();
-const emits = defineEmits(["cancel"]);
+const emits = defineEmits(['cancel']);
 
 const route = useRoute();
 const router = useRouter();
@@ -34,9 +34,9 @@ interface FormData {
 }
 
 const formData = ref<FormData>({
-  title: "",
-  description: "",
-  preparation: "",
+  title: '',
+  description: '',
+  preparation: '',
   doctors: [],
 });
 
@@ -54,9 +54,7 @@ const loadDoctors = async (filters: { page?: number; search?: string }) => {
 
 const availableDoctors = computed(() => {
   return doctors.value.filter((doctor) => {
-    return !formData.value.doctors.some(
-      (selected) => selected.id === doctor.id,
-    );
+    return !formData.value.doctors.some((selected) => selected.id === doctor.id);
   });
 });
 
@@ -70,22 +68,18 @@ const selectDoctor = (doctor: SimpleDoctor) => {
 };
 
 const removeDoctor = (doctorId: number) => {
-  formData.value.doctors = formData.value.doctors.filter(
-    (doctor) => doctor.id !== doctorId,
-  );
+  formData.value.doctors = formData.value.doctors.filter((doctor) => doctor.id !== doctorId);
 };
 
 const validateForm = (): boolean => {
   const form = formData.value;
   let isValid = true;
   if (form.title.length < 1) {
-    errorStore.addErrorMessage("Заголовок не может содержать менее 1 символа.");
+    errorStore.addErrorMessage('Заголовок не может содержать менее 1 символа.');
     isValid = false;
   }
   if (form.preparation.length < 1) {
-    errorStore.addErrorMessage(
-      "Подготовка не может содержать менее 1 символа.",
-    );
+    errorStore.addErrorMessage('Подготовка не может содержать менее 1 символа.');
     isValid = false;
   }
   return isValid;
@@ -94,21 +88,18 @@ const validateForm = (): boolean => {
 const getPatchPayload = (): Partial<CreateInspection> | null => {
   const inspection = inspectionStore.inspection;
   if (!inspection) {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
     return null;
   }
 
   const { doctors, ...form } = formData.value;
-  const entries = Object.entries(form) as [
-    keyof typeof form,
-    (typeof form)[keyof typeof form],
-  ][];
+  const entries = Object.entries(form) as [keyof typeof form, (typeof form)[keyof typeof form]][];
   let doctorsIsEqual = doctors.length === inspection.doctors.length;
   if (doctorsIsEqual) {
     doctorsIsEqual = doctors.every((formDoctor) =>
       inspection.doctors.find((doctor) => {
         return doctor.id == formDoctor.id;
-      }),
+      })
     );
   }
   const payload: Partial<CreateInspection> = {
@@ -121,8 +112,8 @@ const getPatchPayload = (): Partial<CreateInspection> | null => {
     }
   });
 
-  if (JSON.stringify(payload) === "{}") {
-    errorStore.addErrorMessage("Nothing to update.");
+  if (JSON.stringify(payload) === '{}') {
+    errorStore.addErrorMessage('Nothing to update.');
     return null;
   }
   return payload;
@@ -147,18 +138,18 @@ const updateInspection = async () => {
       return await inspectionStore.update(inspectionId.value, updatePayload);
     }
   } else {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
   }
 };
 
 const handleSubmit = async () => {
   if (validateForm()) {
-    if (props.mode == "create") {
+    if (props.mode == 'create') {
       const created = await createInspection();
       if (created) {
         router.go(-1);
       }
-    } else if (props.mode == "edit") {
+    } else if (props.mode == 'edit') {
       const updated = await updateInspection();
       if (updated) {
         router.go(-1);
@@ -172,11 +163,11 @@ const handleCancel = () => {
 };
 
 onMounted(async () => {
-  if (props.mode != "detail") {
+  if (props.mode != 'detail') {
     await doctorStore.loadList();
     doctors.value = [...doctorStore.doctors];
   }
-  if (props.mode !== "create") {
+  if (props.mode !== 'create') {
     inspectionId.value = Number(route.params.id);
     await inspectionStore.loadById(inspectionId.value);
     if (inspectionStore.inspection) {
@@ -191,11 +182,11 @@ onMounted(async () => {
   <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
-        mode === "detail"
-          ? "Просмотр данных обследования"
-          : mode === "edit"
-            ? "Редактирование данных обследования"
-            : "Добавить обследования"
+        mode === 'detail'
+          ? 'Просмотр данных обследования'
+          : mode === 'edit'
+            ? 'Редактирование данных обследования'
+            : 'Добавить обследования'
       }}
     </h3>
 
@@ -247,19 +238,14 @@ onMounted(async () => {
           @click="removeDoctor(doctor.id)"
         >
           <div class="item-info">
-            <strong
-              >{{ doctor.lastname }} {{ doctor.firstname }}
-              {{ doctor.middlename }}</strong
-            >
+            <strong>{{ doctor.lastname }} {{ doctor.firstname }} {{ doctor.middlename }}</strong>
             <div v-if="doctor.speciality" class="speciality">
               Специальность: {{ doctor.speciality.name }}
             </div>
             <div v-if="doctor.qualification" class="qualification">
               Квалификация: {{ doctor.qualification }}
             </div>
-            <div class="department">
-              Отделение: {{ doctor.department.name }}
-            </div>
+            <div class="department">Отделение: {{ doctor.department.name }}</div>
           </div>
         </div>
       </div>
@@ -279,19 +265,14 @@ onMounted(async () => {
             @click="selectDoctor(doctor)"
           >
             <div class="item-info">
-              <strong
-                >{{ doctor.lastname }} {{ doctor.firstname }}
-                {{ doctor.middlename }}</strong
-              >
+              <strong>{{ doctor.lastname }} {{ doctor.firstname }} {{ doctor.middlename }}</strong>
               <div v-if="doctor.speciality" class="speciality">
                 Специальность: {{ doctor.speciality.name }}
               </div>
               <div v-if="doctor.qualification" class="qualification">
                 Квалификация: {{ doctor.qualification }}
               </div>
-              <div class="department">
-                Отделение: {{ doctor.department.name }}
-              </div>
+              <div class="department">Отделение: {{ doctor.department.name }}</div>
             </div>
           </div>
         </LoadContainer>

@@ -14,10 +14,10 @@
 </template>
 
 <script lang="ts" setup>
-import SearchSvg from "./svg/SearchSvg.vue";
-import { debounce } from "lodash";
-import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import SearchSvg from './svg/SearchSvg.vue';
+import { debounce } from 'lodash';
+import { ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 interface inputData {
   title: string;
@@ -25,14 +25,18 @@ interface inputData {
 
 const route = useRoute();
 const router = useRouter();
-const pattern = ref<string>(route.query.search?.toString() ?? "");
+const pattern = ref<string>(route.query.search?.toString() ?? '');
 
 const props = defineProps<inputData>();
 
 const handleSearch = debounce(() => {
   let query = { ...route.query };
   if (pattern.value) {
-    query = { ...query, search: pattern.value, page: "1" };
+    query = {
+      ...query,
+      search: pattern.value,
+      ...(query.page !== undefined ? { page: '1' } : {}),
+    };
   } else {
     delete query.search;
   }

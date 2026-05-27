@@ -1,11 +1,5 @@
 <template>
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M3 6H5H21"
       :stroke="color"
@@ -39,6 +33,6 @@
 
 <script lang="ts" setup>
 const props = withDefaults(defineProps<{ color?: string }>(), {
-  color: "black",
+  color: 'black',
 });
 </script>

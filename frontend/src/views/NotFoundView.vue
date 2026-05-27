@@ -4,16 +4,14 @@
       <div class="error-code">404</div>
       <h2>Страница не найдена</h2>
       <div class="actions">
-        <RouterLink :to="{ name: props.urlName }" class="btn">
-          Перейти на главную
-        </RouterLink>
+        <RouterLink class="btn" :to="{ name: props.urlName }"> Перейти на главную </RouterLink>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
+import { RouterLink } from 'vue-router';
 
 const props = defineProps<{ urlName: string }>();
 </script>

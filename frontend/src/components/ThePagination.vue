@@ -1,10 +1,6 @@
 <template>
   <div class="pagination">
-    <button
-      class="pagination__btn"
-      :disabled="currPage === 1"
-      @click="goToPage(currPage - 1)"
-    >
+    <button class="pagination__btn" :disabled="currPage === 1" @click="goToPage(currPage - 1)">
       <LeftSvg
         class="arrow"
         :class="{ disabled: currPage == 1 }"
@@ -39,13 +35,13 @@
 </template>
 
 <script lang="ts" setup>
-import LeftSvg from "./svg/LeftSvg.vue";
-import RightSvg from "./svg/RightSvg.vue";
+import LeftSvg from './svg/LeftSvg.vue';
+import RightSvg from './svg/RightSvg.vue';
 
-import { computed, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { computed, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-import { calcPages } from "@/utils/pagination";
+import { calcPages } from '@/utils/pagination';
 
 interface Props {
   count: number;
@@ -94,9 +90,9 @@ const goToPage = (page: number) => {
     path: route.path,
     query: { ...route.query, page: page },
   });
-  const element = document.getElementById("scroll-container");
+  const element = document.getElementById('scroll-container');
   if (element) {
-    element.scrollIntoView({ behavior: "smooth" });
+    element.scrollIntoView({ behavior: 'smooth' });
   }
 };
 
@@ -109,7 +105,7 @@ watch(
         query: { ...route.query, page: pagesCount.value },
       });
     }
-  },
+  }
 );
 </script>
 

@@ -17,5 +17,5 @@
 </style>
 
 <script lang="ts" setup>
-import { Transition } from "vue";
+import { Transition } from 'vue';
 </script>

@@ -4,24 +4,18 @@
       <MenuButton />
     </div>
     <aside class="nav-panel" v-if="menuOpen">
-      <RouterLink class="title" :to="{ name: 'admin.index' }">
-        Панель администратора</RouterLink
-      >
+      <RouterLink class="title" :to="{ name: 'admin.index' }"> Панель администратора</RouterLink>
       <nav class="nav">
-        <AdminNavItem
-          :title="link.title"
-          :route-name="link.routeName"
-          v-for="link in links"
-        />
+        <AdminNavItem :title="link.title" :route-name="link.routeName" v-for="link in links" />
       </nav>
     </aside>
   </div>
 </template>
 
 <script setup lang="ts">
-import MenuButton from "@/components/MenuButton.vue";
-import AdminNavItem from "./AdminNavItem.vue";
-import { ref } from "vue";
+import MenuButton from '@/components/MenuButton.vue';
+import AdminNavItem from './AdminNavItem.vue';
+import { ref } from 'vue';
 
 interface Link {
   title: string;

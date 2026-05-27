@@ -9,13 +9,13 @@
 </template>
 
 <script lang="ts" setup>
-import AdminPage from "@/components/admin/AdminPage.vue";
+import AdminPage from '@/components/admin/AdminPage.vue';
 
-import { useDoctorStore } from "@/stores/doctors";
-import type { Department } from "@/types/departments";
+import { useDoctorStore } from '@/stores/doctors';
+import type { Department } from '@/types/departments';
 
-import type { SimpleDoctor } from "@/types/doctors";
-import type { Speciality } from "@/types/specialities";
+import type { SimpleDoctor } from '@/types/doctors';
+import type { Speciality } from '@/types/specialities';
 
 interface Columns {
   key: keyof SimpleDoctor;
@@ -24,11 +24,11 @@ interface Columns {
 }
 
 const columns: Columns[] = [
-  { key: "id", text: "id" },
-  { key: "lastname", text: "Фамилия" },
-  { key: "firstname", text: "Имя" },
-  { key: "middlename", text: "Отчество" },
-  { key: "speciality", text: "Специальность", secondKey: "name" },
+  { key: 'id', text: 'id' },
+  { key: 'lastname', text: 'Фамилия' },
+  { key: 'firstname', text: 'Имя' },
+  { key: 'middlename', text: 'Отчество' },
+  { key: 'speciality', text: 'Специальность', secondKey: 'name' },
 ];
 
 const doctorStore = useDoctorStore();

@@ -1,4 +1,4 @@
-import type { SimpleDoctor } from "./doctors";
+import type { SimpleDoctor } from './doctors';
 
 export interface SimpleInspection {
   id: number;

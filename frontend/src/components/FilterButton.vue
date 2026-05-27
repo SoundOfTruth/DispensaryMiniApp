@@ -5,9 +5,9 @@
 </template>
 
 <script setup lang="ts">
-import FilterSvg from "./svg/FilterSvg.vue";
+import FilterSvg from './svg/FilterSvg.vue';
 
-const emits = defineEmits(["onClick"]);
+const emits = defineEmits(['onClick']);
 </script>
 
 <style lang="scss" scoped>

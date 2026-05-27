@@ -1,9 +1,5 @@
-import { useAuthStore } from "@/stores/auth";
-import {
-  AxiosError,
-  type AxiosInstance,
-  type InternalAxiosRequestConfig,
-} from "axios";
+import { useAuthStore } from '@/stores/auth';
+import { AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 
 export const setAuthToken = async (config: InternalAxiosRequestConfig<any>) => {
   const authStore = useAuthStore();
@@ -13,9 +9,7 @@ export const setAuthToken = async (config: InternalAxiosRequestConfig<any>) => {
   return config;
 };
 
-export const refreshAndSetToken = async (
-  config: InternalAxiosRequestConfig<any>,
-) => {
+export const refreshAndSetToken = async (config: InternalAxiosRequestConfig<any>) => {
   const authStore = useAuthStore();
   if (authStore.accessToken) {
     config.headers.setAuthorization(authStore.accessToken);
@@ -48,10 +42,7 @@ const processQueue = (error: unknown) => {
   failedQueue = [];
 };
 
-export const refreshTokenOnFall = async (
-  client: AxiosInstance,
-  error: AxiosError,
-) => {
+export const refreshTokenOnFall = async (client: AxiosInstance, error: AxiosError) => {
   const origRequest = error.config as InternalAxiosRequestConfig & {
     _retry?: boolean;
   };
@@ -66,7 +57,7 @@ export const refreshTokenOnFall = async (
       if (authStore.accessToken) {
         processQueue(null);
       } else {
-        processQueue(new Error("Failed to refresh token"));
+        processQueue(new Error('Failed to refresh token'));
       }
       return client(origRequest);
     } catch (err) {

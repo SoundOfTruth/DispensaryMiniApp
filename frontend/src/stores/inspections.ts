@@ -1,27 +1,14 @@
-import { ref } from "vue";
-import { useRoute } from "vue-router";
-import { defineStore } from "pinia";
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { defineStore } from 'pinia';
 
-import InspectionApi from "../api/inspections";
-import type {
-  CreateInspection,
-  Inspection,
-  SimpleInspection,
-} from "../types/inspections";
-import { useErrorStore } from "./errors";
+import InspectionApi from '../api/inspections';
+import type { CreateInspection, Inspection, SimpleInspection } from '../types/inspections';
+import { useErrorStore } from './errors';
+import type { Filters } from './base';
+import type { ApiParams } from '@/api/base';
 
-interface ApiParams {
-  limit: number;
-  offset: number;
-  search?: number;
-}
-
-interface Filters {
-  page?: number;
-  search?: string;
-}
-
-export const useInspectionStore = defineStore("inspectionStore", () => {
+export const useInspectionStore = defineStore('inspectionStore', () => {
   const route = useRoute();
   const errorStore = useErrorStore();
 
@@ -32,7 +19,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
   const limit = ref<number>(10);
 
   const getApiParams = (params: Filters): ApiParams => {
-    const allowedParams: (keyof Filters)[] = ["search"];
+    const allowedParams: (keyof Filters)[] = ['search'];
     const page = params?.page || 1;
     const apiParams: ApiParams = {
       offset: (page - 1) * limit.value,
@@ -41,7 +28,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     Object.entries(params).forEach(([key, value]) => {
       const param = key as keyof Filters;
       if (
-        param != "page" &&
+        param != 'page' &&
         allowedParams.includes(param) &&
         value !== undefined &&
         value !== null
@@ -57,7 +44,7 @@ export const useInspectionStore = defineStore("inspectionStore", () => {
     const params = getApiParams(filters);
     try {
       const paginatedData = await InspectionApi.getAll(
-        Object.keys(filters).length !== 0 ? params : routeParams,
+        Object.keys(filters).length !== 0 ? params : routeParams
       );
       inspections.value = paginatedData.results;
       count.value = paginatedData.count;

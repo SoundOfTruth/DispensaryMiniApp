@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import TheForm from "./TheForm.vue";
-import FormActions from "./FormActions.vue";
+import TheForm from './TheForm.vue';
+import FormActions from './FormActions.vue';
 
-import { onMounted, ref } from "vue";
+import { onMounted, ref } from 'vue';
 
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from 'vue-router';
 
-import { useEquipmentTypeStore } from "@/stores/equipmentTypes";
-import type { CreateEquipmentType } from "@/types/equipments";
-import { useErrorStore } from "@/stores/errors";
+import { useEquipmentTypeStore } from '@/stores/equipmentTypes';
+import type { CreateEquipmentType } from '@/types/equipments';
+import { useErrorStore } from '@/stores/errors';
 
 const props = defineProps<{
-  mode: "create" | "edit" | "detail";
+  mode: 'create' | 'edit' | 'detail';
 }>();
 
 const route = useRoute();
@@ -21,15 +21,13 @@ const errorStore = useErrorStore();
 const typeStore = useEquipmentTypeStore();
 
 const typeId = ref<number>();
-const formData = ref<CreateEquipmentType>({ name: "" });
+const formData = ref<CreateEquipmentType>({ name: '' });
 
 const validateForm = (): boolean => {
   const form = formData.value;
   let isValid: boolean = true;
   if (form.name.length < 1) {
-    errorStore.addErrorMessage(
-      "Название типа не может содержать менее 1 символа.",
-    );
+    errorStore.addErrorMessage('Название типа не может содержать менее 1 символа.');
     isValid = false;
   }
   return isValid;
@@ -39,19 +37,19 @@ const updateType = async () => {
   if (typeId.value) {
     return await typeStore.update(typeId.value, formData.value);
   } else {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
   }
 };
 
 const handleSubmit = async () => {
   if (validateForm()) {
-    if (props.mode === "create") {
+    if (props.mode === 'create') {
       const created = await typeStore.create(formData.value);
       if (created) {
         router.go(-1);
       }
     }
-    if (props.mode === "edit") {
+    if (props.mode === 'edit') {
       if (typeId.value) {
         const updated = await updateType();
         if (updated) {
@@ -67,7 +65,7 @@ const handleCancel = () => {
 };
 
 onMounted(async () => {
-  if (props.mode !== "create") {
+  if (props.mode !== 'create') {
     typeId.value = Number(route.params.id);
     await typeStore.loadById(typeId.value);
     if (typeStore.type) {
@@ -81,11 +79,11 @@ onMounted(async () => {
   <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
-        mode === "detail"
-          ? "Просмотр типа оборудования"
-          : mode === "edit"
-            ? "Редактирование тип оборудования"
-            : "Добавить тип оборудования"
+        mode === 'detail'
+          ? 'Просмотр типа оборудования'
+          : mode === 'edit'
+            ? 'Редактирование тип оборудования'
+            : 'Добавить тип оборудования'
       }}
     </h3>
 

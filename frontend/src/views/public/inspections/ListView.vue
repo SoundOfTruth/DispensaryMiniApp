@@ -3,33 +3,27 @@
     <div class="filters">
       <SearchField title="Поиск обследований" />
     </div>
-    <PaginatedPage
-      :count="inspectionStore.count"
-      :limit="inspectionStore.limit"
-    >
+    <PaginatedPage :count="inspectionStore.count" :limit="inspectionStore.limit">
       <div class="err-handler" v-for="err in errors" v-if="errCondition">
         {{ err.message }}
       </div>
       <div class="inspections-list">
-        <InspectionCard
-          :inspection="inspection"
-          v-for="inspection in inspections"
-        />
+        <InspectionCard :inspection="inspection" v-for="inspection in inspections" />
       </div>
     </PaginatedPage>
   </div>
 </template>
 
 <script setup lang="ts">
-import SearchField from "@/components/SearchField.vue";
-import PaginatedPage from "@/components/PaginatedPage.vue";
-import InspectionCard from "@/components/inspections/InspectionCard.vue";
+import SearchField from '@/components/SearchField.vue';
+import PaginatedPage from '@/components/PaginatedPage.vue';
+import InspectionCard from '@/components/inspections/InspectionCard.vue';
 
-import { computed, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
+import { computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
-import { useInspectionStore } from "@/stores/inspections";
-import { useErrorStore } from "@/stores/errors";
+import { useInspectionStore } from '@/stores/inspections';
+import { useErrorStore } from '@/stores/errors';
 
 const route = useRoute();
 
@@ -39,16 +33,16 @@ const inspectionStore = useInspectionStore();
 const inspections = computed(() => inspectionStore.inspections);
 const errors = computed(() => errorStore.errors);
 const errCondition = computed(
-  () => inspections.value === undefined || inspections.value?.length == 0,
+  () => inspections.value === undefined || inspections.value?.length == 0
 );
 
 const afterLoad = () => {
   const search = route.query.search;
   if (inspections.value.length === 0 && errors.value.length === 0) {
     if (!search) {
-      errorStore.setErrorMessage("Ничего не найдено...");
+      errorStore.setErrorMessage('Ничего не найдено...');
     } else {
-      errorStore.setErrorMessage("Ничего не найдено по заданным параметрам.");
+      errorStore.setErrorMessage('Ничего не найдено по заданным параметрам.');
     }
   }
 };
@@ -63,7 +57,7 @@ watch(
   async () => {
     await inspectionStore.loadList();
     afterLoad();
-  },
+  }
 );
 </script>
 

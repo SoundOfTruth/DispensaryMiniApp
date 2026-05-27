@@ -1,20 +1,17 @@
 <template>
   <div class="paginated-page">
     <slot></slot>
-    <div
-      class="pagination-container"
-      v-if="count > limit || currentPage < 1 || currentPage > 1"
-    >
+    <div class="pagination-container" v-if="count > limit || currentPage < 1 || currentPage > 1">
       <ThePagination :count="count" :limit="limit" :size="3"></ThePagination>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import ThePagination from "./ThePagination.vue";
+import ThePagination from './ThePagination.vue';
 
-import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 
 const route = useRoute();
 

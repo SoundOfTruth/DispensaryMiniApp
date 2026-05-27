@@ -9,11 +9,11 @@
 </template>
 
 <script lang="ts" setup>
-import AdminPage from "@/components/admin/AdminPage.vue";
+import AdminPage from '@/components/admin/AdminPage.vue';
 
-import { useDepartmentStore } from "@/stores/departments";
+import { useDepartmentStore } from '@/stores/departments';
 
-import { type Department } from "@/types/departments";
+import { type Department } from '@/types/departments';
 
 interface Columns {
   key: keyof Department;
@@ -21,8 +21,8 @@ interface Columns {
 }
 
 const columns: Columns[] = [
-  { key: "id", text: "id" },
-  { key: "name", text: "Название" },
+  { key: 'id', text: 'id' },
+  { key: 'name', text: 'Название' },
 ];
 
 const store = useDepartmentStore();

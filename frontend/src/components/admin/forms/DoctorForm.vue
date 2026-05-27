@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import TheForm from "./TheForm.vue";
-import FormActions from "./FormActions.vue";
-import FileInput from "./FileInput.vue";
-import LoadContainer from "@/components/LoadContainer.vue";
+import TheForm from './TheForm.vue';
+import FormActions from './FormActions.vue';
+import FileInput from './FileInput.vue';
+import LoadContainer from '@/components/LoadContainer.vue';
 
-import { onMounted, ref, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-import { useDoctorStore } from "@/stores/doctors";
-import { useDepartmentStore } from "@/stores/departments";
-import { useSpecialityStore } from "@/stores/specialties";
-import { useInspectionStore } from "@/stores/inspections";
+import { useDoctorStore } from '@/stores/doctors';
+import { useDepartmentStore } from '@/stores/departments';
+import { useSpecialityStore } from '@/stores/specialties';
+import { useInspectionStore } from '@/stores/inspections';
 
-import type { CreateDoctor, CreateDoctorForm } from "@/types/doctors";
-import type { SimpleInspection } from "@/types/inspections";
-import { useErrorStore } from "@/stores/errors";
+import type { CreateDoctor, CreateDoctorForm } from '@/types/doctors';
+import type { SimpleInspection } from '@/types/inspections';
+import { useErrorStore } from '@/stores/errors';
 
 const props = defineProps<{
-  mode: "create" | "edit" | "detail";
+  mode: 'create' | 'edit' | 'detail';
 }>();
 
 const route = useRoute();
@@ -45,9 +45,9 @@ const loadInspections = async (filters: { page?: number; search?: string }) => {
 
 const doctorId = ref<number>();
 const formData = ref<CreateDoctorForm>({
-  lastname: "",
-  firstname: "",
-  middlename: "",
+  lastname: '',
+  firstname: '',
+  middlename: '',
   qualification: null,
   experience_start: null,
   speciality_id: 0,
@@ -58,8 +58,8 @@ const formData = ref<CreateDoctorForm>({
   inspections: [],
 });
 
-const educationInput = ref<string>("");
-const extraEducationInput = ref<string>("");
+const educationInput = ref<string>('');
+const extraEducationInput = ref<string>('');
 
 const setPhoto = (url: string | null) => {
   formData.value.photo = url;
@@ -73,11 +73,9 @@ const addEducation = () => {
   }
   if (title.length > 0) {
     formData.value.education.add(title);
-    educationInput.value = "";
+    educationInput.value = '';
   } else {
-    errorStore.addErrorMessage(
-      "Добавленное образование содержит менее 1 символа.",
-    );
+    errorStore.addErrorMessage('Добавленное образование содержит менее 1 символа.');
   }
 };
 
@@ -89,11 +87,9 @@ const addExtraducation = () => {
   }
   if (title.length > 0) {
     formData.value.extra_education.add(title);
-    extraEducationInput.value = "";
+    extraEducationInput.value = '';
   } else {
-    errorStore.addErrorMessage(
-      "Добавленное образование содержит менее 1 символа.",
-    );
+    errorStore.addErrorMessage('Добавленное образование содержит менее 1 символа.');
   }
 };
 
@@ -103,15 +99,11 @@ const removeEducation = (set: Set<string>, title: string) => {
 
 const availableInspection = computed(() => {
   const selectedIds = formData.value.inspections.map((i) => i.id);
-  return inspections.value.filter(
-    (inspection) => !selectedIds.includes(inspection.id),
-  );
+  return inspections.value.filter((inspection) => !selectedIds.includes(inspection.id));
 });
 
 const selectInspection = (inspection: SimpleInspection) => {
-  const index = formData.value.inspections.findIndex(
-    (d) => d.id === inspection.id,
-  );
+  const index = formData.value.inspections.findIndex((d) => d.id === inspection.id);
   if (index === -1) {
     formData.value.inspections.push(inspection);
   } else {
@@ -121,7 +113,7 @@ const selectInspection = (inspection: SimpleInspection) => {
 
 const removeInspection = (inspectionId: number) => {
   formData.value.inspections = formData.value.inspections.filter(
-    (inspection) => inspection.id != inspectionId,
+    (inspection) => inspection.id != inspectionId
   );
 };
 
@@ -129,9 +121,9 @@ const validateForm = (): boolean => {
   const payload = formData.value;
   let isValid = true;
 
-  if (typeof payload.experience_start === "number") {
+  if (typeof payload.experience_start === 'number') {
     if (payload.experience_start < 1920) {
-      errorStore.addErrorMessage("Начало стажа некорректно.");
+      errorStore.addErrorMessage('Начало стажа некорректно.');
       isValid = false;
     }
   } else {
@@ -143,24 +135,20 @@ const validateForm = (): boolean => {
     payload.firstname.length < 1 ||
     payload.middlename.length < 1
   ) {
-    errorStore.addErrorMessage(
-      "Фамилия/имя/очество не может содержать менее 1 символа.",
-    );
+    errorStore.addErrorMessage('Фамилия/имя/очество не может содержать менее 1 символа.');
     isValid = false;
   }
   if (payload.qualification && payload.qualification.length < 1) {
-    errorStore.addErrorMessage(
-      "Поле квалификация не может содержать менее 1 символа.",
-    );
+    errorStore.addErrorMessage('Поле квалификация не может содержать менее 1 символа.');
     isValid = false;
   }
 
   if (payload.department_id == 0) {
-    errorStore.addErrorMessage("Отделение некорректно.");
+    errorStore.addErrorMessage('Отделение некорректно.');
     isValid = false;
   }
   if (payload.speciality_id == 0) {
-    errorStore.addErrorMessage("Специальность некорректна.");
+    errorStore.addErrorMessage('Специальность некорректна.');
     isValid = false;
   }
   return isValid;
@@ -169,7 +157,7 @@ const validateForm = (): boolean => {
 const getPatchPayload = (): Partial<CreateDoctor> | null => {
   const doctor = doctorStore.doctor;
   if (!doctor) {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
     return null;
   }
   const {
@@ -188,33 +176,22 @@ const getPatchPayload = (): Partial<CreateDoctor> | null => {
     inspectionsIsEqual = inspections.every((formDoctor) =>
       doctor.inspections.find((doctor) => {
         return doctor.id == formDoctor.id;
-      }),
+      })
     );
   }
 
-  const educationHasNoChanges = (
-    set: Set<string>,
-    array: string[],
-  ): boolean => {
+  const educationHasNoChanges = (set: Set<string>, array: string[]): boolean => {
     return set.size === array.length && array.every((val) => set.has(val));
   };
-  const validQualification: string | null =
-    qualification === "" ? null : qualification;
+  const validQualification: string | null = qualification === '' ? null : qualification;
   const validExperienceStart: number | null =
-    typeof experience_start === "string" ? null : experience_start;
+    typeof experience_start === 'string' ? null : experience_start;
   const payload: Partial<CreateDoctor> = {
-    qualification:
-      doctor?.qualification === validQualification
-        ? undefined
-        : validQualification,
-    department_id:
-      doctor?.department.id === department_id ? undefined : department_id,
-    speciality_id:
-      doctor?.speciality.id === speciality_id ? undefined : speciality_id,
+    qualification: doctor?.qualification === validQualification ? undefined : validQualification,
+    department_id: doctor?.department.id === department_id ? undefined : department_id,
+    speciality_id: doctor?.speciality.id === speciality_id ? undefined : speciality_id,
     experience_start:
-      doctor?.experience_start === validExperienceStart
-        ? undefined
-        : validExperienceStart,
+      doctor?.experience_start === validExperienceStart ? undefined : validExperienceStart,
     inspections: inspectionsIsEqual
       ? undefined
       : inspections.map((inspection) => ({
@@ -223,10 +200,7 @@ const getPatchPayload = (): Partial<CreateDoctor> | null => {
     education: educationHasNoChanges(education, doctor.education)
       ? undefined
       : Array.from(education),
-    extra_education: educationHasNoChanges(
-      extra_education,
-      doctor.extra_education,
-    )
+    extra_education: educationHasNoChanges(extra_education, doctor.extra_education)
       ? undefined
       : Array.from(extra_education),
   };
@@ -240,27 +214,20 @@ const getPatchPayload = (): Partial<CreateDoctor> | null => {
       payload[key] = val;
     }
   });
-  if (JSON.stringify(payload) === "{}") {
-    errorStore.addErrorMessage("Nothing to update.");
+  if (JSON.stringify(payload) === '{}') {
+    errorStore.addErrorMessage('Nothing to update.');
     return null;
   }
   return payload;
 };
 
 const createDoctor = async () => {
-  const {
-    inspections,
-    education,
-    extra_education,
-    experience_start,
-    qualification,
-    ...data
-  } = formData.value;
+  const { inspections, education, extra_education, experience_start, qualification, ...data } =
+    formData.value;
   const payload: CreateDoctor = {
     ...data,
-    qualification: qualification === "" ? null : qualification,
-    experience_start:
-      typeof experience_start != "string" ? experience_start : null,
+    qualification: qualification === '' ? null : qualification,
+    experience_start: typeof experience_start != 'string' ? experience_start : null,
     education: Array.from(education),
     extra_education: Array.from(extra_education),
     inspections: inspections.map((inspection) => ({
@@ -277,18 +244,18 @@ const updateDoctor = async () => {
       return await doctorStore.update(doctorId.value, updatePayload);
     }
   } else {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
   }
 };
 
 const handleSubmit = async () => {
   if (validateForm()) {
-    if (props.mode === "create") {
+    if (props.mode === 'create') {
       const created = await createDoctor();
       if (created) {
         router.go(-1);
       }
-    } else if (props.mode == "edit") {
+    } else if (props.mode == 'edit') {
       const updated = await updateDoctor();
       if (updated) {
         router.go(-1);
@@ -304,14 +271,14 @@ const handleCancel = () => {
 onMounted(async () => {
   await departmentStore.loadList();
   await specialityStore.loadList();
-  if (props.mode != "detail") {
+  if (props.mode != 'detail') {
     await inspectionStore.loadList();
     inspections.value.push(...inspectionStore.inspections);
   }
-  if (props.mode != "create") {
+  if (props.mode != 'create') {
     doctorId.value = Number(route.params.id);
     if (!doctorId.value) {
-      errorStore.addErrorMessage("Непредвиденная ошибка.");
+      errorStore.addErrorMessage('Непредвиденная ошибка.');
       return;
     }
     await doctorStore.loadById(doctorId.value);
@@ -342,11 +309,11 @@ onMounted(async () => {
   <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
-        mode === "detail"
-          ? "Просмотр данных врача"
-          : mode === "edit"
-            ? "Редактирование данных врача"
-            : "Добавить врача"
+        mode === 'detail'
+          ? 'Просмотр данных врача'
+          : mode === 'edit'
+            ? 'Редактирование данных врача'
+            : 'Добавить врача'
       }}
     </h3>
 
@@ -405,15 +372,13 @@ onMounted(async () => {
         class="field"
         :disabled="mode === 'detail' || specialities.length == 0"
       >
-        <option :value="0" v-if="specialities.length !== 0">
-          Выберите специальность
-        </option>
+        <option :value="0" v-if="specialities.length !== 0">Выберите специальность</option>
         <option :value="speciality.id" v-for="speciality in specialities">
           {{ speciality.name }}
         </option>
         <option :value="0" disabled v-if="specialities.length === 0">
-          Нет доступных специальностей, вы не можете сохранять данные, пока не
-          создадите специальность
+          Нет доступных специальностей, вы не можете сохранять данные, пока не создадите
+          специальность
         </option>
       </select>
     </div>
@@ -425,17 +390,15 @@ onMounted(async () => {
         class="field"
         :disabled="mode === 'detail' || departments.length == 0"
       >
-        <option :value="0" v-if="specialities.length > 0">
-          Выберите отделение
-        </option>
+        <option :value="0" v-if="specialities.length > 0">Выберите отделение</option>
         <option :value="0" disabled v-else>
-          Нет доступных отделений, вы не можете сохранять данные, пока не
-          создадите отделение
+          Нет доступных отделений, вы не можете сохранять данные, пока не создадите отделение
         </option>
         <option
-          :value="department.id"
-          v-for="department in departments"
           v-if="departments.length > 0"
+          :key="`department${department.id}`"
+          v-for="department in departments"
+          :value="department.id"
         >
           {{ department.name }}
         </option>
@@ -448,9 +411,7 @@ onMounted(async () => {
         type="number"
         v-model="formData.experience_start"
         class="field"
-        :placeholder="
-          mode !== 'detail' ? 'Введите год начала рабочего стажа' : ''
-        "
+        :placeholder="mode !== 'detail' ? 'Введите год начала рабочего стажа' : ''"
         :disabled="mode === 'detail'"
       />
     </div>
@@ -460,40 +421,30 @@ onMounted(async () => {
       <input
         v-model="formData.qualification"
         class="field"
-        :placeholder="
-          mode !== 'detail' ? 'Введите квалификационную категорию' : ''
-        "
+        :placeholder="mode !== 'detail' ? 'Введите квалификационную категорию' : ''"
         :disabled="mode === 'detail'"
       />
     </div>
 
     <div class="group">
       <label>Образование</label>
-      <div class="education-input" v-if="mode !== 'detail'">
-        <textarea
-          v-model="educationInput"
-          class="field"
-          placeholder="Введите образование"
-        />
+      <div v-if="mode !== 'detail'" class="education-input">
+        <textarea v-model="educationInput" class="field" placeholder="Введите образование" />
         <button type="button" class="add-btn" @click="addEducation()">
           <span>+</span>
         </button>
       </div>
     </div>
 
-    <div class="group" v-if="formData.education.size > 0">
+    <div v-if="formData.education.size > 0" class="group">
       <div class="education-list">
-        <div
-          v-for="education in formData.education"
-          :key="education"
-          class="education-data"
-        >
+        <div v-for="education in formData.education" :key="education" class="education-data">
           <span>{{ education }}</span>
           <button
+            v-if="mode !== 'detail'"
             type="button"
             class="remove-education-btn"
             @click="removeEducation(formData.education, education)"
-            v-if="mode !== 'detail'"
           >
             ×
           </button>
@@ -503,7 +454,7 @@ onMounted(async () => {
 
     <div class="group">
       <label>Доп. Образование</label>
-      <div class="education-input" v-if="mode !== 'detail'">
+      <div v-if="mode !== 'detail'" class="education-input">
         <textarea
           id="extra_education"
           v-model="extraEducationInput"
@@ -517,17 +468,13 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="group" v-if="formData.extra_education.size > 0">
+    <div v-if="formData.extra_education.size > 0" class="group">
       <div class="education-list">
-        <div
-          v-for="education in formData.extra_education"
-          :key="education"
-          class="education-data"
-        >
+        <div v-for="education in formData.extra_education" :key="education" class="education-data">
           <span>{{ education }}</span>
           <button
-            type="button"
             v-if="mode !== 'detail'"
+            type="button"
             class="remove-education-btn"
             @click="removeEducation(formData.extra_education, education)"
           >
@@ -544,8 +491,8 @@ onMounted(async () => {
           v-for="inspection in formData.inspections"
           :key="inspection.id"
           class="selection-item"
-          @click="removeInspection(inspection.id)"
           :disabled="mode === 'detail'"
+          @click="removeInspection(inspection.id)"
         >
           <div class="item-info">
             <strong>{{ inspection.title }}</strong>

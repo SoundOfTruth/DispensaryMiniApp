@@ -1,9 +1,9 @@
-import axios from "axios";
+import axios from 'axios';
 
-import { baseApiUrl } from "./base";
+import { baseApiUrl } from './base';
 
-import type { AxiosInstance } from "axios";
-import type { JWTResponse } from "@/types/auth";
+import type { AxiosInstance } from 'axios';
+import type { JWTResponse } from '@/types/auth';
 
 class AuthApi {
   protected client: AxiosInstance;
@@ -18,7 +18,7 @@ class AuthApi {
   }
 
   async login(email: string, password: string) {
-    const response = await this.client.post<JWTResponse>("/auth/login/", {
+    const response = await this.client.post<JWTResponse>('/auth/login/', {
       email: email,
       password: password,
     });
@@ -26,15 +26,15 @@ class AuthApi {
   }
 
   async refresh() {
-    const response = await this.client.post<JWTResponse>("/auth/refresh/");
+    const response = await this.client.post<JWTResponse>('/auth/refresh/');
     return response.data;
   }
 
   async logout() {
-    await this.client.post<JWTResponse>("/auth/logout/");
+    await this.client.post<JWTResponse>('/auth/logout/');
   }
 }
 
 export default new AuthApi(baseApiUrl, {
-  "content-type": "application/json",
+  'content-type': 'application/json',
 });

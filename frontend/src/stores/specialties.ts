@@ -1,20 +1,13 @@
-import { computed, ref } from "vue";
-import { defineStore } from "pinia";
+import { computed, ref } from 'vue';
+import { defineStore } from 'pinia';
 
-import SpecialitiesApi from "@/api/specialities";
-import type { Speciality, CreateSpeciality } from "@/types/specialities";
-import { useRoute } from "vue-router";
-import { useErrorStore } from "./errors";
+import SpecialitiesApi from '@/api/specialities';
+import type { Speciality, CreateSpeciality } from '@/types/specialities';
+import { useRoute } from 'vue-router';
+import { useErrorStore } from './errors';
+import type { ApiSearchParams } from '@/api/base';
 
-interface ApiParams {
-  search?: number;
-}
-
-interface Filters {
-  search?: string;
-}
-
-export const useSpecialityStore = defineStore("specialityStore", () => {
+export const useSpecialityStore = defineStore('specialityStore', () => {
   const route = useRoute();
   const errorStore = useErrorStore();
 
@@ -23,31 +16,23 @@ export const useSpecialityStore = defineStore("specialityStore", () => {
 
   const count = computed(() => specialties.value.length || 0);
 
-  const getAllowedParams = (filters: Filters): ApiParams => {
-    const allowedParams: (keyof Filters)[] = ["search"];
-    const params: ApiParams = {};
-    Object.entries(filters).forEach(([key, value]) => {
-      const param = key as keyof Filters;
-
-      if (
-        allowedParams.includes(param) &&
-        value !== undefined &&
-        value !== null
-      ) {
-        params[param] = value;
-      }
-    });
-    return params;
+  const getRouteParams = (): ApiSearchParams => {
+    const routeSearch = route.query.search;
+    const search = routeSearch ? String(routeSearch) : undefined;
+    return {
+      search: search ? search : undefined,
+    };
   };
 
   const loadList = async () => {
-    const params = getAllowedParams(route.query);
+    const params = getRouteParams();
     try {
       specialties.value = await SpecialitiesApi.getAll(params);
     } catch (error) {
       errorStore.parseApiError(error);
     }
   };
+
   const loadById = async (id: number) => {
     try {
       speciality.value = await SpecialitiesApi.get(id);

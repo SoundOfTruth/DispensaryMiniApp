@@ -4,9 +4,7 @@
 
 <script setup lang="ts">
 const props = defineProps<{ id?: number; isChecked?: boolean }>();
-const emits = defineEmits(["onSelect"]);
+const emits = defineEmits(['onSelect']);
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

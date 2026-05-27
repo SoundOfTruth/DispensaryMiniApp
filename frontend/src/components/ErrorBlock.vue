@@ -1,17 +1,13 @@
 <template>
   <div class="errors-block">
-    <div
-      v-for="(error, index) in errorStore.errors"
-      :key="index"
-      class="error-message"
-    >
+    <div v-for="(error, index) in errorStore.errors" :key="index" class="error-message">
       {{ error.message }}
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.errors-block{
+.errors-block {
   padding-left: 4px;
   display: flex;
   flex-direction: column;
@@ -26,7 +22,7 @@
 </style>
 
 <script setup lang="ts">
-import { useErrorStore } from "@/stores/errors";
+import { useErrorStore } from '@/stores/errors';
 
 const errorStore = useErrorStore();
 </script>

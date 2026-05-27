@@ -1,10 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
-import { baseApiUrl } from "./base";
+import { baseApiUrl, type ApiSearchParams } from './base';
 
-import type { AxiosError, AxiosInstance } from "axios";
-import type { Speciality, CreateSpeciality } from "@/types/specialities";
-import { refreshTokenOnFall, setAuthToken } from "@/utils/api";
+import type { AxiosError, AxiosInstance } from 'axios';
+import type { Speciality, CreateSpeciality } from '@/types/specialities';
+import { refreshTokenOnFall, setAuthToken } from '@/utils/api';
 
 class SpecialtiesApi {
   protected client: AxiosInstance;
@@ -20,17 +20,17 @@ class SpecialtiesApi {
     });
     this.client.interceptors.request.use(
       (config) => setAuthToken(config),
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error)
     );
     this.client.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError) => await refreshTokenOnFall(this.client, error),
+      async (error: AxiosError) => await refreshTokenOnFall(this.client, error)
     );
   }
 
-  async getAll(params: Record<string, any> = {}) {
-    const response = await this.client.get<Speciality[]>("/specialties/", {
-      params: { ...params },
+  async getAll(params: ApiSearchParams) {
+    const response = await this.client.get<Speciality[]>('/specialties/', {
+      params: params,
     });
     return response.data;
   }
@@ -41,15 +41,12 @@ class SpecialtiesApi {
   }
 
   async create(data: CreateSpeciality) {
-    const response = await this.client.post<Speciality>("/specialties/", data);
+    const response = await this.client.post<Speciality>('/specialties/', data);
     return response.data;
   }
 
   async update(id: number, data: CreateSpeciality) {
-    const response = await this.client.put<Speciality>(
-      `/specialties/${id}/`,
-      data,
-    );
+    const response = await this.client.put<Speciality>(`/specialties/${id}/`, data);
     return response.data;
   }
 
@@ -58,12 +55,12 @@ class SpecialtiesApi {
   }
 
   async deleteBulk(ids: number[]) {
-    await this.client.delete("/specialties/bulk/", {
+    await this.client.delete('/specialties/bulk/', {
       params: { ids: ids },
     });
   }
 }
 
 export default new SpecialtiesApi(baseApiUrl, {
-  "content-type": "application/json",
+  'content-type': 'application/json',
 });

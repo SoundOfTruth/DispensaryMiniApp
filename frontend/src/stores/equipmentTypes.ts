@@ -1,25 +1,14 @@
-import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
-import { defineStore } from "pinia";
+import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { defineStore } from 'pinia';
 
-import EquipmentTypeApi from "@/api/equipmentTypes";
+import EquipmentTypeApi from '@/api/equipmentTypes';
 
-import type {
-  SimpleEquipmentType,
-  EquipmentType,
-  CreateEquipmentType,
-} from "@/types/equipments";
-import { useErrorStore } from "./errors";
+import type { SimpleEquipmentType, EquipmentType, CreateEquipmentType } from '@/types/equipments';
+import { useErrorStore } from './errors';
+import type { ApiSearchParams } from '@/api/base';
 
-interface ApiParams {
-  search?: number;
-}
-
-interface Filters {
-  search?: string;
-}
-
-export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
+export const useEquipmentTypeStore = defineStore('equipmentTypeStore', () => {
   const route = useRoute();
   const errorStore = useErrorStore();
 
@@ -29,21 +18,12 @@ export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
 
   const count = computed(() => types.value.length || 0);
 
-  const getAllowedParams = (filters: Filters): ApiParams => {
-    const allowedParams: (keyof Filters)[] = ["search"];
-    const params: ApiParams = {};
-    Object.entries(filters).forEach(([key, value]) => {
-      const param = key as keyof Filters;
-
-      if (
-        allowedParams.includes(param) &&
-        value !== undefined &&
-        value !== null
-      ) {
-        params[param] = value;
-      }
-    });
-    return params;
+  const getRouteParams = (): ApiSearchParams => {
+    const routeSearch = route.query.search;
+    const search = routeSearch ? String(routeSearch) : undefined;
+    return {
+      search: search ? search : undefined,
+    };
   };
 
   const loadDetailList = async () => {
@@ -55,7 +35,7 @@ export const useEquipmentTypeStore = defineStore("equipmentTypeStore", () => {
   };
 
   const loadList = async () => {
-    const params = getAllowedParams(route.query);
+    const params = getRouteParams();
     try {
       types.value = await EquipmentTypeApi.getAll(params);
     } catch (error) {

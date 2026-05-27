@@ -26,59 +26,55 @@
       </div>
 
       <div class="form-group">
-        <span v-if="errorMessage" class="error-message">{{
-          errorMessage
-        }}</span>
+        <span v-if="errorMessage" class="error-message">{{ errorMessage }}</span>
       </div>
 
       <div class="actions">
         <button type="submit" class="btn-submit">Сохранить</button>
-        <button type="button" class="btn-cancel" @click="emits('close')">
-          Отмена
-        </button>
+        <button type="button" class="btn-cancel" @click="emits('close')">Отмена</button>
       </div>
     </form>
   </CenterModal>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import CenterModal from "../../CenterModal.vue";
-import { useUserStore } from "@/stores/users";
-import { AxiosError } from "axios";
+import { ref } from 'vue';
+import CenterModal from '../../CenterModal.vue';
+import { useUserStore } from '@/stores/users';
+import { AxiosError } from 'axios';
 
 const props = defineProps<{ open: boolean }>();
-const emits = defineEmits(["close"]);
+const emits = defineEmits(['close']);
 
 const formData = ref<{ currentPassword: string; newPassword: string }>({
-  currentPassword: "",
-  newPassword: "",
+  currentPassword: '',
+  newPassword: '',
 });
-const errorMessage = ref("");
+const errorMessage = ref('');
 
 const userStore = useUserStore();
 
 const onSubmit = async () => {
-  errorMessage.value = "";
+  errorMessage.value = '';
   const form = formData.value;
   if (form.newPassword.length < 8) {
-    errorMessage.value = "Пароль должен состоять минимум из 8 символо.";
+    errorMessage.value = 'Пароль должен состоять минимум из 8 символо.';
     return;
   }
   if (form.currentPassword == form.newPassword) {
-    errorMessage.value = "Пароли не должны совпадать.";
+    errorMessage.value = 'Пароли не должны совпадать.';
     return;
   }
   try {
     await userStore.changePassword(form.currentPassword, form.newPassword);
-    emits("close");
+    emits('close');
   } catch (error) {
     if (error instanceof AxiosError) {
       const detail = error.response?.data?.detail;
-      if (typeof detail === "string") {
+      if (typeof detail === 'string') {
         errorMessage.value = detail;
       } else {
-        errorMessage.value = "Непредвиденная ошибка";
+        errorMessage.value = 'Непредвиденная ошибка';
       }
     }
   }

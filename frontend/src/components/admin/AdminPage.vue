@@ -6,10 +6,7 @@
           <div class="title">{{ props.title }}</div>
           <div class="actions">
             <ExportButton />
-            <RouterLink
-              :to="{ name: String(route.name) + '.create' }"
-              class="add-btn"
-            >
+            <RouterLink :to="{ name: String(route.name) + '.create' }" class="add-btn">
               {{ props.addButtonName }}</RouterLink
             >
           </div>
@@ -42,28 +39,25 @@
         :store="props.store"
         @close="closeDelete"
       />
-      <AdminErrorModal
-        :errors="errorStore.errors"
-        @close="errorStore.clearErrors()"
-      />
+      <AdminErrorModal :errors="errorStore.errors" @close="errorStore.clearErrors()" />
     </Teleport>
   </div>
 </template>
 
 <script lang="ts" setup>
-import ActionsButton from "./buttons/ActionsButton.vue";
-import AdminDeteleModal from "./modals/AdminDeteleModal.vue";
-import AdminErrorModal from "./modals/AdminErrorModal.vue";
-import AdminTable from "./AdminTable.vue";
-import SearchField from "../SearchField.vue";
-import ExportButton from "./buttons/ExportButton.vue";
+import ActionsButton from './buttons/ActionsButton.vue';
+import AdminDeteleModal from './modals/AdminDeteleModal.vue';
+import AdminErrorModal from './modals/AdminErrorModal.vue';
+import AdminTable from './AdminTable.vue';
+import SearchField from '../SearchField.vue';
+import ExportButton from './buttons/ExportButton.vue';
 
-import type { BaseStore } from "@/stores/base";
+import type { BaseStore } from '@/stores/base';
 
-import { onMounted, watch, ref, computed } from "vue";
-import { useRoute } from "vue-router";
-import { useUserStore } from "@/stores/users";
-import { useErrorStore } from "@/stores/errors";
+import { onMounted, watch, ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useUserStore } from '@/stores/users';
+import { useErrorStore } from '@/stores/errors';
 
 const errorStore = useErrorStore();
 const userStore = useUserStore();
@@ -75,7 +69,7 @@ const deleteOpen = ref<boolean>(false);
 const openDelete = (id?: number) => {
   deleteId.value = id;
   if (!deleteId.value && selectedItems.value.size === 0) {
-    errorStore.setErrorMessage("Ничего не выбрано.");
+    errorStore.setErrorMessage('Ничего не выбрано.');
   } else {
     deleteOpen.value = true;
   }
@@ -139,7 +133,7 @@ watch(
     selectedItems.value.clear();
     await props.store.loadList();
   },
-  { deep: true },
+  { deep: true }
 );
 watch(
   () => [props.store.limit],
@@ -150,7 +144,7 @@ watch(
       await props.store.loadList();
     }
   },
-  { deep: true },
+  { deep: true }
 );
 </script>
 

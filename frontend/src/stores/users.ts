@@ -1,34 +1,22 @@
-import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
-import { defineStore } from "pinia";
+import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { defineStore } from 'pinia';
 
-import UserApi from "@/api/users";
+import UserApi from '@/api/users';
 
-interface ApiParams {
-  limit: number;
-  offset: number;
-  search?: number;
-}
+import type { CreateUser, User } from '@/types/users';
+import { useAuthStore } from './auth';
+import { useErrorStore } from './errors';
+import type { ApiParams } from '@/api/base';
 
-interface Filters {
-  page?: number;
-  search?: string;
-}
-
-import type { CreateUser, User } from "@/types/users";
-import { useAuthStore } from "./auth";
-import { useErrorStore } from "./errors";
-
-export const useUserStore = defineStore("userStore", () => {
+export const useUserStore = defineStore('userStore', () => {
   const authStore = useAuthStore();
   const errorStore = useErrorStore();
   const route = useRoute();
 
   const currentUser = ref<User>();
   const isAdmin = computed(
-    () =>
-      currentUser.value?.role === "superuser" ||
-      currentUser.value?.role === "admin",
+    () => currentUser.value?.role === 'superuser' || currentUser.value?.role === 'admin'
   );
   const users = ref<User[]>([]);
   const user = ref<User>();
@@ -40,26 +28,15 @@ export const useUserStore = defineStore("userStore", () => {
     limit.value = val;
   };
 
-  const getAllowedParams = (filters: Filters): ApiParams => {
-    const allowedParams: (keyof Filters)[] = ["search"];
-    const page = filters?.page || 1;
-    const params: ApiParams = {
+  const getRouteParams = (): ApiParams => {
+    const routeSearch = route.query.search;
+    const search = routeSearch ? String(routeSearch) : undefined;
+    const page = Number(route.query.page) || 1;
+    return {
       offset: (page - 1) * limit.value,
       limit: limit.value,
+      search: search ? search : undefined,
     };
-    Object.entries(filters).forEach(([key, value]) => {
-      const param = key as keyof Filters;
-
-      if (
-        param != "page" &&
-        allowedParams.includes(param) &&
-        value !== undefined &&
-        value !== null
-      ) {
-        params[param] = value;
-      }
-    });
-    return params;
   };
 
   const loadCurrentUser = async () => {
@@ -73,7 +50,7 @@ export const useUserStore = defineStore("userStore", () => {
   };
 
   const loadList = async () => {
-    const params = getAllowedParams(route.query);
+    const params = getRouteParams();
     try {
       const paginatedData = await UserApi.getAll(params);
       users.value = paginatedData.results;
@@ -123,10 +100,7 @@ export const useUserStore = defineStore("userStore", () => {
     }
   };
 
-  const changePassword = async (
-    currentPassword: string,
-    newPassword: string,
-  ) => {
+  const changePassword = async (currentPassword: string, newPassword: string) => {
     return await UserApi.changePassword(currentPassword, newPassword);
   };
 

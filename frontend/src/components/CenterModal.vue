@@ -11,7 +11,7 @@ const props = defineProps<{
   open: boolean;
 }>();
 
-const emits = defineEmits(["close"]);
+const emits = defineEmits(['close']);
 </script>
 
 <style lang="scss" scoped>

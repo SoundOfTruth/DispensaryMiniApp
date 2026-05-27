@@ -1,14 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
-import { baseApiUrl } from "./base";
+import { baseApiUrl, type ApiParams } from './base';
 
-import type { AxiosError, AxiosInstance } from "axios";
-import type {
-  Inspection,
-  CreateInspection,
-  PaginatedInspection,
-} from "@/types/inspections";
-import { refreshTokenOnFall, setAuthToken } from "@/utils/api";
+import type { AxiosError, AxiosInstance } from 'axios';
+import type { Inspection, CreateInspection, PaginatedInspection } from '@/types/inspections';
+import { refreshTokenOnFall, setAuthToken } from '@/utils/api';
 
 class InspectionApi {
   protected client: AxiosInstance;
@@ -24,22 +20,19 @@ class InspectionApi {
     });
     this.client.interceptors.request.use(
       (config) => setAuthToken(config),
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error)
     );
     this.client.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError) => await refreshTokenOnFall(this.client, error),
+      async (error: AxiosError) => await refreshTokenOnFall(this.client, error)
     );
   }
 
-  async getAll(params: Record<string, any> = {}) {
+  async getAll(params: ApiParams = { limit: 10, offset: 0 }) {
     const defaultParams = { limit: 10, offset: 0 };
-    const response = await this.client.get<PaginatedInspection>(
-      "/inspections/",
-      {
-        params: { ...defaultParams, ...params },
-      },
-    );
+    const response = await this.client.get<PaginatedInspection>('/inspections/', {
+      params: { ...defaultParams, ...params },
+    });
     return response.data;
   }
   async get(id: number) {
@@ -48,15 +41,12 @@ class InspectionApi {
   }
 
   async create(data: CreateInspection) {
-    const response = await this.client.post<Inspection>("/inspections/", data);
+    const response = await this.client.post<Inspection>('/inspections/', data);
     return response.data;
   }
 
   async update(id: number, data: Partial<CreateInspection>) {
-    const response = await this.client.patch<Inspection>(
-      `/inspections/${id}`,
-      data,
-    );
+    const response = await this.client.patch<Inspection>(`/inspections/${id}`, data);
     return response.data;
   }
 
@@ -65,12 +55,12 @@ class InspectionApi {
   }
 
   async deleteBulk(ids: number[]) {
-    await this.client.delete("/inspections/bulk/", {
+    await this.client.delete('/inspections/bulk/', {
       params: { ids: ids },
     });
   }
 }
 
 export default new InspectionApi(baseApiUrl, {
-  "content-type": "application/json",
+  'content-type': 'application/json',
 });

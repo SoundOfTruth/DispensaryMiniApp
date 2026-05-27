@@ -9,11 +9,11 @@
 </template>
 
 <script lang="ts" setup>
-import AdminPage from "@/components/admin/AdminPage.vue";
+import AdminPage from '@/components/admin/AdminPage.vue';
 
-import { useUserStore } from "@/stores/users";
+import { useUserStore } from '@/stores/users';
 
-import { type User } from "@/types/users";
+import { type User } from '@/types/users';
 
 interface Columns {
   key: keyof User;
@@ -21,12 +21,12 @@ interface Columns {
 }
 
 const columns: Columns[] = [
-  { key: "id", text: "id" },
-  { key: "email", text: "Почта" },
-  { key: "lastname", text: "Фамилия" },
-  { key: "firstname", text: "Имя" },
-  { key: "middlename", text: "Отчество" },
-  { key: "role", text: "Роль" },
+  { key: 'id', text: 'id' },
+  { key: 'email', text: 'Почта' },
+  { key: 'lastname', text: 'Фамилия' },
+  { key: 'firstname', text: 'Имя' },
+  { key: 'middlename', text: 'Отчество' },
+  { key: 'role', text: 'Роль' },
 ];
 
 const store = useUserStore();

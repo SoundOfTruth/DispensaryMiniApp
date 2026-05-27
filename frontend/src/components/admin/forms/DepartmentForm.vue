@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import TheForm from "./TheForm.vue";
-import FormActions from "./FormActions.vue";
+import TheForm from './TheForm.vue';
+import FormActions from './FormActions.vue';
 
-import { onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-import { useDepartmentStore } from "@/stores/departments";
-import type { CreateDepartment } from "@/types/departments";
-import { useErrorStore } from "@/stores/errors";
+import { useDepartmentStore } from '@/stores/departments';
+import type { CreateDepartment } from '@/types/departments';
+import { useErrorStore } from '@/stores/errors';
 
 const props = defineProps<{
-  mode: "create" | "edit" | "detail";
+  mode: 'create' | 'edit' | 'detail';
 }>();
 
 const route = useRoute();
@@ -19,15 +19,13 @@ const errorStore = useErrorStore();
 const departmentStore = useDepartmentStore();
 
 const departmentId = ref<number>();
-const formData = ref<CreateDepartment>({ name: "" });
+const formData = ref<CreateDepartment>({ name: '' });
 
 const validateForm = (): boolean => {
   const form = formData.value;
   let isValid: boolean = true;
   if (form.name.length < 1) {
-    errorStore.addErrorMessage(
-      "Название отделения не может содержать менее 1 символа.",
-    );
+    errorStore.addErrorMessage('Название отделения не может содержать менее 1 символа.');
     isValid = false;
   }
   return isValid;
@@ -37,19 +35,19 @@ const updateDepartment = async () => {
   if (departmentId.value) {
     return await departmentStore.update(departmentId.value, formData.value);
   } else {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
   }
 };
 
 const handleSubmit = async () => {
   if (validateForm()) {
-    if (props.mode === "create") {
+    if (props.mode === 'create') {
       const created = await departmentStore.create(formData.value);
       if (created) {
         router.go(-1);
       }
     }
-    if (props.mode === "edit") {
+    if (props.mode === 'edit') {
       const updated = await updateDepartment();
       if (updated) {
         router.go(-1);
@@ -63,7 +61,7 @@ const handleCancel = () => {
 };
 
 onMounted(async () => {
-  if (props.mode !== "create") {
+  if (props.mode !== 'create') {
     departmentId.value = Number(route.params.id);
     await departmentStore.loadById(departmentId.value);
     if (departmentStore.department) {
@@ -77,11 +75,11 @@ onMounted(async () => {
   <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
-        mode === "detail"
-          ? "Просмотр отделения"
-          : mode === "edit"
-            ? "Редактирование данных отделения"
-            : "Добавить отделение"
+        mode === 'detail'
+          ? 'Просмотр отделения'
+          : mode === 'edit'
+            ? 'Редактирование данных отделения'
+            : 'Добавить отделение'
       }}
     </h3>
 

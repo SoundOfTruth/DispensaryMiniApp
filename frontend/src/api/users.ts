@@ -1,10 +1,10 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError } from 'axios';
 
-import { baseApiUrl } from "./base";
+import { baseApiUrl, type ApiParams } from './base';
 
-import type { AxiosInstance } from "axios";
-import type { CreateUser, User, PaginatedUsers } from "@/types/users";
-import { refreshTokenOnFall, refreshAndSetToken } from "@/utils/api";
+import type { AxiosInstance } from 'axios';
+import type { CreateUser, User, PaginatedUsers } from '@/types/users';
+import { refreshTokenOnFall, refreshAndSetToken } from '@/utils/api';
 
 class UserApi {
   protected client: AxiosInstance;
@@ -20,18 +20,17 @@ class UserApi {
     });
     this.client.interceptors.request.use(
       (config) => refreshAndSetToken(config),
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error)
     );
     this.client.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError) => await refreshTokenOnFall(this.client, error),
+      async (error: AxiosError) => await refreshTokenOnFall(this.client, error)
     );
   }
 
-  async getAll(params: Record<string, any> = {}) {
-    const defaultParams = { limit: 10, offset: 0 };
-    const response = await this.client.get<PaginatedUsers>("/users/", {
-      params: { ...defaultParams, ...params },
+  async getAll(params: ApiParams = { limit: 10, offset: 0 }) {
+    const response = await this.client.get<PaginatedUsers>('/users/', {
+      params: params,
     });
     return response.data;
   }
@@ -42,12 +41,12 @@ class UserApi {
   }
 
   async getMe() {
-    const response = await this.client.get<User>("/users/me/");
+    const response = await this.client.get<User>('/users/me/');
     return response.data;
   }
 
   async create(data: CreateUser) {
-    const response = await this.client.post<User>("/users/", data);
+    const response = await this.client.post<User>('/users/', data);
     return response.data;
   }
 
@@ -61,13 +60,13 @@ class UserApi {
   }
 
   async deleteBulk(ids: number[]) {
-    await this.client.delete("/users/bulk/", {
+    await this.client.delete('/users/bulk/', {
       params: { ids: ids },
     });
   }
 
   async changePassword(currentPassword: string, newPassword: string) {
-    await this.client.post("/users/change-password/", {
+    await this.client.post('/users/change-password/', {
       current_password: currentPassword,
       new_password: newPassword,
     });
@@ -75,5 +74,5 @@ class UserApi {
 }
 
 export default new UserApi(baseApiUrl, {
-  "content-type": "application/json",
+  'content-type': 'application/json',
 });

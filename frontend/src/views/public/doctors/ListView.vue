@@ -21,17 +21,17 @@
 </template>
 
 <script setup lang="ts">
-import FilterModal from "@/components/doctors/DoctorFilterModal.vue";
-import SearchField from "@/components/SearchField.vue";
-import FilterButton from "@/components/FilterButton.vue";
-import PaginatedPage from "@/components/PaginatedPage.vue";
-import DoctorCard from "@/components/doctors/DoctorCard.vue";
+import FilterModal from '@/components/doctors/DoctorFilterModal.vue';
+import SearchField from '@/components/SearchField.vue';
+import FilterButton from '@/components/FilterButton.vue';
+import PaginatedPage from '@/components/PaginatedPage.vue';
+import DoctorCard from '@/components/doctors/DoctorCard.vue';
 
-import { computed, onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
-import { useDoctorStore } from "@/stores/doctors";
-import { useErrorStore } from "@/stores/errors";
+import { useDoctorStore } from '@/stores/doctors';
+import { useErrorStore } from '@/stores/errors';
 
 const filterOpen = ref<boolean>(false);
 
@@ -41,17 +41,15 @@ const errorStore = useErrorStore();
 
 const doctors = computed(() => doctorStore.doctors);
 const errors = computed(() => errorStore.errors);
-const errCondition = computed(
-  () => doctors.value == undefined || doctors.value?.length == 0,
-);
+const errCondition = computed(() => doctors.value == undefined || doctors.value?.length == 0);
 
 const afterLoad = () => {
   const search = route.query.search;
   if (doctors.value.length === 0 && errors.value.length === 0) {
     if (!search) {
-      errorStore.setErrorMessage("Ничего не найдено...");
+      errorStore.setErrorMessage('Ничего не найдено...');
     } else {
-      errorStore.setErrorMessage("Ничего не найдено по заданным параметрам.");
+      errorStore.setErrorMessage('Ничего не найдено по заданным параметрам.');
     }
   }
 };
@@ -68,7 +66,7 @@ watch(
     await doctorStore.loadList();
     afterLoad();
   },
-  { deep: true },
+  { deep: true }
 );
 </script>
 

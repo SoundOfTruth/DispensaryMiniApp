@@ -8,11 +8,7 @@
       <div class="body">
         <div class="group">
           <label for="speciality_id">Специальность</label>
-          <select
-            id="speciality_id"
-            v-model="filtersData.speciality_id"
-            class="input-data"
-          >
+          <select id="speciality_id" v-model="filtersData.speciality_id" class="input-data">
             <option :value="undefined">Выберите специальность</option>
             <option :value="speciality.id" v-for="speciality in specialities">
               {{ speciality.name }}
@@ -22,11 +18,7 @@
 
         <div class="group">
           <label for="department_id">Отделение</label>
-          <select
-            id="department_id"
-            v-model="filtersData.department_id"
-            class="input-data"
-          >
+          <select id="department_id" v-model="filtersData.department_id" class="input-data">
             <option :value="undefined">Выберите отделение</option>
             <option :value="department.id" v-for="department in departments">
               {{ department.name }}
@@ -36,28 +28,24 @@
       </div>
     </div>
     <div class="actions">
-      <button type="submit" class="btn confirm" @click="handleConfirm()">
-        Применить
-      </button>
-      <button type="button" class="btn reset" @click="handleReset()">
-        Сбросить
-      </button>
+      <button type="submit" class="btn confirm" @click="handleConfirm()">Применить</button>
+      <button type="button" class="btn reset" @click="handleReset()">Сбросить</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import XSvg from "../svg/XSvg.vue";
+import XSvg from '../svg/XSvg.vue';
 
-import { useDepartmentStore } from "@/stores/departments";
-import { useSpecialityStore } from "@/stores/specialties";
-import { computed, onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useDepartmentStore } from '@/stores/departments';
+import { useSpecialityStore } from '@/stores/specialties';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
 const props = defineProps<{ open: boolean }>();
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close']);
 
 const DepartmentStore = useDepartmentStore();
 const SpecialitiesStore = useSpecialityStore();
@@ -68,12 +56,8 @@ const filtersData = ref<{
   department_id: number | undefined;
   speciality_id: number | undefined;
 }>({
-  department_id: route.query.department_id
-    ? Number(route.query.department_id)
-    : undefined,
-  speciality_id: route.query.speciality_id
-    ? Number(route.query.speciality_id)
-    : undefined,
+  department_id: route.query.department_id ? Number(route.query.department_id) : undefined,
+  speciality_id: route.query.speciality_id ? Number(route.query.speciality_id) : undefined,
 });
 
 onMounted(async () => {
@@ -87,10 +71,10 @@ const handleReset = () => {
 };
 const handleConfirm = () => {
   router.push({
-    path: "/doctors",
+    path: '/doctors',
     query: { ...route.query, ...filtersData.value },
   });
-  emit("close");
+  emit('close');
 };
 </script>
 

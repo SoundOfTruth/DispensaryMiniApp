@@ -1,14 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
-import { baseApiUrl } from "./base";
+import { baseApiUrl, type ApiSearchParams } from './base';
 
-import type { AxiosError, AxiosInstance } from "axios";
-import type {
-  SimpleEquipmentType,
-  EquipmentType,
-  CreateEquipmentType,
-} from "@/types/equipments";
-import { refreshTokenOnFall, setAuthToken } from "@/utils/api";
+import type { AxiosError, AxiosInstance } from 'axios';
+import type { SimpleEquipmentType, EquipmentType, CreateEquipmentType } from '@/types/equipments';
+import { refreshTokenOnFall, setAuthToken } from '@/utils/api';
 
 class EquipmentTypeApi {
   client: AxiosInstance;
@@ -21,52 +17,40 @@ class EquipmentTypeApi {
     });
     this.client.interceptors.request.use(
       (config) => setAuthToken(config),
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error)
     );
     this.client.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError) => await refreshTokenOnFall(this.client, error),
+      async (error: AxiosError) => await refreshTokenOnFall(this.client, error)
     );
   }
 
   async getAllDetail() {
     const defaultparams = { detail: true };
-    const response = await this.client.get<EquipmentType[]>(
-      "/equipment-types/",
-      { params: defaultparams },
-    );
+    const response = await this.client.get<EquipmentType[]>('/equipment-types/', {
+      params: defaultparams,
+    });
     return response.data;
   }
 
-  async getAll(params: Record<string, any> = {}) {
-    const response = await this.client.get<SimpleEquipmentType[]>(
-      "/equipment-types/",
-      {
-        params: { ...params },
-      },
-    );
+  async getAll(params: ApiSearchParams) {
+    const response = await this.client.get<SimpleEquipmentType[]>('/equipment-types/', {
+      params: params,
+    });
     return response.data;
   }
 
   async get(id: number) {
-    const response = await this.client.get<SimpleEquipmentType>(
-      `/equipment-types/${id}/`,
-    );
+    const response = await this.client.get<SimpleEquipmentType>(`/equipment-types/${id}/`);
     return response.data;
   }
 
   async create(data: CreateEquipmentType) {
-    const response = await this.client.post<SimpleEquipmentType>(
-      "/equipment-types/",
-      data,
-    );
+    const response = await this.client.post<SimpleEquipmentType>('/equipment-types/', data);
     return response.data;
   }
   async update(id: number, data: CreateEquipmentType) {
-    const response = await this.client.put<SimpleEquipmentType>(
-      `/equipment-types/${id}/`,
-      data,
-    );
+    const response = await this.client.put<SimpleEquipmentType>(`/equipment-types/${id}/`, data);
     return response.data;
   }
 
@@ -75,12 +59,12 @@ class EquipmentTypeApi {
   }
 
   async deleteBulk(ids: number[]) {
-    await this.client.delete("/equipment-types/bulk/", {
+    await this.client.delete('/equipment-types/bulk/', {
       params: { ids: ids },
     });
   }
 }
 
 export default new EquipmentTypeApi(baseApiUrl, {
-  "content-type": "application/json",
+  'content-type': 'application/json',
 });

@@ -3,36 +3,26 @@
     <header>
       <div class="hat">
         <MenuButton @click="toggleMenu()" />
-        <RouterLink
-          :to="{ name: indexLink.routeName }"
-          class="link"
-          @click="isMenuOpen = false"
-        >
+        <RouterLink :to="{ name: indexLink.routeName }" class="link" @click="isMenuOpen = false">
           <h1 class="title">{{ indexLink.title }}</h1>
         </RouterLink>
       </div>
       <nav class="menu" :class="{ active: isMenuOpen }">
         <ul>
           <li @click="toggleMenu()" v-for="link in links" :key="link.routeName">
-            <RouterLink :to="{ name: link.routeName }">{{
-              link.title
-            }}</RouterLink>
+            <RouterLink :to="{ name: link.routeName }">{{ link.title }}</RouterLink>
           </li>
         </ul>
       </nav>
     </header>
-    <div
-      class="modal-backdrop"
-      v-if="isMenuOpen"
-      @click="toggleMenu()"
-    ></div>
+    <div class="modal-backdrop" v-if="isMenuOpen" @click="toggleMenu()"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import MenuButton from "./MenuButton.vue";
-import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import MenuButton from './MenuButton.vue';
+import { ref } from 'vue';
+import { RouterLink } from 'vue-router';
 
 interface Link {
   title: string;
@@ -59,7 +49,7 @@ const toggleMenu = () => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.10);
+  background: rgba(0, 0, 0, 0.1);
   z-index: 99;
 }
 
@@ -73,13 +63,13 @@ header {
   top: 0;
   z-index: 100;
   background: #f5f7fa;
-  
+
   .hat {
     display: flex;
     gap: 30px;
     align-items: center;
   }
-  
+
   .title {
     color: #222;
     font-size: 140%;
@@ -100,21 +90,21 @@ header {
   background: white;
   border-bottom: 1px solid #e0e0e0;
   z-index: 101;
-  
+
   &.active {
     display: block;
   }
-  
+
   ul {
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  
+
   li {
     border-bottom: 1px solid #f0f0f0;
   }
-  
+
   a {
     display: block;
     padding: 16px;
@@ -122,11 +112,10 @@ header {
     color: black;
     font-size: 16px;
     transition: background 0.2s ease;
-    
+
     &:hover {
       background: #f0f0f0;
     }
   }
 }
-
 </style>

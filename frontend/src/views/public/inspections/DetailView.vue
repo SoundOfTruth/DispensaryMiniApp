@@ -12,13 +12,9 @@
         <div class="title">{{ inspection?.title }}</div>
         <div class="sub-title" v-if="inspection?.description">Описание:</div>
         <div class="text">{{ inspection?.description }}</div>
-        <div class="sub-title" v-if="inspection?.preparation">
-          Подготовка к иследованию:
-        </div>
+        <div class="sub-title" v-if="inspection?.preparation">Подготовка к иследованию:</div>
         <div class="text">{{ inspection?.preparation }}</div>
-        <div class="sub-title" v-if="inspection?.doctors.length">
-          Проводят исследование:
-        </div>
+        <div class="sub-title" v-if="inspection?.doctors.length">Проводят исследование:</div>
         <div>
           <div v-for="doctor in inspection?.doctors">
             <RouterLink :to="`/doctors/${doctor.id}`">{{
@@ -32,11 +28,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed } from "vue";
-import { useRoute } from "vue-router";
+import { onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
 
-import { useInspectionStore } from "@/stores/inspections";
-import { useErrorStore } from "@/stores/errors";
+import { useInspectionStore } from '@/stores/inspections';
+import { useErrorStore } from '@/stores/errors';
 
 const route = useRoute();
 const inspectionId = Number(route.params.inspectionId);

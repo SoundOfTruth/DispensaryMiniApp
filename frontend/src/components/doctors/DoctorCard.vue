@@ -9,9 +9,7 @@
       <div class="avatar-container">
         <img
           :src="
-            !doctor.photo || !doctor.photo.includes('http')
-              ? 'static/doctor.png'
-              : doctor.photo
+            !doctor.photo || !doctor.photo.includes('http') ? 'static/doctor.png' : doctor.photo
           "
           class="img"
           loading="lazy"
@@ -19,9 +17,7 @@
       </div>
       <div class="info">
         <div class="fullname">
-          {{
-            `${doctor?.lastname}  ${doctor?.firstname} ${doctor?.middlename}`
-          }}
+          {{ `${doctor?.lastname}  ${doctor?.firstname} ${doctor?.middlename}` }}
         </div>
         <div class="speciality">{{ doctor?.speciality.name }}</div>
       </div>
@@ -30,9 +26,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue';
 
-import type { SimpleDoctor } from "@/types/doctors";
+import type { SimpleDoctor } from '@/types/doctors';
 
 const props = defineProps<{ doctor: SimpleDoctor }>();
 const doctor = computed(() => props.doctor);

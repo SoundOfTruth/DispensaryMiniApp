@@ -9,15 +9,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue';
 
-const emits = defineEmits(["delete"]);
+const emits = defineEmits(['delete']);
 
 const isOpen = ref<boolean>(false);
 
 const deleteItems = () => {
   isOpen.value = false;
-  emits("delete");
+  emits('delete');
 };
 </script>
 

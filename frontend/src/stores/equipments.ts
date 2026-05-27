@@ -1,24 +1,13 @@
-import { computed, ref } from "vue";
-import { defineStore } from "pinia";
+import { computed, ref } from 'vue';
+import { defineStore } from 'pinia';
 
-import EquipmentApi from "../api/equipments";
-import type {
-  Equipment,
-  CreateEquipment,
-  SimpleEquipment,
-} from "../types/equipments";
-import { useRoute } from "vue-router";
-import { useErrorStore } from "./errors";
+import EquipmentApi from '../api/equipments';
+import type { Equipment, CreateEquipment, SimpleEquipment } from '../types/equipments';
+import { useRoute } from 'vue-router';
+import { useErrorStore } from './errors';
+import type { ApiSearchParams } from '@/api/base';
 
-interface ApiParams {
-  search?: number;
-}
-
-interface Filters {
-  search?: string;
-}
-
-export const useEquipmentStore = defineStore("equipmentStore", () => {
+export const useEquipmentStore = defineStore('equipmentStore', () => {
   const route = useRoute();
   const errorStore = useErrorStore();
 
@@ -27,25 +16,16 @@ export const useEquipmentStore = defineStore("equipmentStore", () => {
 
   const count = computed(() => equipments.value.length || 0);
 
-  const getAllowedParams = (filters: Filters): ApiParams => {
-    const allowedParams: (keyof Filters)[] = ["search"];
-    const params: ApiParams = {};
-    Object.entries(filters).forEach(([key, value]) => {
-      const param = key as keyof Filters;
-
-      if (
-        allowedParams.includes(param) &&
-        value !== undefined &&
-        value !== null
-      ) {
-        params[param] = value;
-      }
-    });
-    return params;
+  const getRouteParams = (): ApiSearchParams => {
+    const routeSearch = route.query.search;
+    const search = routeSearch ? String(routeSearch) : undefined;
+    return {
+      search: search ? search : undefined,
+    };
   };
 
   const loadList = async () => {
-    const params = getAllowedParams(route.query);
+    const params = getRouteParams();
     try {
       equipments.value = await EquipmentApi.getAll(params);
     } catch (error) {

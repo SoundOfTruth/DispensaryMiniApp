@@ -1,16 +1,8 @@
-import { ref } from "vue";
-import { useRoute } from "vue-router";
-import { defineStore } from "pinia";
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { defineStore } from 'pinia';
 
-import DoctorApi from "@/api/doctors";
-
-interface ApiParams {
-  limit: number;
-  offset: number;
-  department_id?: number;
-  speciality_id?: number;
-  search?: number;
-}
+import DoctorApi, { type ApiParams } from '@/api/doctors';
 
 interface Filters {
   page?: number;
@@ -19,15 +11,10 @@ interface Filters {
   search?: string;
 }
 
-import type {
-  Doctor,
-  SimpleDoctor,
-  ApiDoctor,
-  CreateDoctor,
-} from "../types/doctors";
-import { useErrorStore } from "./errors";
+import type { Doctor, SimpleDoctor, ApiDoctor, CreateDoctor } from '../types/doctors';
+import { useErrorStore } from './errors';
 
-export const useDoctorStore = defineStore("doctorStore", () => {
+export const useDoctorStore = defineStore('doctorStore', () => {
   const route = useRoute();
   const errorStore = useErrorStore();
 
@@ -43,11 +30,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
   };
 
   const getApiParams = (filters: Filters): ApiParams => {
-    const allowedParams: (keyof Filters)[] = [
-      "department_id",
-      "speciality_id",
-      "search",
-    ];
+    const allowedParams: (keyof Filters)[] = ['department_id', 'speciality_id', 'search'];
     const page = filters?.page || 1;
     const params: ApiParams = {
       offset: (page - 1) * limit.value,
@@ -57,7 +40,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
       const param = key as keyof Filters;
 
       if (
-        param != "page" &&
+        param != 'page' &&
         allowedParams.includes(param) &&
         value !== undefined &&
         value !== null
@@ -73,7 +56,7 @@ export const useDoctorStore = defineStore("doctorStore", () => {
     const params = getApiParams(filters);
     try {
       const paginatedData = await DoctorApi.getAll(
-        Object.keys(filters).length !== 0 ? params : routeParams,
+        Object.keys(filters).length !== 0 ? params : routeParams
       );
       doctors.value = paginatedData.results;
       count.value = paginatedData.count;
@@ -142,15 +125,11 @@ export const useDoctorStore = defineStore("doctorStore", () => {
 
 const getYearsWord = (years: number | null): string => {
   if (!years) {
-    return "";
+    return '';
   }
   if (years % 10 === 1 && years % 100 !== 11) {
     return `${years}год`;
-  } else if (
-    years % 10 >= 2 &&
-    years % 10 <= 4 &&
-    (years % 100 < 10 || years % 100 >= 20)
-  ) {
+  } else if (years % 10 >= 2 && years % 10 <= 4 && (years % 100 < 10 || years % 100 >= 20)) {
     return `${years}года`;
   } else {
     return `${years} лет`;

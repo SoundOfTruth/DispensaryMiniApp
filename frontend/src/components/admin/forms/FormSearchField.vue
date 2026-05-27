@@ -10,17 +10,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const props = defineProps<{ title: string }>();
 
 const route = useRoute();
 const router = useRouter();
 
-const pattern = ref<string | undefined>(
-  route.query.search as string | undefined,
-);
+const pattern = ref<string | undefined>(route.query.search as string | undefined);
 
 const handleSearch = () => {
   let query = { ...route.query };

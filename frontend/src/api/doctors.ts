@@ -1,14 +1,18 @@
-import axios from "axios";
+import axios from 'axios';
 
-import { baseApiUrl } from "./base";
+import { baseApiUrl } from './base';
 
-import type { AxiosError, AxiosInstance } from "axios";
-import type {
-  ApiDoctor,
-  CreateDoctor,
-  PaginatedDoctors,
-} from "@/types/doctors";
-import { refreshTokenOnFall, setAuthToken } from "@/utils/api";
+import type { AxiosError, AxiosInstance } from 'axios';
+import type { ApiDoctor, CreateDoctor, PaginatedDoctors } from '@/types/doctors';
+import { refreshTokenOnFall, setAuthToken } from '@/utils/api';
+
+export interface ApiParams {
+  limit: number;
+  offset: number;
+  department_id?: number;
+  speciality_id?: number;
+  search?: number;
+}
 
 class DoctorApi {
   protected client: AxiosInstance;
@@ -24,18 +28,17 @@ class DoctorApi {
     });
     this.client.interceptors.request.use(
       (config) => setAuthToken(config),
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error)
     );
     this.client.interceptors.response.use(
       (response) => response,
-      async (error: AxiosError) => await refreshTokenOnFall(this.client, error),
+      async (error: AxiosError) => await refreshTokenOnFall(this.client, error)
     );
   }
 
-  async getAll(params: Record<string, any> = {}) {
-    const defaultParams = { limit: 10, offset: 0 };
-    const response = await this.client.get<PaginatedDoctors>("/doctors/", {
-      params: { ...defaultParams, ...params },
+  async getAll(params: ApiParams = { limit: 10, offset: 0 }) {
+    const response = await this.client.get<PaginatedDoctors>('/doctors/', {
+      params: params,
     });
     return response.data;
   }
@@ -44,15 +47,12 @@ class DoctorApi {
     return response.data;
   }
   async create(data: CreateDoctor) {
-    const response = await this.client.post<ApiDoctor>("/doctors/", data);
+    const response = await this.client.post<ApiDoctor>('/doctors/', data);
     return response.data;
   }
 
   async update(id: number, data: Partial<CreateDoctor>) {
-    const response = await this.client.patch<ApiDoctor>(
-      `/doctors/${id}/`,
-      data,
-    );
+    const response = await this.client.patch<ApiDoctor>(`/doctors/${id}/`, data);
     return response.data;
   }
 
@@ -61,12 +61,12 @@ class DoctorApi {
   }
 
   async deleteBulk(ids: number[]) {
-    await this.client.delete("/doctors/bulk/", {
+    await this.client.delete('/doctors/bulk/', {
       params: { ids: ids },
     });
   }
 }
 
 export default new DoctorApi(baseApiUrl, {
-  "content-type": "application/json",
+  'content-type': 'application/json',
 });

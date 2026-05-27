@@ -1,9 +1,9 @@
-import { createWebHistory, createRouter } from "vue-router";
+import { createWebHistory, createRouter } from 'vue-router';
 
-import { publicRoutes } from "./public";
-import { adminRoutes } from "./admin";
-import { useUserStore } from "@/stores/users";
-import { useErrorStore } from "@/stores/errors";
+import { publicRoutes } from './public';
+import { adminRoutes } from './admin';
+import { useUserStore } from '@/stores/users';
+import { useErrorStore } from '@/stores/errors';
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -16,15 +16,15 @@ router.beforeEach(async (to, _from, next) => {
   const userStore = useUserStore();
   const errorStore = useErrorStore();
   errorStore.clearErrors();
-  if (to.name?.toString().includes("admin")) {
+  if (to.name?.toString().includes('admin')) {
     if (!userStore.currentUser) {
       await userStore.loadCurrentUser();
     }
-    if (!userStore.isAdmin && to.name != "admin.login") {
-      next({ name: "admin.login" });
+    if (!userStore.isAdmin && to.name != 'admin.login') {
+      next({ name: 'admin.login' });
       return;
-    } else if (userStore.isAdmin && to.name == "admin.login") {
-      next({ name: "admin.index" });
+    } else if (userStore.isAdmin && to.name == 'admin.login') {
+      next({ name: 'admin.index' });
       return;
     }
   }

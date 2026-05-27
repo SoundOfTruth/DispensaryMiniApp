@@ -1,15 +1,13 @@
 <template>
   <div class="form-actions" v-if="mode != 'detail'">
     <button type="submit" class="btn save">Сохранить</button>
-    <button type="button" class="btn cancel" @click="emits('cancel')">
-      Отмена
-    </button>
+    <button type="button" class="btn cancel" @click="emits('cancel')">Отмена</button>
   </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ mode: "create" | "edit" | "detail" }>();
-const emits = defineEmits(["cancel"]);
+const props = defineProps<{ mode: 'create' | 'edit' | 'detail' }>();
+const emits = defineEmits(['cancel']);
 </script>
 
 <style lang="scss" scoped>

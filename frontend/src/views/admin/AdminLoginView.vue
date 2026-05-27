@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import LoginForm from "@/components/LoginForm.vue";
+import LoginForm from '@/components/LoginForm.vue';
 
-import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/users";
-import { useErrorStore } from "@/stores/errors";
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/users';
+import { useErrorStore } from '@/stores/errors';
 
 const router = useRouter();
 
@@ -13,9 +13,9 @@ const errorStore = useErrorStore();
 const afterSubmit = async () => {
   await userStore.loadCurrentUser();
   if (userStore.isAdmin) {
-    router.push({ name: "admin.index" });
+    router.push({ name: 'admin.index' });
   } else if (userStore.currentUser && errorStore.errors.length === 0) {
-    errorStore.addErrorMessage("Недостаточно прав.");
+    errorStore.addErrorMessage('Недостаточно прав.');
   }
 };
 </script>

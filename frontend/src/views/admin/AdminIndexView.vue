@@ -37,35 +37,30 @@
           <LockSvg />
           Сменить пароль
         </button>
-        <RouterLink :to="{ name: 'logout' }" class="action-btn">
-          Выйти из аккаунта
-        </RouterLink>
+        <RouterLink :to="{ name: 'logout' }" class="action-btn"> Выйти из аккаунта </RouterLink>
       </div>
     </div>
     <Teleport to="#modals">
-      <AdminChangePasswordModal
-        :open="changePasswordOpen"
-        @close="closeChangePasswordModal"
-      />
+      <AdminChangePasswordModal :open="changePasswordOpen" @close="closeChangePasswordModal" />
     </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import AdminChangePasswordModal from "@/components/admin/modals/AdminChangePasswordModal.vue";
-import LockSvg from "@/components/svg/LockSvg.vue";
-import { computed, ref } from "vue";
+import AdminChangePasswordModal from '@/components/admin/modals/AdminChangePasswordModal.vue';
+import LockSvg from '@/components/svg/LockSvg.vue';
+import { computed, ref } from 'vue';
 
-import { useUserStore } from "@/stores/users";
+import { useUserStore } from '@/stores/users';
 
 const userStore = useUserStore();
 const currentUser = computed(() => userStore.currentUser);
 const changePasswordOpen = ref(false);
-const passwordError = ref("");
+const passwordError = ref('');
 
 const openChangePasswordModal = () => {
   changePasswordOpen.value = true;
-  passwordError.value = "";
+  passwordError.value = '';
 };
 
 const closeChangePasswordModal = () => {

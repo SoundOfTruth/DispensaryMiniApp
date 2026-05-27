@@ -15,22 +15,20 @@
       </li>
     </ul>
     <div class="actions">
-      <button type="button" class="btn-submit" @click="emits('close')">
-        ОК
-      </button>
+      <button type="button" class="btn-submit" @click="emits('close')">ОК</button>
     </div>
   </CenterModal>
 </template>
 
 <script lang="ts" setup>
-import type { ApiError } from "@/stores/errors";
-import CenterModal from "../../CenterModal.vue";
+import type { ApiError } from '@/stores/errors';
+import CenterModal from '../../CenterModal.vue';
 
 const props = defineProps<{
   errors: ApiError[];
 }>();
 
-const emits = defineEmits(["close"]);
+const emits = defineEmits(['close']);
 </script>
 
 <style lang="scss" scoped>

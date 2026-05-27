@@ -9,11 +9,11 @@
 </template>
 
 <script lang="ts" setup>
-import AdminPage from "@/components/admin/AdminPage.vue";
+import AdminPage from '@/components/admin/AdminPage.vue';
 
-import { useInspectionStore } from "@/stores/inspections";
+import { useInspectionStore } from '@/stores/inspections';
 
-import type { SimpleInspection } from "@/types/inspections";
+import type { SimpleInspection } from '@/types/inspections';
 
 interface Columns {
   key: keyof SimpleInspection;
@@ -21,8 +21,8 @@ interface Columns {
 }
 
 const columns: Columns[] = [
-  { key: "id", text: "id" },
-  { key: "title", text: "Название" },
+  { key: 'id', text: 'id' },
+  { key: 'title', text: 'Название' },
 ];
 
 const store = useInspectionStore();

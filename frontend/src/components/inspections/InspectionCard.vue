@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SimpleInspection } from "@/types/inspections";
+import type { SimpleInspection } from '@/types/inspections';
 
 const props = defineProps<{ inspection: SimpleInspection }>();
 </script>

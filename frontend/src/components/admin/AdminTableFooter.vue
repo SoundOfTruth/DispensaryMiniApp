@@ -1,26 +1,16 @@
 <template>
   <div class="table-footer" v-if="props.store.limit">
-    <div class="count">
-      Пройденно {{ passedCount }} из {{ props.store.count }} строк
-    </div>
+    <div class="count">Пройденно {{ passedCount }} из {{ props.store.count }} строк</div>
     <div class="right">
       <ThePagination
         :count="props.store.count"
         :limit="props.store.limit"
         :size="7"
       ></ThePagination>
-      <div
-        class="limit"
-        @click="IsDropdownOpen = !IsDropdownOpen"
-        v-if="props.store.setLimit"
-      >
+      <div class="limit" @click="IsDropdownOpen = !IsDropdownOpen" v-if="props.store.setLimit">
         <div>{{ props.store.limit }} / на страницу</div>
         <div class="dropdown" v-if="IsDropdownOpen">
-          <button
-            class="item"
-            v-for="count in dropdownCount"
-            @click="props.store.setLimit(count)"
-          >
+          <button class="item" v-for="count in dropdownCount" @click="props.store.setLimit(count)">
             {{ count }} / на страницу
           </button>
         </div>
@@ -30,10 +20,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useRoute } from "vue-router";
-import ThePagination from "../ThePagination.vue";
-import type { BaseStore } from "@/stores/base";
+import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import ThePagination from '../ThePagination.vue';
+import type { BaseStore } from '@/stores/base';
 
 const props = defineProps<{
   tableCount: number | undefined;

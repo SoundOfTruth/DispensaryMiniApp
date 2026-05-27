@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import TheForm from "./TheForm.vue";
-import FormActions from "./FormActions.vue";
+import TheForm from './TheForm.vue';
+import FormActions from './FormActions.vue';
 
-import { onMounted, ref } from "vue";
+import { onMounted, ref } from 'vue';
 
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from 'vue-router';
 
-import { useSpecialityStore } from "@/stores/specialties";
-import type { CreateSpeciality } from "@/types/specialities";
-import { useErrorStore } from "@/stores/errors";
+import { useSpecialityStore } from '@/stores/specialties';
+import type { CreateSpeciality } from '@/types/specialities';
+import { useErrorStore } from '@/stores/errors';
 
 const props = defineProps<{
-  mode: "create" | "edit" | "detail";
+  mode: 'create' | 'edit' | 'detail';
 }>();
 
 const route = useRoute();
@@ -20,14 +20,12 @@ const errorStore = useErrorStore();
 const specialityStore = useSpecialityStore();
 
 const specialityId = ref<number>();
-const formData = ref<CreateSpeciality>({ name: "" });
+const formData = ref<CreateSpeciality>({ name: '' });
 
 const validateForm = (payload: CreateSpeciality): boolean => {
   let isValid: boolean = true;
   if (payload.name.length < 1) {
-    errorStore.addErrorMessage(
-      "Название специальности не может содержать менее 1 символа",
-    );
+    errorStore.addErrorMessage('Название специальности не может содержать менее 1 символа');
     isValid = false;
   }
   return isValid;
@@ -37,20 +35,20 @@ const updateSpeciality = async () => {
   if (specialityId.value) {
     return await specialityStore.update(specialityId.value, formData.value);
   } else {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
   }
 };
 
 const handleSubmit = async () => {
   const payload = formData.value;
   if (validateForm(payload)) {
-    if (props.mode === "create") {
+    if (props.mode === 'create') {
       const created = await specialityStore.create(formData.value);
       if (created) {
         router.go(-1);
       }
     }
-    if (props.mode === "edit") {
+    if (props.mode === 'edit') {
       const updated = await updateSpeciality();
       if (updated) {
         router.go(-1);
@@ -64,7 +62,7 @@ const handleCancel = () => {
 };
 
 onMounted(async () => {
-  if (props.mode !== "create") {
+  if (props.mode !== 'create') {
     specialityId.value = Number(route.params.id);
     await specialityStore.loadById(specialityId.value);
     if (specialityStore.speciality) {
@@ -78,11 +76,11 @@ onMounted(async () => {
   <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
-        mode === "detail"
-          ? "Просмотр специальности"
-          : mode === "edit"
-            ? "Редактирование данных специальности"
-            : "Добавить специальность"
+        mode === 'detail'
+          ? 'Просмотр специальности'
+          : mode === 'edit'
+            ? 'Редактирование данных специальности'
+            : 'Добавить специальность'
       }}
     </h3>
 

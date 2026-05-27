@@ -1,34 +1,34 @@
 <script setup lang="ts">
-import DeleteSvg from "@/components/svg/DeleteSvg.vue";
-import { useErrorStore } from "@/stores/errors";
+import DeleteSvg from '@/components/svg/DeleteSvg.vue';
+import { useErrorStore } from '@/stores/errors';
 
-import { useFilesStore } from "@/stores/files";
-import { ref, watch } from "vue";
+import { useFilesStore } from '@/stores/files';
+import { ref, watch } from 'vue';
 
 const emits = defineEmits<{
-  (e: "on-select", url: string): void;
-  (e: "on-delete"): void;
+  (e: 'on-select', url: string): void;
+  (e: 'on-delete'): void;
 }>();
-const props = defineProps<{ hidden?: boolean; previewUrl?: string | null }>();
+const props = defineProps<{ hidden?: boolean; initUrl?: string | null }>();
 
 const errorStore = useErrorStore();
 const filesStore = useFilesStore();
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
-const fileTypes = ["image/png", "image/jpeg", "image/webp"];
+const fileTypes = ['image/png', 'image/jpeg', 'image/webp'];
 const previewUrl = ref<string | null>();
 
 const clearPreview = () => {
   if (!props.hidden) {
     previewUrl.value = undefined;
-    emits("on-delete");
+    emits('on-delete');
   }
 };
 
 const handleDelete = () => {
   clearPreview();
   if (fileInputRef.value && fileInputRef.value instanceof HTMLInputElement) {
-    fileInputRef.value.value = "";
+    fileInputRef.value.value = '';
   }
 };
 
@@ -37,49 +37,51 @@ const handleFileSelect = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
   if (!file) {
-    errorStore.addErrorMessage("Файл не загружен на клиент.");
+    errorStore.addErrorMessage('Файл не загружен на клиент.');
     return;
   }
   if (!fileTypes.some((type) => type == file.type)) {
-    errorStore.addErrorMessage("Вы не можете загрузить файл данного типа.");
+    errorStore.addErrorMessage('Вы не можете загрузить файл данного типа.');
     return;
   }
   const created = await filesStore.create(file);
   if (created) {
-    emits("on-select", created.url);
+    emits('on-select', created.url);
     previewUrl.value = created.url;
   }
 };
 
 watch(
-  () => props.previewUrl,
+  () => props.initUrl,
   (newUrl) => {
     previewUrl.value = newUrl;
-  },
+  }
 );
 </script>
 
 <template>
   <input
-    type="file"
-    @change="handleFileSelect"
-    accept="image/*"
     ref="fileInputRef"
+    type="file"
+    accept="image/*"
     style="display: none"
+    @change="handleFileSelect"
   />
   <div class="file-input">
     <div v-if="filesStore.loading || previewUrl" @click="handleDelete()">
       <div class="image-wrapper">
-        <img :src="previewUrl" class="image" v-if="previewUrl" />
-        <div class="loading" v-if="filesStore.loading"></div>
-        <div class="deleteOverlay"><DeleteSvg color="white" /></div>
+        <img v-if="previewUrl" :src="previewUrl" class="image" />
+        <div v-if="filesStore.loading" class="loading" />
+        <div class="deleteOverlay">
+          <DeleteSvg color="white" />
+        </div>
       </div>
     </div>
     <button
       class="choise-btn"
       type="button"
-      @click="fileInputRef?.click()"
       :style="hidden ? { display: 'none' } : {}"
+      @click="fileInputRef?.click()"
     >
       Выбрать файл
     </button>

@@ -5,11 +5,7 @@
         <thead>
           <tr>
             <td class="s-coll">
-              <input
-                type="checkbox"
-                @click="emits('selectAll')"
-                :checked="isAllSelected"
-              />
+              <input type="checkbox" @click="emits('selectAll')" :checked="isAllSelected" />
             </td>
             <td class="s-coll"></td>
             <th v-for="col in columns">{{ col.text }}</th>
@@ -66,19 +62,19 @@
 </template>
 
 <script lang="ts" setup>
-import DeleteSvg from "../svg/DeleteSvg.vue";
-import EditSvg from "../svg/EditSvg.vue";
-import WatchSvg from "../svg/WatchSvg.vue";
-import AdminTableFooter from "./AdminTableFooter.vue";
+import DeleteSvg from '../svg/DeleteSvg.vue';
+import EditSvg from '../svg/EditSvg.vue';
+import WatchSvg from '../svg/WatchSvg.vue';
+import AdminTableFooter from './AdminTableFooter.vue';
 
-import { useRoute } from "vue-router";
+import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
 const routeName = String(route.name);
 
-import type { BaseStore } from "../../stores/base";
-import { computed } from "vue";
+import type { BaseStore } from '../../stores/base';
+import { computed } from 'vue';
 
 interface Columns {
   key: string;
@@ -95,12 +91,12 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emits = defineEmits(["openDelete", "selectAll", "selectOne"]);
+const emits = defineEmits(['openDelete', 'selectAll', 'selectOne']);
 
 const errorMessage = computed(() => {
   const search = route.query.search;
   if (props.data?.length === 0 && search) {
-    return "Ничего не найдено по заданным параметрам.";
+    return 'Ничего не найдено по заданным параметрам.';
   }
 });
 </script>

@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import TheForm from "./TheForm.vue";
-import FormActions from "./FormActions.vue";
-import { onMounted, ref } from "vue";
+import TheForm from './TheForm.vue';
+import FormActions from './FormActions.vue';
+import { onMounted, ref } from 'vue';
 
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from 'vue-router';
 
-import { useUserStore } from "@/stores/users";
-import type { CreateUser } from "@/types/users";
-import { useErrorStore } from "@/stores/errors";
+import { useUserStore } from '@/stores/users';
+import type { CreateUser } from '@/types/users';
+import { useErrorStore } from '@/stores/errors';
 
 const props = defineProps<{
-  mode: "create" | "edit" | "detail";
+  mode: 'create' | 'edit' | 'detail';
 }>();
 
 const route = useRoute();
@@ -21,7 +21,7 @@ const userStore = useUserStore();
 
 const userId = ref<number>();
 
-const roles = ["user", "admin", "superuser"];
+const roles = ['user', 'admin', 'superuser'];
 
 interface FormData {
   email: string;
@@ -29,15 +29,15 @@ interface FormData {
   firstname: string;
   middlename: string;
   password?: string;
-  role: "user" | "admin" | "superuser";
+  role: 'user' | 'admin' | 'superuser';
 }
 const formData = ref<FormData>({
-  email: "",
-  lastname: "",
-  firstname: "",
-  middlename: "",
-  password: props.mode !== "edit" ? "" : undefined,
-  role: "user",
+  email: '',
+  lastname: '',
+  firstname: '',
+  middlename: '',
+  password: props.mode !== 'edit' ? '' : undefined,
+  role: 'user',
 });
 
 const getPatchPayload = (): Partial<CreateUser> | null => {
@@ -46,22 +46,19 @@ const getPatchPayload = (): Partial<CreateUser> | null => {
   const user = userStore.user;
 
   if (!user) {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
     return null;
   }
 
-  const entries = Object.entries(form) as [
-    keyof FormData,
-    FormData[keyof FormData],
-  ][];
+  const entries = Object.entries(form) as [keyof FormData, FormData[keyof FormData]][];
   entries.forEach(([key, val]) => {
-    if (key != "password" && user[key] === val) {
+    if (key != 'password' && user[key] === val) {
       payload[key] = undefined;
     }
   });
 
-  if (JSON.stringify(payload) === "{}") {
-    errorStore.addErrorMessage("Nothing to update.");
+  if (JSON.stringify(payload) === '{}') {
+    errorStore.addErrorMessage('Nothing to update.');
     return null;
   }
   return payload;
@@ -70,22 +67,13 @@ const getPatchPayload = (): Partial<CreateUser> | null => {
 const validateForm = (): boolean => {
   const form = formData.value;
   let formValid = true;
-  if (
-    form.lastname.length < 1 ||
-    form.firstname.length < 1 ||
-    form.middlename.length < 1
-  ) {
-    errorStore.addErrorMessage(
-      "Фамилия/имя/очество не может содержать менее 1 символа.",
-    );
+  if (form.lastname.length < 1 || form.firstname.length < 1 || form.middlename.length < 1) {
+    errorStore.addErrorMessage('Фамилия/имя/очество не может содержать менее 1 символа.');
 
     formValid = false;
   }
-  if (
-    (props.mode === "create" && !form.password) ||
-    (form.password && form.password.length < 8)
-  ) {
-    errorStore.addErrorMessage("Пароль должен состоять минимум из 8 символов.");
+  if ((props.mode === 'create' && !form.password) || (form.password && form.password.length < 8)) {
+    errorStore.addErrorMessage('Пароль должен состоять минимум из 8 символов.');
     formValid = false;
   }
   return formValid;
@@ -98,18 +86,18 @@ const updateUser = async () => {
       return await userStore.update(userId.value, updatePayload);
     }
   } else {
-    errorStore.addErrorMessage("Непредвиденная ошибка.");
+    errorStore.addErrorMessage('Непредвиденная ошибка.');
   }
 };
 
 const handleSubmit = async () => {
   if (validateForm()) {
-    if (props.mode === "create") {
+    if (props.mode === 'create') {
       const created = await userStore.create(formData.value as CreateUser);
       if (created) {
         router.go(-1);
       }
-    } else if (props.mode === "edit") {
+    } else if (props.mode === 'edit') {
       const updated = await updateUser();
       if (updated) {
         router.go(-1);
@@ -123,7 +111,7 @@ const handleCancel = () => {
 };
 
 onMounted(async () => {
-  if (props.mode !== "create") {
+  if (props.mode !== 'create') {
     userId.value = Number(route.params.id);
     await userStore.loadById(userId.value);
     if (userStore.user) {
@@ -137,11 +125,11 @@ onMounted(async () => {
   <TheForm @submit="handleSubmit">
     <h3 class="form-title">
       {{
-        mode === "detail"
-          ? "Просмотр пользователя"
-          : mode === "edit"
-            ? "Редактирование данных пользователя"
-            : "Добавить пользователя"
+        mode === 'detail'
+          ? 'Просмотр пользователя'
+          : mode === 'edit'
+            ? 'Редактирование данных пользователя'
+            : 'Добавить пользователя'
       }}
     </h3>
 
