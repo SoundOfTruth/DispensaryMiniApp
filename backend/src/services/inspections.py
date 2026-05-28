@@ -31,10 +31,10 @@ class InspectionService:
             raise NotFoundError
         return InspectionSchema.model_validate(inspection)
 
-    async def get_all(self, limit: int, offset: int, search: str | None):
-        count = await self.inspetion_rep.count(search)
+    async def get_all(self, limit: int, offset: int, search: str | None, filled: bool):
+        count = await self.inspetion_rep.count(search, filled)
         inspections = await self.inspetion_rep.get_all(
-            search=search, limit=limit, offset=offset
+            search=search, limit=limit, offset=offset, filled=filled
         )
         results = [
             SimpleInspectionSchema.model_validate(inspection)

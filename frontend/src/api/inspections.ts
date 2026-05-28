@@ -1,10 +1,17 @@
 import axios from 'axios';
 
-import { baseApiUrl, type ApiParams } from './base';
+import { baseApiUrl } from './base';
 
 import type { AxiosError, AxiosInstance } from 'axios';
 import type { Inspection, CreateInspection, PaginatedInspection } from '@/types/inspections';
 import { refreshTokenOnFall, setAuthToken } from '@/utils/api';
+
+export interface ApiParams {
+  limit: number;
+  offset: number;
+  search?: string;
+  filled?: boolean;
+}
 
 class InspectionApi {
   protected client: AxiosInstance;

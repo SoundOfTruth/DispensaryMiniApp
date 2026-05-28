@@ -15,9 +15,10 @@ async def get_inspections(
     service: InspectionServiceDep,
     pagination: Annotated[PaginationParams, Depends()],
     search: str | None = None,
+    filled: bool = False,
 ):
     return await service.get_all(
-        limit=pagination.limit, offset=pagination.offset, search=search
+        limit=pagination.limit, offset=pagination.offset, search=search, filled=filled
     )
 
 

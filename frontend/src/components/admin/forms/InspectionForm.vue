@@ -78,10 +78,6 @@ const validateForm = (): boolean => {
     errorStore.addErrorMessage('Заголовок не может содержать менее 1 символа.');
     isValid = false;
   }
-  if (form.preparation.length < 1) {
-    errorStore.addErrorMessage('Подготовка не может содержать менее 1 символа.');
-    isValid = false;
-  }
   return isValid;
 };
 
@@ -223,7 +219,6 @@ onMounted(async () => {
         class="field"
         rows="3"
         placeholder="Опишите подготовку"
-        required
         :disabled="mode === 'detail'"
       ></textarea>
     </div>

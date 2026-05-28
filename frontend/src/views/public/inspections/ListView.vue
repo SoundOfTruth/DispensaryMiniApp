@@ -48,14 +48,14 @@ const afterLoad = () => {
 };
 
 onMounted(async () => {
-  await inspectionStore.loadList();
+  await inspectionStore.loadPublicList();
   afterLoad();
 });
 
 watch(
   () => route.query,
   async () => {
-    await inspectionStore.loadList();
+    await inspectionStore.loadPublicList();
     afterLoad();
   }
 );

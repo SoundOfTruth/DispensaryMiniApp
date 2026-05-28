@@ -11,7 +11,7 @@ export interface ApiParams {
   offset: number;
   department_id?: number;
   speciality_id?: number;
-  search?: number;
+  search?: string;
 }
 
 class DoctorApi {

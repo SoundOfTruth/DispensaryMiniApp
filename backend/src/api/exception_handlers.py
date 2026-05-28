@@ -271,7 +271,7 @@ def add_exception_handlers(app: FastAPI):
     def handle_invalid_image(request: Request, exc: InvalidImageUrlError):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
-            content={"detail": "Неверный url изображения."},
+            content={"detail": "Ресурс данного изображения запрещён."},
         )
 
     @app.exception_handler(UpdateSelfPasswordError)

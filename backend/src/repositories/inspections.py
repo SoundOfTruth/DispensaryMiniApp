@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import select, or_, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 
@@ -25,14 +25,21 @@ class InspectionRepository(DeleteOnlyRepository[Inspection]):
             raise InspectionDoctorNotExistsError
         raise err
 
-    def get_expressions(self, search: str | None) -> list:
+    def get_expressions(self, search: str | None, filled: bool) -> list:
         expressions = []
         if search:
             expressions.append(self.model.title.icontains(search))
+        if filled:
+            expressions.append(
+                or_(
+                    func.trim(self.model.description) != "",
+                    func.trim(self.model.preparation) != "",
+                )
+            )
         return expressions
 
-    async def count(self, search: str | None = None) -> int:
-        expressions = self.get_expressions(search)
+    async def count(self, search: str | None = None, filled: bool = False) -> int:
+        expressions = self.get_expressions(search, filled)
         return await self._count(expressions=expressions)
 
     async def get_with_relations(self, id: int) -> Inspection | None:
@@ -45,9 +52,13 @@ class InspectionRepository(DeleteOnlyRepository[Inspection]):
         return res.scalar_one_or_none()
 
     async def get_all(
-        self, search: str | None, limit: int | None = None, offset: int | None = None
+        self,
+        search: str | None,
+        limit: int | None = None,
+        offset: int | None = None,
+        filled: bool = False,
     ) -> Sequence[Inspection]:
-        expressions = self.get_expressions(search)
+        expressions = self.get_expressions(search, filled)
         statement = select(self.model).where(*expressions).limit(limit).offset(offset)
         res = await self.session.execute(statement)
         return res.scalars().all()

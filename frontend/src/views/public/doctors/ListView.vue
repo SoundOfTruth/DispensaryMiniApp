@@ -55,7 +55,7 @@ const afterLoad = () => {
 };
 
 onMounted(async () => {
-  doctorStore.setLimit(8);
+  doctorStore.setLimit(5);
   await doctorStore.loadList();
   afterLoad();
 });

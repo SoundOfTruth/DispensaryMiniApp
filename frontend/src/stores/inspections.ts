@@ -5,8 +5,14 @@ import { defineStore } from 'pinia';
 import InspectionApi from '../api/inspections';
 import type { CreateInspection, Inspection, SimpleInspection } from '../types/inspections';
 import { useErrorStore } from './errors';
-import type { Filters } from './base';
-import type { ApiParams } from '@/api/base';
+import type { ApiParams } from '@/api/inspections';
+import { usePagination } from '@/utils/pagination';
+
+interface Filters {
+  page?: number;
+  search?: string;
+  filled?: boolean;
+}
 
 export const useInspectionStore = defineStore('inspectionStore', () => {
   const route = useRoute();
@@ -17,35 +23,31 @@ export const useInspectionStore = defineStore('inspectionStore', () => {
 
   const count = ref<number>(0);
   const limit = ref<number>(10);
+  const { pagination, calcPagination } = usePagination(limit.value);
 
-  const getApiParams = (params: Filters): ApiParams => {
-    const allowedParams: (keyof Filters)[] = ['search'];
-    const page = params?.page || 1;
-    const apiParams: ApiParams = {
-      offset: (page - 1) * limit.value,
-      limit: limit.value,
+  const getApiParams = (filters: Filters = {}): ApiParams => {
+    const search = filters.search || route.query.search;
+    const paginationParams = filters.page ? calcPagination(filters.page) : pagination.value;
+    return {
+      ...paginationParams,
+      search: search ? String(search) : undefined,
     };
-    Object.entries(params).forEach(([key, value]) => {
-      const param = key as keyof Filters;
-      if (
-        param != 'page' &&
-        allowedParams.includes(param) &&
-        value !== undefined &&
-        value !== null
-      ) {
-        apiParams[param] = value;
-      }
-    });
-    return apiParams;
   };
 
   const loadList = async (filters: Filters = {}) => {
-    const routeParams = getApiParams(route.query);
-    const params = getApiParams(filters);
     try {
-      const paginatedData = await InspectionApi.getAll(
-        Object.keys(filters).length !== 0 ? params : routeParams
-      );
+      const paginatedData = await InspectionApi.getAll(getApiParams(filters));
+      inspections.value = paginatedData.results;
+      count.value = paginatedData.count;
+    } catch (error) {
+      errorStore.parseApiError(error);
+    }
+  };
+
+  const loadPublicList = async () => {
+    const params = getApiParams();
+    try {
+      const paginatedData = await InspectionApi.getAll({ ...params, filled: true });
       inspections.value = paginatedData.results;
       count.value = paginatedData.count;
     } catch (error) {
@@ -100,6 +102,7 @@ export const useInspectionStore = defineStore('inspectionStore', () => {
     limit,
     loadById,
     loadList,
+    loadPublicList,
     create,
     update,
     deleteById,

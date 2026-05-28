@@ -13,6 +13,7 @@ interface Filters {
 
 import type { Doctor, SimpleDoctor, ApiDoctor, CreateDoctor } from '../types/doctors';
 import { useErrorStore } from './errors';
+import { usePagination } from '@/utils/pagination';
 
 export const useDoctorStore = defineStore('doctorStore', () => {
   const route = useRoute();
@@ -25,22 +26,26 @@ export const useDoctorStore = defineStore('doctorStore', () => {
   const count = ref<number>(0);
   const limit = ref<number>(10);
 
+  const { pagination, calcPagination } = usePagination(limit.value);
+
   const setLimit = (val: number) => {
     limit.value = val;
   };
 
-  const getApiParams = (filters: Filters): ApiParams => {
+  const getApiParams = (filters: Filters = {}): ApiParams => {
     const allowedParams: (keyof Filters)[] = ['department_id', 'speciality_id', 'search'];
-    const page = filters?.page || 1;
+    const paginationParams = filters.page ? calcPagination(filters.page) : pagination.value;
+    const search = filters.search || route.query.search;
     const params: ApiParams = {
-      offset: (page - 1) * limit.value,
-      limit: limit.value,
+      ...paginationParams,
+      search: search ? String(search) : undefined,
     };
     Object.entries(filters).forEach(([key, value]) => {
       const param = key as keyof Filters;
 
       if (
         param != 'page' &&
+        param != 'search' &&
         allowedParams.includes(param) &&
         value !== undefined &&
         value !== null
@@ -52,12 +57,9 @@ export const useDoctorStore = defineStore('doctorStore', () => {
   };
 
   const loadList = async (filters: Filters = {}) => {
-    const routeParams = getApiParams(route.query);
     const params = getApiParams(filters);
     try {
-      const paginatedData = await DoctorApi.getAll(
-        Object.keys(filters).length !== 0 ? params : routeParams
-      );
+      const paginatedData = await DoctorApi.getAll(params);
       doctors.value = paginatedData.results;
       count.value = paginatedData.count;
     } catch (error) {
