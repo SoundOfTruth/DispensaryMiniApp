@@ -5,9 +5,9 @@ import aiofiles
 from fastapi import Depends, UploadFile
 from pydantic import HttpUrl
 
-from services.exceptions import InvalidFileExtensionError
 from src.config import settings
 from src.schemas.files import UploadResponse
+from src.services.exceptions import InvalidFileExtensionError
 
 allowed_types = "|".join(["jpeg", "png", "webp", "avif", "apng"])
 

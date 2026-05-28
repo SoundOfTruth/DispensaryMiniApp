@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from api.dependencies import has_admin_permissions
+from src.api.dependencies import has_admin_permissions
 from src.api.params import QueryIds
 from src.schemas.departments import CreateDepartmentSchema
 from src.services.departments import DepartmentServiceDep

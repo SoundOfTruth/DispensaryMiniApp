@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Cookie, Response
 
-from config import settings
+from src.config import settings
 from src.schemas.auth import LoginUserSchema
 from src.services.auth import JwtAuthServiceDep
 

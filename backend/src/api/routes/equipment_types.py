@@ -2,10 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from services.equipment_types import EquipmentTypeServiceDep
 from src.api.dependencies import has_admin_permissions
 from src.api.params import QueryIds
 from src.schemas.equipments import CreateEquipmentTypeSchema, UpdateEquipmentTypeSchema
+from src.services.equipment_types import EquipmentTypeServiceDep
 
 router = APIRouter(prefix="/equipment-types", tags=["Equipment Types"])
 

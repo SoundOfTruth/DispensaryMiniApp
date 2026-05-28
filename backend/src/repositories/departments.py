@@ -1,12 +1,12 @@
 from sqlalchemy import update
 from sqlalchemy.exc import IntegrityError
 
-from repositories.exceptions import (
+from src.models.doctors import Department
+from src.repositories.base import DefaultRepository
+from src.repositories.exceptions import (
     DepartmentIsUsingError,
     DepartmentNameAlreadyExistsError,
 )
-from src.models.doctors import Department
-from src.repositories.base import DefaultRepository
 
 
 class DepartmentRepository(DefaultRepository[Department]):
