@@ -28,7 +28,7 @@ class UpdateUserSchema(BaseSchema):
 
 class UserSchema(CreateUserSchema):
     id: int
-    password: str = Field(exclude=True)
+    password: str = Field("", exclude=True)
 
     model_config = ConfigDict(from_attributes=True)
 
