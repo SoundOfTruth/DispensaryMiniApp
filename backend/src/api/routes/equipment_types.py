@@ -21,7 +21,7 @@ async def get_equipment_types(
     return await service.get_all(search)
 
 
-@router.get("/{id}/", dependencies=[Depends(has_admin_permissions)])
+@router.get("/{id}/")
 async def get_equipment_type(service: EquipmentTypeServiceDep, id: int):
     return await service.get(id)
 
