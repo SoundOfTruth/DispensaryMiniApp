@@ -31,7 +31,7 @@ const afterSubmit = async () => {
 
 <style lang="scss" scoped>
 .login-page {
-  padding-top: 14vh;
+  padding-top: 25vh;
   display: flex;
   flex-direction: column;
   place-content: center;
