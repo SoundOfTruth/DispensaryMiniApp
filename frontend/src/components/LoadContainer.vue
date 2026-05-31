@@ -23,7 +23,9 @@ interface Filters {
   search?: string;
 }
 
-const props = defineProps<{ count: number; limit: number }>();
+const limit = 10;
+
+const props = defineProps<{ count: number }>();
 const emits = defineEmits<{
   (e: 'load', filters: Filters): Promise<void>;
   (e: 'search', search: string): Promise<void>;
@@ -32,7 +34,7 @@ const emits = defineEmits<{
 const searchPattern = ref<string>('');
 
 const pagesCount = computed(() => {
-  return Math.ceil(props.count / props.limit);
+  return Math.ceil(props.count / limit);
 });
 const currPage = ref<number>(1);
 

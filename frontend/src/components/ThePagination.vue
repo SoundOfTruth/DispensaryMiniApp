@@ -38,24 +38,26 @@
 import LeftSvg from './svg/LeftSvg.vue';
 import RightSvg from './svg/RightSvg.vue';
 
-import { computed, watch } from 'vue';
+import { computed, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { calcPages } from '@/utils/pagination';
+import { usePaginationStore } from '@/stores/paginationStore.ts';
 
 interface Props {
   count: number;
-  limit: number;
   size: number;
 }
 
 const props = defineProps<Props>();
+const paginationStore = usePaginationStore();
+const limit = computed(() => paginationStore.limit);
 
 const route = useRoute();
 const router = useRouter();
 
 const pagesCount = computed(() => {
-  return Math.ceil(props.count / props.limit);
+  return Math.ceil(props.count / limit.value);
 });
 const currPage = computed(() => {
   const page = route.query.page;
@@ -95,6 +97,8 @@ const goToPage = (page: number) => {
     element.scrollIntoView({ behavior: 'smooth' });
   }
 };
+
+onUnmounted(() => paginationStore.setLimit(10));
 
 watch(
   () => [pagesCount.value],

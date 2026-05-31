@@ -55,12 +55,14 @@ import ExportButton from './buttons/ExportButton.vue';
 import type { BaseStore } from '@/stores/base';
 
 import { onMounted, watch, ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 import { useUserStore } from '@/stores/users';
 import { useErrorStore } from '@/stores/errors';
+import { usePaginationStore } from '@/stores/paginationStore.ts';
 
 const errorStore = useErrorStore();
 const userStore = useUserStore();
+const paginationStore = usePaginationStore();
 const isAdmin = computed(() => userStore.isAdmin);
 
 const deleteId = ref<number | undefined>(undefined);
@@ -96,7 +98,7 @@ interface inputData {
 }
 
 const route = useRoute();
-
+const router = useRouter();
 const props = defineProps<inputData>();
 
 const isAllSelected = ref<boolean>(false);
@@ -127,18 +129,17 @@ onMounted(async () => {
 });
 
 watch(
-  () => [route.query],
-  async () => {
-    isAllSelected.value = false;
-    selectedItems.value.clear();
-    await props.store.loadList();
-  },
-  { deep: true }
-);
-watch(
-  () => [props.store.limit],
-  async () => {
-    if (props.store.setLimit) {
+  () => [route.query, paginationStore.limit] as const,
+  async ([newQuery], [oldQuery]) => {
+    const newQueryTyped = newQuery as LocationQuery;
+    const oldQueryTyped = oldQuery as LocationQuery | undefined;
+
+    if (newQueryTyped === oldQueryTyped && oldQueryTyped?.page !== '1') {
+      router.push({
+        path: route.path,
+        query: { ...route.query, page: 1 },
+      });
+    } else {
       isAllSelected.value = false;
       selectedItems.value.clear();
       await props.store.loadList();

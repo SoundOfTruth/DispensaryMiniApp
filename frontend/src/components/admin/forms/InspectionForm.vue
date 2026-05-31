@@ -249,7 +249,6 @@ onMounted(async () => {
         <label>Выбрать врача</label>
         <LoadContainer
           :count="doctorStore.count"
-          :limit="doctorStore.limit"
           @load="loadDoctors"
           @search="searchDoctors"
         >

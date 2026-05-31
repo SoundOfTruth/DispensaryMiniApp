@@ -328,7 +328,7 @@ onMounted(async () => {
         @on-select="setPhoto"
         @on-delete="setPhoto(null)"
         :hidden="mode === 'detail'"
-        :preview-url="formData.photo"
+        :initUrl="formData.photo"
       />
     </div>
 
@@ -507,7 +507,6 @@ onMounted(async () => {
       <div class="group">
         <LoadContainer
           :count="inspectionStore.count"
-          :limit="inspectionStore.limit"
           @load="loadInspections"
           @search="searchInspections"
         >

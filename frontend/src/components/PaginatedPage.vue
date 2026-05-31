@@ -8,12 +8,15 @@
 </template>
 
 <script lang="ts" setup>
+import { usePaginationStore } from '@/stores/paginationStore.ts';
 import ThePagination from './ThePagination.vue';
 
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
+const paginationStore = usePaginationStore();
+const limit = computed(() => paginationStore.limit);
 
 const currentPage = computed(() => {
   const page = route.query.page;
@@ -22,7 +25,6 @@ const currentPage = computed(() => {
 
 interface Props {
   count: number;
-  limit: number;
 }
 const props = defineProps<Props>();
 </script>

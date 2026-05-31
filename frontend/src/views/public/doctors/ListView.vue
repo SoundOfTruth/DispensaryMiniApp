@@ -31,13 +31,16 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { useDoctorStore } from '@/stores/doctors';
+
 import { useErrorStore } from '@/stores/errors';
+import { usePaginationStore } from '@/stores/paginationStore';
 
 const filterOpen = ref<boolean>(false);
 
 const route = useRoute();
 const doctorStore = useDoctorStore();
 const errorStore = useErrorStore();
+const paginationStore = usePaginationStore();
 
 const doctors = computed(() => doctorStore.doctors);
 const errors = computed(() => errorStore.errors);
@@ -55,13 +58,13 @@ const afterLoad = () => {
 };
 
 onMounted(async () => {
-  doctorStore.setLimit(5);
+  paginationStore.setLimit(5);
   await doctorStore.loadList();
   afterLoad();
 });
 
 watch(
-  () => route.query,
+  () => [route.query, doctorStore.limit],
   async () => {
     await doctorStore.loadList();
     afterLoad();

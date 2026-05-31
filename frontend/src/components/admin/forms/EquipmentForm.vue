@@ -156,7 +156,7 @@ onMounted(async () => {
         @on-select="setImage"
         @on-delete="setImage('')"
         :hidden="mode === 'detail'"
-        :preview-url="formData.image"
+        :initUrl="formData.image"
       />
     </div>
 

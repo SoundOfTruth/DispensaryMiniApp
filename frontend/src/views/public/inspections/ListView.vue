@@ -24,11 +24,13 @@ import { useRoute } from 'vue-router';
 
 import { useInspectionStore } from '@/stores/inspections';
 import { useErrorStore } from '@/stores/errors';
+import { usePaginationStore } from '@/stores/paginationStore';
 
 const route = useRoute();
 
 const errorStore = useErrorStore();
 const inspectionStore = useInspectionStore();
+const paginationStore = usePaginationStore();
 
 const inspections = computed(() => inspectionStore.inspections);
 const errors = computed(() => errorStore.errors);
@@ -48,6 +50,7 @@ const afterLoad = () => {
 };
 
 onMounted(async () => {
+  paginationStore.setLimit(10);
   await inspectionStore.loadPublicList();
   afterLoad();
 });
