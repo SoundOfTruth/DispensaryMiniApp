@@ -71,6 +71,11 @@ watch(
   },
   { deep: true }
 );
+
+watch(
+  () => [paginationStore.limit],
+  () => console.log(paginationStore.limit)
+);
 </script>
 
 <style scoped lang="scss">

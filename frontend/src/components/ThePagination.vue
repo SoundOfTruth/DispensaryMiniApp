@@ -38,7 +38,7 @@
 import LeftSvg from './svg/LeftSvg.vue';
 import RightSvg from './svg/RightSvg.vue';
 
-import { computed, onUnmounted, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { calcPages } from '@/utils/pagination';
@@ -97,8 +97,6 @@ const goToPage = (page: number) => {
     element.scrollIntoView({ behavior: 'smooth' });
   }
 };
-
-onUnmounted(() => paginationStore.setLimit(10));
 
 watch(
   () => [pagesCount.value],

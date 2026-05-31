@@ -54,7 +54,7 @@ import ExportButton from './buttons/ExportButton.vue';
 
 import type { BaseStore } from '@/stores/base';
 
-import { onMounted, watch, ref, computed } from 'vue';
+import { onMounted, watch, ref, computed, onUnmounted } from 'vue';
 import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 import { useUserStore } from '@/stores/users';
 import { useErrorStore } from '@/stores/errors';
@@ -127,6 +127,7 @@ const selectOne = (id: number) => {
 onMounted(async () => {
   await props.store.loadList();
 });
+onUnmounted(() => paginationStore.setLimit(10));
 
 watch(
   () => [route.query, paginationStore.limit] as const,

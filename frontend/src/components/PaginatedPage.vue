@@ -11,7 +11,7 @@
 import { usePaginationStore } from '@/stores/paginationStore.ts';
 import ThePagination from './ThePagination.vue';
 
-import { computed } from 'vue';
+import { computed, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -27,6 +27,7 @@ interface Props {
   count: number;
 }
 const props = defineProps<Props>();
+onUnmounted(() => paginationStore.setLimit(10));
 </script>
 
 <style scoped lang="scss">
