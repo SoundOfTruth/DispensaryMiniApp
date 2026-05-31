@@ -44,7 +44,7 @@ const handleSearch = debounce(() => {
     path: route.path,
     query: query,
   });
-}, 350);
+}, 200);
 </script>
 
 <style lang="scss" scoped>
