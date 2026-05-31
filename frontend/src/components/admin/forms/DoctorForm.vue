@@ -322,7 +322,7 @@ onMounted(async () => {
       <input v-model="doctorId" class="field" disabled="true" />
     </div>
 
-    <div class="group">
+    <div class="group" v-if="mode != 'detail' || formData.photo?.includes('http')">
       <label for="name">Фото</label>
       <FileInput
         @on-select="setPhoto"
@@ -507,6 +507,7 @@ onMounted(async () => {
       <div class="group">
         <LoadContainer
           :count="inspectionStore.count"
+          search-title="Найти обследование"
           @load="loadInspections"
           @search="searchInspections"
         >

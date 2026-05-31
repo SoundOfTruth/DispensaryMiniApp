@@ -4,7 +4,7 @@
       class="field"
       v-model="searchPattern"
       type="text"
-      placeholder="Найти обследование"
+      :placeholder="searchTitle"
       @input="handleSearch"
       @keydown.enter.prevent
     />
@@ -25,7 +25,7 @@ interface Filters {
 
 const limit = 10;
 
-const props = defineProps<{ count: number }>();
+const props = defineProps<{ count: number; searchTitle: string }>();
 const emits = defineEmits<{
   (e: 'load', filters: Filters): Promise<void>;
   (e: 'search', search: string): Promise<void>;
@@ -83,16 +83,5 @@ const handleScroll = async (event: Event) => {
   border: 1px solid #ddd;
   border-radius: 6px;
   margin-bottom: 16px;
-  .item {
-    display: flex;
-    width: 100%;
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    &:hover {
-      background-color: #f8f9fa;
-    }
-  }
 }
 </style>

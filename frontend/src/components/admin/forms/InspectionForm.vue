@@ -250,6 +250,7 @@ onMounted(async () => {
         <LoadContainer
           :count="doctorStore.count"
           @load="loadDoctors"
+          search-title="Найти врача"
           @search="searchDoctors"
         >
           <div
@@ -315,6 +316,14 @@ textarea.field {
 }
 
 .item-search {
+  margin-bottom: 16px;
+}
+.selection {
+  box-sizing: border-box;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
   margin-bottom: 16px;
 }
 

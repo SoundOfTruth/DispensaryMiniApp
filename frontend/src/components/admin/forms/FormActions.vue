@@ -1,6 +1,6 @@
 <template>
-  <div class="form-actions" v-if="mode != 'detail'">
-    <button type="submit" class="btn save">Сохранить</button>
+  <div class="form-actions">
+    <button type="submit" class="btn save" v-if="mode != 'detail'">Сохранить</button>
     <button type="button" class="btn cancel" @click="emits('cancel')">Отмена</button>
   </div>
 </template>
@@ -14,8 +14,8 @@ const emits = defineEmits(['cancel']);
 .form-actions {
   display: flex;
   gap: 12px;
-  margin-top: 32px;
-  padding-top: 20px;
+  margin-top: 30px;
+  padding-top: 0px;
   @media (max-width: 768px) {
     flex-direction: column;
   }

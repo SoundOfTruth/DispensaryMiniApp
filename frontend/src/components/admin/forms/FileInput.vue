@@ -3,7 +3,7 @@ import DeleteSvg from '@/components/svg/DeleteSvg.vue';
 import { useErrorStore } from '@/stores/errors';
 
 import { useFilesStore } from '@/stores/files';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 const emits = defineEmits<{
   (e: 'on-select', url: string): void;
@@ -51,10 +51,14 @@ const handleFileSelect = async (event: Event) => {
   }
 };
 
+onMounted(() => {
+  previewUrl.value = props.initUrl;
+});
+
 watch(
-  () => props.initUrl,
-  (newUrl) => {
-    previewUrl.value = newUrl;
+  () => [props.initUrl],
+  () => {
+    previewUrl.value = props.initUrl;
   }
 );
 </script>
@@ -68,11 +72,11 @@ watch(
     @change="handleFileSelect"
   />
   <div class="file-input">
-    <div v-if="filesStore.loading || previewUrl" @click="handleDelete()">
+    <div @click="handleDelete()">
       <div class="image-wrapper">
         <img v-if="previewUrl" :src="previewUrl" class="image" />
         <div v-if="filesStore.loading" class="loading" />
-        <div class="deleteOverlay">
+        <div class="deleteOverlay" v-if="!hidden">
           <DeleteSvg color="white" />
         </div>
       </div>
