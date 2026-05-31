@@ -13,12 +13,37 @@ class Testequipment_typeApi:
         response = await client.get("/api/equipment-types/")
         assert response.status_code == 200
 
-    async def test_get_equipment_types(self, client: AsyncClient, equipment_types):
+    async def test_get_equipment_types_unauth(
+        self, client: AsyncClient, equipment_types
+    ):
         response = await client.get("/api/equipment-types/")
         data = response.json()
         assert response.status_code == 200
         assert len(data) >= len(equipment_types)
         validate_response_schema(data, schema=EquipmentTypeSchema, many=True)
+
+    @pytest.mark.usefixtures("equipment_types")
+    async def test_get_equipment_types_user_role(self, user_client: AsyncClient):
+        response = await user_client.get("/api/equipment-types/")
+        data = response.json()
+        assert response.status_code == 200
+        assert len(data) != 0
+
+    @pytest.mark.usefixtures("equipment_types")
+    async def test_get_equipment_types_admin_role(self, admin_client: AsyncClient):
+        response = await admin_client.get("/api/equipment-types/")
+        data = response.json()
+        assert response.status_code == 200
+        assert len(data) != 0
+
+    @pytest.mark.usefixtures("equipment_types")
+    async def test_get_equipment_types_superuser_role(
+        self, superuser_client: AsyncClient
+    ):
+        response = await superuser_client.get("/api/equipment-types/")
+        data = response.json()
+        assert response.status_code == 200
+        assert len(data) != 0
 
     async def test_get_equipment_type(
         self, client: AsyncClient, equipment_type: EquipmentType
@@ -137,24 +162,3 @@ class Testequipment_typeApi:
             f"/api/equipment-types/{equipment.type_id}/"
         )
         assert response.status_code == 400
-
-    @pytest.mark.usefixtures("equipment_types")
-    async def test_get_equipment_types_user_role(self, user_client: AsyncClient):
-        response = await user_client.get("/api/equipment-types/")
-        data = response.json()
-        assert response.status_code == 200
-        assert len(data) != 0
-
-    @pytest.mark.usefixtures("equipment_types")
-    async def test_get_equipment_types_admin_role(self, admin_client: AsyncClient):
-        response = await admin_client.get("/api/equipment-types/")
-        data = response.json()
-        assert response.status_code == 200
-        assert len(data) != 0
-
-    @pytest.mark.usefixtures("equipment_types")
-    async def test_get_equipment_types_superuser_role(self, superuser_client: AsyncClient):
-        response = await superuser_client.get("/api/equipment-types/")
-        data = response.json()
-        assert response.status_code == 200
-        assert len(data) != 0

@@ -19,10 +19,10 @@ class CreateInspectionSchema(BaseModel):
 
 class UpdateInspectionSchema(BaseModel):
     title: str = Field("", max_length=255, examples=["s"])
-    description: str = Field("", examples=["s"])
-    preparation: str = Field("", examples=["s"])
+    description: str = Field("", examples=["s"], min_length=0)
+    preparation: str = Field("", examples=["s"], min_length=0)
 
-    doctors: list[CreateDoctorInspectionSchema] | None = None
+    doctors: list[CreateDoctorInspectionSchema] = []
 
     model_config = ConfigDict(str_min_length=1, str_max_length=1_000_000)
 

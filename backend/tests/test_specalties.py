@@ -112,7 +112,10 @@ class TestSpecailityApi:
         assert response.status_code == 422
 
     async def test_update_specialty_superuser_role(
-        self, superuser_client: AsyncClient, speciality: Speciality, gen_speciality_payload
+        self,
+        superuser_client: AsyncClient,
+        speciality: Speciality,
+        gen_speciality_payload,
     ):
         payload = gen_speciality_payload()
         response = await superuser_client.put(

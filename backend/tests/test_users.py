@@ -7,9 +7,86 @@ from tests.utils import validate_pagination, validate_response_schema
 
 pytestmark = pytest.mark.asyncio
 
-@pytest.mark.skip
+
 class TestUserApi:
     new_password = "new_test_password"
+    incorrect_payload = [
+        "",
+        {},
+        [],
+        1,
+        1.1,
+        {
+            "email": "bad_email",
+            "firstname": "test",
+            "lastname": "test",
+            "middlename": "test",
+            "password": "testpassword",
+            "role": "user",
+        },
+        {
+            "email": "test@example.com",
+            "firstname": "",
+            "lastname": "test",
+            "middlename": "test",
+            "password": "bad",
+            "role": "user",
+        },
+        {
+            "email": "test@example.com",
+            "firstname": "test",
+            "lastname": "",
+            "middlename": "test",
+            "password": "testpassword",
+            "role": "user",
+        },
+        {
+            "email": "test@example.com",
+            "firstname": "test",
+            "lastname": "test",
+            "middlename": "",
+            "password": "testpassword",
+            "role": "user",
+        },
+        {
+            "email": "test@example.com",
+            "firstname": "test",
+            "lastname": "test",
+            "middlename": "test",
+            "password": "testpassword",
+            "role": "",
+        },
+        {
+            "email": "test@example.com",
+            "firstname": "test",
+            "lastname": "test",
+            "middlename": "test",
+            "password": "testpassword",
+            "role": "",
+        },
+    ]
+    patch_payload = [
+        {"email": "test123@example.com"},
+        {"firstname": "test"},
+        {"lastname": "test"},
+        {"middlename": "test"},
+        {"password": "testpassword"},
+        {"role": "user"},
+        {"firstname": "test", "lastname": "test", "middlename": "test"},
+        {
+            "email": "test1234@example.com",
+            "firstname": "test",
+            "lastname": "test",
+            "middlename": "test",
+        },
+        {
+            "email": "test1234@example.com",
+            "firstname": "test",
+            "lastname": "test",
+            "middlename": "test",
+            "role": "admin",
+        },
+    ]
 
     @pytest.mark.parametrize(
         "params",
@@ -161,7 +238,9 @@ class TestUserApi:
         response = await admin_client.post("/api/users/", json=payload)
         assert response.status_code == 403
 
-    async def test_create_user_user_role(self, user_client: AsyncClient, gen_user_payload):
+    async def test_create_user_user_role(
+        self, user_client: AsyncClient, gen_user_payload
+    ):
         payload = gen_user_payload(Role.USER.value)
         response = await user_client.post("/api/users/", json=payload)
         assert response.status_code == 403
@@ -196,14 +275,12 @@ class TestUserApi:
         response = await superuser_client.post("/api/users/", json=payload)
         assert response.status_code == 400
 
-    async def test_update_self_password_by_patch(
-        self, superuser_client: AsyncClient, superuser: User
+    @pytest.mark.parametrize("payload", incorrect_payload)
+    async def test_create_inspection_incorrect_payload(
+        self, superuser_client: AsyncClient, payload
     ):
-        new_password = "testpassword2"
-        response = await superuser_client.patch(
-            f"/api/users/{superuser.id}/", json={"password": new_password}
-        )
-        assert response.status_code == 400
+        response = await superuser_client.post("/api/users/", json=payload)
+        assert response.status_code == 422
 
     async def test_update_busy_email(
         self, superuser_client: AsyncClient, superuser: User, another_user: User
@@ -228,6 +305,7 @@ class TestUserApi:
             f"/api/users/{another_user.id}/", json=payload
         )
         assert response.status_code == 200
+        assert validate_response_schema(response.json(), schema=UserSchema)
 
     async def test_update_admin_role(
         self, admin_client: AsyncClient, admin, gen_user_payload
@@ -236,9 +314,26 @@ class TestUserApi:
         response = await admin_client.patch(f"/api/users/{admin.id}/", json=payload)
         assert response.status_code == 403
 
-    async def test_delete_user_role(self, user_client: AsyncClient, superuser):
-        response = await user_client.delete(f"/api/users/{superuser.id}/")
-        assert response.status_code == 403
+    async def test_update_self_password_by_patch(
+        self, superuser_client: AsyncClient, superuser: User
+    ):
+        new_password = "testpassword2"
+        response = await superuser_client.patch(
+            f"/api/users/{superuser.id}/", json={"password": new_password}
+        )
+        assert response.status_code == 400
+
+    @pytest.mark.parametrize("payload", patch_payload)
+    async def test_patch_update(
+        self, superuser_client: AsyncClient, user: User, payload
+    ):
+        response = await superuser_client.patch(f"/api/users/{user.id}/", json=payload)
+        data = response.json()
+        assert response.status_code == 200
+        assert validate_response_schema(data, schema=UserSchema)
+        for key in payload:
+            if key != "password":
+                assert data[key] == payload[key]
 
     async def test_change_password_unauth(self, client: AsyncClient, password: str):
         payload = {"current_password": password, "new_password": self.new_password}
@@ -273,3 +368,29 @@ class TestUserApi:
         )
         assert response.status_code == 201
         assert after_response.status_code == 201
+
+    async def test_delete_user_role(self, user_client: AsyncClient, superuser: User):
+        response = await user_client.delete(f"/api/users/{superuser.id}/")
+        assert response.status_code == 403
+
+    async def test_delete_admin_role(self, admin_client: AsyncClient, superuser: User):
+        response = await admin_client.delete(f"/api/users/{superuser.id}/")
+        assert response.status_code == 403
+
+    async def test_delete_admin_superuser_role(
+        self, superuser_client: AsyncClient, admin: User
+    ):
+        response = await superuser_client.delete(f"/api/users/{admin.id}/")
+        assert response.status_code == 204
+
+    async def test_delete_user_superuser_role(
+        self, superuser_client: AsyncClient, user: User
+    ):
+        response = await superuser_client.delete(f"/api/users/{user.id}/")
+        assert response.status_code == 204
+
+    async def test_delete_self_superuser(
+        self, superuser_client: AsyncClient, superuser: User
+    ):
+        response = await superuser_client.delete(f"/api/users/{superuser.id}/")
+        assert response.status_code == 400

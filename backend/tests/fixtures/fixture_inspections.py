@@ -16,6 +16,7 @@ def gen_inspection_payload():
             "title": faker.name(),
             "description": faker.text(),
             "preparation": faker.text(),
+            "doctors": [],
         }
 
     return wrapper
@@ -24,6 +25,8 @@ def gen_inspection_payload():
 @pytest.fixture
 def create_inspection_instance(gen_inspection_payload):
     def wrapper():
+        payload: dict = gen_inspection_payload()
+        payload.pop("doctors", [])
         return Inspection(**gen_inspection_payload())
 
     return wrapper

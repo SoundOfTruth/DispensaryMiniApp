@@ -1,3 +1,4 @@
+import pytest
 import pytest_asyncio
 from faker import Faker
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,38 +9,47 @@ from src.schemas.equipments import CreateEquipmentSchema
 faker = Faker()
 
 
-@pytest_asyncio.fixture
-async def gen_equipment_data(related_equipment_type: EquipmentType, image_url: str):
-    async def wrapper():
+@pytest.fixture
+def gen_equipment_payload(image_url: str):
+    def wrapper(equipment_type_id: int):
         return {
             "name": faker.name(),
             "image": image_url,
-            "type_id": related_equipment_type.id,
+            "type_id": equipment_type_id,
         }
 
     return wrapper
 
 
-@pytest_asyncio.fixture
-async def create_equipment_instance(gen_equipment_data):
-    async def wrapper():
-        schema = CreateEquipmentSchema(**await gen_equipment_data())
+@pytest.fixture
+def create_equipment_instance(gen_equipment_payload):
+    def wrapper(equipment_type_id: int):
+        payload = gen_equipment_payload(equipment_type_id)
+        schema = CreateEquipmentSchema(**payload)
         return Equipment(**schema.model_dump(mode="json"))
 
     return wrapper
 
 
 @pytest_asyncio.fixture
-async def equipment(session: AsyncSession, create_equipment_instance):
-    instance = await create_equipment_instance()
+async def equipment(
+    session: AsyncSession,
+    create_equipment_instance,
+    related_equipment_type: EquipmentType,
+):
+    instance = create_equipment_instance(related_equipment_type.id)
     session.add(instance)
     await session.commit()
     return instance
 
 
 @pytest_asyncio.fixture
-async def equipments(session: AsyncSession, create_equipment_instance):
-    instance = [await create_equipment_instance() for _ in range(10)]
-    session.add(instance)
+async def equipments(
+    session: AsyncSession,
+    create_equipment_instance,
+    related_equipment_type: EquipmentType,
+):
+    instance = [create_equipment_instance(related_equipment_type.id) for _ in range(10)]
+    session.add_all(instance)
     await session.commit()
     return instance

@@ -1,10 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from src.api.dependencies import (
-    BaseUrlDep,
-    has_admin_permissions,
-    has_superuser_permissions,
-)
+from src.api.dependencies import BaseUrlDep, has_admin_permissions
 from src.api.params import QueryIds
 from src.schemas.equipments import CreateEquipmentSchema, UpdateEquipmentSchema
 from src.services.equipments import EquipmentServiceDep
@@ -13,7 +9,6 @@ from src.services.exceptions import InvalidImageUrlError
 router = APIRouter(
     prefix="/equipments",
     tags=["Equipments"],
-    dependencies=[Depends(has_admin_permissions)],
 )
 
 
@@ -27,7 +22,7 @@ async def get_equipment(service: EquipmentServiceDep, id: int):
     return await service.get(id)
 
 
-@router.post("/", status_code=201)
+@router.post("/", status_code=201, dependencies=[Depends(has_admin_permissions)])
 async def create_equipment(
     service: EquipmentServiceDep, schema: CreateEquipmentSchema, base_url: BaseUrlDep
 ):
@@ -36,7 +31,7 @@ async def create_equipment(
     return await service.create(schema)
 
 
-@router.patch("/{id}/")
+@router.patch("/{id}/", dependencies=[Depends(has_admin_permissions)])
 async def update_equipment(
     service: EquipmentServiceDep,
     id: int,
@@ -48,15 +43,11 @@ async def update_equipment(
     return await service.update(id, schema)
 
 
-@router.delete(
-    "/bulk/", status_code=204, dependencies=[Depends(has_superuser_permissions)]
-)
+@router.delete("/bulk/", status_code=204, dependencies=[Depends(has_admin_permissions)])
 async def delete_equipments(service: EquipmentServiceDep, ids: QueryIds):
     return await service.bulk_delete(ids)
 
 
-@router.delete(
-    "/{id}/", status_code=204, dependencies=[Depends(has_superuser_permissions)]
-)
+@router.delete("/{id}/", status_code=204, dependencies=[Depends(has_admin_permissions)])
 async def delete_equipment(service: EquipmentServiceDep, id: int):
     return await service.delete(id)

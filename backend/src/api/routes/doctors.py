@@ -2,11 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from src.api.dependencies import (
-    BaseUrlDep,
-    has_admin_permissions,
-    has_superuser_permissions,
-)
+from src.api.dependencies import BaseUrlDep, has_admin_permissions
 from src.api.params import PaginationParams, QueryIds
 from src.schemas.doctors import (
     CreateDoctorSchema,
@@ -38,7 +34,7 @@ async def get_doctor(service: DoctorServiceDep, id: int):
 async def create_doctor(
     service: DoctorServiceDep, schema: CreateDoctorSchema, base_url: BaseUrlDep
 ):
-    if base_url not in str(schema.photo):
+    if schema.photo and base_url not in str(schema.photo):
         raise InvalidImageUrlError
     return await service.create(schema)
 
@@ -47,20 +43,16 @@ async def create_doctor(
 async def update_doctor(
     service: DoctorServiceDep, id: int, schema: UpdateDoctorSchema, base_url: BaseUrlDep
 ):
-    if base_url not in str(schema.photo):
+    if schema.photo and base_url not in str(schema.photo):
         raise InvalidImageUrlError
     return await service.update(id, schema)
 
 
-@router.delete(
-    "/bulk/", status_code=204, dependencies=[Depends(has_superuser_permissions)]
-)
+@router.delete("/bulk/", status_code=204, dependencies=[Depends(has_admin_permissions)])
 async def delete_doctors(service: DoctorServiceDep, ids: QueryIds):
     return await service.bulk_delete(ids)
 
 
-@router.delete(
-    "/{id}/", status_code=204, dependencies=[Depends(has_superuser_permissions)]
-)
+@router.delete("/{id}/", status_code=204, dependencies=[Depends(has_admin_permissions)])
 async def delete_doctor(service: DoctorServiceDep, id: int):
     return await service.delete(id)

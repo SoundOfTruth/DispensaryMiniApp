@@ -1,5 +1,4 @@
 import io
-from uuid import uuid4
 
 import pytest
 from PIL import Image
@@ -15,4 +14,4 @@ def image() -> bytes:
 
 @pytest.fixture
 def image_url():
-    return f"http://localhost:8000/media/{uuid4}/"
+    return "http://test/media/9c6e6a46-8586-437b-ac0b-5014048f3b6c.jpeg/"
