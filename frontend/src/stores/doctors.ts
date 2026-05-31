@@ -35,8 +35,10 @@ export const useDoctorStore = defineStore('doctorStore', () => {
     const params: ApiParams = {
       ...paginationParams,
       search: search ? String(search) : undefined,
+      department_id: filters.department_id,
+      speciality_id: filters.speciality_id,
     };
-    Object.entries(filters).forEach(([key, value]) => {
+    Object.entries(route.query as Filters).forEach(([key, value]) => {
       const param = key as keyof Filters;
 
       if (
