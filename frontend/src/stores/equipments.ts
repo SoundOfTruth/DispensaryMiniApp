@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
 import EquipmentApi from '../api/equipments';
@@ -13,8 +13,6 @@ export const useEquipmentStore = defineStore('equipmentStore', () => {
 
   const equipments = ref<Equipment[]>([]);
   const equipment = ref<SimpleEquipment>();
-
-  const count = computed(() => equipments.value.length || 0);
 
   const getRouteParams = (): ApiSearchParams => {
     const routeSearch = route.query.search;
@@ -72,7 +70,6 @@ export const useEquipmentStore = defineStore('equipmentStore', () => {
   return {
     equipment,
     equipments,
-    count,
     loadList,
     loadById,
     create,

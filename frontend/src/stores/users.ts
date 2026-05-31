@@ -8,11 +8,13 @@ import type { CreateUser, User } from '@/types/users';
 import { useAuthStore } from './auth';
 import { useErrorStore } from './errors';
 import type { ApiParams } from '@/api/base';
+import { usePaginationStore } from './paginationStore';
 
 export const useUserStore = defineStore('userStore', () => {
+  const route = useRoute();
   const authStore = useAuthStore();
   const errorStore = useErrorStore();
-  const route = useRoute();
+  const paginationStore = usePaginationStore();
 
   const currentUser = ref<User>();
   const isAdmin = computed(
@@ -22,19 +24,13 @@ export const useUserStore = defineStore('userStore', () => {
   const user = ref<User>();
 
   const count = ref<number>(0);
-  const limit = ref<number>(10);
-
-  const setLimit = (val: number) => {
-    limit.value = val;
-  };
 
   const getRouteParams = (): ApiParams => {
     const routeSearch = route.query.search;
     const search = routeSearch ? String(routeSearch) : undefined;
-    const page = Number(route.query.page) || 1;
+    const paginationParams = paginationStore.pagination;
     return {
-      offset: (page - 1) * limit.value,
-      limit: limit.value,
+      ...paginationParams,
       search: search ? search : undefined,
     };
   };
@@ -115,11 +111,9 @@ export const useUserStore = defineStore('userStore', () => {
     user,
     users,
     count,
-    limit,
     loadCurrentUser,
     loadById,
     loadList,
-    setLimit,
     create,
     update,
     deleteById,

@@ -58,7 +58,7 @@ async def update_user(
     return await service.update(id, schema)
 
 
-@router.post("/change-password/")
+@router.post("/change-password/", status_code=201)
 async def change_password(
     service: UserServiceDep, schema: PasswordChangeSchema, token: AccessTokenDep
 ):

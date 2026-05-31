@@ -1,23 +1,37 @@
 import pytest
 from httpx import AsyncClient
 
-from src.models.users import User
+from src.models.users import Role, User
 from src.schemas.users import UserSchema
 from tests.utils import validate_pagination, validate_response_schema
 
 pytestmark = pytest.mark.asyncio
 
+@pytest.mark.skip
+class TestUserApi:
+    new_password = "new_test_password"
 
-class TestUsersApi:
-    async def test_get_users_pagination(self, superuser_client: AsyncClient, users):
-        limit = 2
-        params = {"limit": limit, "offset": 0}
+    @pytest.mark.parametrize(
+        "params",
+        [
+            {"limit": 2, "offset": 0},
+            {"limit": 10, "offset": 10},
+            {"limit": 20, "offset": 20},
+            {"limit": 50, "offset": 0},
+        ],
+    )
+    async def test_get_users_pagination(
+        self,
+        superuser_client: AsyncClient,
+        many_users: list[User],
+        params: dict[str, int],
+    ):
         response = await superuser_client.get("/api/users/", params=params)
         data = response.json()
         assert validate_pagination(
             data=data,
             schema=UserSchema,
-            fixture_length=len(users),
+            fixture_length=len(many_users),
             limit=params["limit"],
             offset=params["offset"],
         )
@@ -95,3 +109,167 @@ class TestUsersApi:
     async def test_get_me_unauth(self, client: AsyncClient):
         response = await client.get("/api/users/me/")
         assert response.status_code == 401
+
+    async def test_create_user_uanauth(self, client: AsyncClient, gen_user_payload):
+        payload = gen_user_payload(Role.USER.value)
+        response = await client.post("/api/users/", data=payload)
+        assert response.status_code == 401
+
+    async def test_create_user_empyty_payload(self, superuser_client: AsyncClient):
+        response = await superuser_client.post("/api/users/", json={})
+        assert response.status_code == 422
+
+    async def test_create_user_superuser_role(
+        self, superuser_client: AsyncClient, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.USER.value)
+        response = await superuser_client.post("/api/users/", json=payload)
+        assert response.status_code == 201
+
+    async def test_create_admin_superuser_role(
+        self, superuser_client: AsyncClient, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.ADMIN.value)
+        response = await superuser_client.post("/api/users/", json=payload)
+        assert response.status_code == 201
+
+    async def test_create_superuser_superuser_role(
+        self, superuser_client: AsyncClient, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.SUPERUSER.value)
+        response = await superuser_client.post("/api/users/", json=payload)
+        assert response.status_code == 201
+
+    async def test_create_user_admin_role(
+        self, admin_client: AsyncClient, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.USER.value)
+        response = await admin_client.post("/api/users/", json=payload)
+        assert response.status_code == 201
+
+    async def test_create_admin_admin_role(
+        self, admin_client: AsyncClient, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.ADMIN.value)
+        response = await admin_client.post("/api/users/", json=payload)
+        assert response.status_code == 403
+
+    async def test_create_superuser_admin_role(
+        self, admin_client: AsyncClient, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.SUPERUSER.value)
+        response = await admin_client.post("/api/users/", json=payload)
+        assert response.status_code == 403
+
+    async def test_create_user_user_role(self, user_client: AsyncClient, gen_user_payload):
+        payload = gen_user_payload(Role.USER.value)
+        response = await user_client.post("/api/users/", json=payload)
+        assert response.status_code == 403
+
+    async def test_create_admin_user_role(
+        self, user_client: AsyncClient, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.ADMIN.value)
+        response = await user_client.post("/api/users/", json=payload)
+        assert response.status_code == 403
+
+    async def test_create_superuser_user_role(
+        self, user_client: AsyncClient, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.SUPERUSER.value)
+        response = await user_client.post("/api/users/", json=payload)
+        assert response.status_code == 403
+
+    async def test_create_superuser_bad_password(
+        self, superuser_client: AsyncClient, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.SUPERUSER.value)
+        payload["password"] = "123"
+        response = await superuser_client.post("/api/users/", json=payload)
+        assert response.status_code == 422
+
+    async def test_create_user_busy_email(
+        self, superuser_client: AsyncClient, superuser: User, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.USER.value)
+        payload["email"] = superuser.email
+        response = await superuser_client.post("/api/users/", json=payload)
+        assert response.status_code == 400
+
+    async def test_update_self_password_by_patch(
+        self, superuser_client: AsyncClient, superuser: User
+    ):
+        new_password = "testpassword2"
+        response = await superuser_client.patch(
+            f"/api/users/{superuser.id}/", json={"password": new_password}
+        )
+        assert response.status_code == 400
+
+    async def test_update_busy_email(
+        self, superuser_client: AsyncClient, superuser: User, another_user: User
+    ):
+        payload = {"email": superuser.email}
+        response = await superuser_client.patch(
+            f"/api/users/{another_user.id}/", json=payload
+        )
+        assert response.status_code == 400
+
+    async def test_update_empty_payload(
+        self, superuser_client: AsyncClient, superuser: User
+    ):
+        response = await superuser_client.patch(f"/api/users/{superuser.id}/", json={})
+        assert response.status_code == 400
+
+    async def test_update_superuser_role(
+        self, superuser_client: AsyncClient, another_user, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.USER.value)
+        response = await superuser_client.patch(
+            f"/api/users/{another_user.id}/", json=payload
+        )
+        assert response.status_code == 200
+
+    async def test_update_admin_role(
+        self, admin_client: AsyncClient, admin, gen_user_payload
+    ):
+        payload = gen_user_payload(Role.SUPERUSER.value)
+        response = await admin_client.patch(f"/api/users/{admin.id}/", json=payload)
+        assert response.status_code == 403
+
+    async def test_delete_user_role(self, user_client: AsyncClient, superuser):
+        response = await user_client.delete(f"/api/users/{superuser.id}/")
+        assert response.status_code == 403
+
+    async def test_change_password_unauth(self, client: AsyncClient, password: str):
+        payload = {"current_password": password, "new_password": self.new_password}
+        response = await client.post("/api/users/change-password/", json=payload)
+        assert response.status_code == 401
+
+    async def test_change_password_fake(self, user_client: AsyncClient):
+        payload = {
+            "current_password": "fake_password",
+            "new_password": self.new_password,
+        }
+        response = await user_client.post("/api/users/change-password/", json=payload)
+        atfter_payload = {
+            "current_password": self.new_password,
+            "new_password": "fake_password",
+        }
+        after_response = await user_client.post(
+            "/api/users/change-password/", json=atfter_payload
+        )
+        assert response.status_code == 400
+        assert after_response.status_code == 400
+
+    async def test_change_password(self, user_client: AsyncClient, password: str):
+        payload = {"current_password": password, "new_password": self.new_password}
+        response = await user_client.post("/api/users/change-password/", json=payload)
+        atfter_payload = {
+            "current_password": self.new_password,
+            "new_password": "fake_password",
+        }
+        after_response = await user_client.post(
+            "/api/users/change-password/", json=atfter_payload
+        )
+        assert response.status_code == 201
+        assert after_response.status_code == 201

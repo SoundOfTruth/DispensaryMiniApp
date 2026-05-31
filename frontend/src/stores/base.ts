@@ -1,7 +1,5 @@
 export interface BaseStore {
-  limit?: number;
-  count: number;
-  setLimit?: (limit: number) => void;
+  count?: number;
   loadById: (id: number) => Promise<void>;
   loadList: (params?: Record<string, any>) => Promise<void>;
   create: (data: any) => Promise<any>;

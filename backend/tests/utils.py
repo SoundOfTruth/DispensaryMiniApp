@@ -38,7 +38,6 @@ def validate_pagination(
     limit_is_valid = results_count <= limit
     offset_is_valid = results_count == min(expected_on_page, limit)
     schema_is_valid = validate_response_schema(results, schema, many=True)
-
     return (
         fixture_is_valid
         and count_is_valid

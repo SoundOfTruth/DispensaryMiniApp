@@ -13,28 +13,24 @@ interface Filters {
 
 import type { Doctor, SimpleDoctor, ApiDoctor, CreateDoctor } from '../types/doctors';
 import { useErrorStore } from './errors';
-import { usePagination } from '@/utils/pagination';
+import { usePaginationStore } from './paginationStore';
 
 export const useDoctorStore = defineStore('doctorStore', () => {
   const route = useRoute();
   const errorStore = useErrorStore();
+  const paginationStore = usePaginationStore();
 
   const doctors = ref<SimpleDoctor[]>([]);
   const doctor = ref<Doctor>();
   const apiDoctor = ref<ApiDoctor>();
 
   const count = ref<number>(0);
-  const limit = ref<number>(10);
-
-  const { pagination, calcPagination } = usePagination(limit.value);
-
-  const setLimit = (val: number) => {
-    limit.value = val;
-  };
 
   const getApiParams = (filters: Filters = {}): ApiParams => {
     const allowedParams: (keyof Filters)[] = ['department_id', 'speciality_id', 'search'];
-    const paginationParams = filters.page ? calcPagination(filters.page) : pagination.value;
+    const paginationParams = filters.page
+      ? paginationStore.calcPagination(filters.page)
+      : paginationStore.pagination;
     const search = filters.search || route.query.search;
     const params: ApiParams = {
       ...paginationParams,
@@ -114,10 +110,8 @@ export const useDoctorStore = defineStore('doctorStore', () => {
     doctor,
     doctors,
     count,
-    limit,
     loadById,
     loadList,
-    setLimit,
     create,
     update,
     deleteById,

@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { defineStore } from 'pinia';
 
@@ -15,8 +15,6 @@ export const useEquipmentTypeStore = defineStore('equipmentTypeStore', () => {
   const detailTypes = ref<EquipmentType[]>([]);
   const types = ref<SimpleEquipmentType[]>([]);
   const type = ref<SimpleEquipmentType>();
-
-  const count = computed(() => types.value.length || 0);
 
   const getRouteParams = (): ApiSearchParams => {
     const routeSearch = route.query.search;
@@ -83,7 +81,6 @@ export const useEquipmentTypeStore = defineStore('equipmentTypeStore', () => {
     detailTypes,
     types,
     type,
-    count,
     loadById,
     loadDetailList,
     loadList,

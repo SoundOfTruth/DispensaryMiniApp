@@ -6,7 +6,7 @@ import InspectionApi from '../api/inspections';
 import type { CreateInspection, Inspection, SimpleInspection } from '../types/inspections';
 import { useErrorStore } from './errors';
 import type { ApiParams } from '@/api/inspections';
-import { usePagination } from '@/utils/pagination';
+import { usePaginationStore } from './paginationStore';
 
 interface Filters {
   page?: number;
@@ -17,17 +17,18 @@ interface Filters {
 export const useInspectionStore = defineStore('inspectionStore', () => {
   const route = useRoute();
   const errorStore = useErrorStore();
+  const paginationStore = usePaginationStore();
 
   const inspections = ref<SimpleInspection[]>([]);
   const inspection = ref<Inspection>();
 
   const count = ref<number>(0);
-  const limit = ref<number>(10);
-  const { pagination, calcPagination } = usePagination(limit.value);
 
   const getApiParams = (filters: Filters = {}): ApiParams => {
     const search = filters.search || route.query.search;
-    const paginationParams = filters.page ? calcPagination(filters.page) : pagination.value;
+    const paginationParams = filters.page
+      ? paginationStore.calcPagination(filters.page)
+      : paginationStore.pagination;
     return {
       ...paginationParams,
       search: search ? String(search) : undefined,
@@ -99,7 +100,6 @@ export const useInspectionStore = defineStore('inspectionStore', () => {
     inspection,
     inspections,
     count,
-    limit,
     loadById,
     loadList,
     loadPublicList,

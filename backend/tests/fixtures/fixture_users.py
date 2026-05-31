@@ -16,25 +16,36 @@ def password():
 
 
 @pytest.fixture(scope="session")
-def create_user_data(password):
+def gen_user_payload(password):
+    def wrapper(role: str):
+        user_payload = {
+            "email": faker.unique.email(),
+            "firstname": faker.first_name(),
+            "lastname": faker.last_name(),
+            "middlename": faker.unique.user_name(),
+            "password": password,
+            "role": role,
+        }
+        return user_payload
+
+    return wrapper
+
+
+@pytest.fixture(scope="session")
+def create_user_instance(gen_user_payload):
     def wrapper(role: Role):
-        schema = CreateUserSchema(
-            email=faker.unique.email(),
-            firstname=faker.first_name(),
-            lastname=faker.last_name(),
-            middlename=faker.unique.user_name(),
-            password=hash_password(password),
-            role=role,
-        )
+        payload = gen_user_payload(role.value)
+        payload["password"] = hash_password(payload["password"])
+        schema = CreateUserSchema.model_validate(payload)
         return User(**schema.model_dump())
 
     return wrapper
 
 
 @pytest_asyncio.fixture
-async def create_user(session: AsyncSession, create_user_data):
+async def create_user(session: AsyncSession, create_user_instance):
     async def wrapper(role: Role):
-        instance = create_user_data(role)
+        instance = create_user_instance(role)
         session.add(instance)
         await session.commit()
         return instance
@@ -67,8 +78,16 @@ async def superuser(create_user):
 
 
 @pytest_asyncio.fixture
-async def users(session: AsyncSession, create_user_data):
-    instances = [create_user_data(Role.USER) for _ in range(10)]
+async def users(session: AsyncSession, create_user_instance):
+    instances = [create_user_instance(Role.USER) for _ in range(10)]
+    session.add_all(instances)
+    await session.commit()
+    return instances
+
+
+@pytest_asyncio.fixture
+async def many_users(session: AsyncSession, create_user_instance):
+    instances = [create_user_instance(Role.USER) for _ in range(50)]
     session.add_all(instances)
     await session.commit()
     return instances

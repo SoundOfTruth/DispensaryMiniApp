@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
 import SpecialitiesApi from '@/api/specialities';
@@ -13,8 +13,6 @@ export const useSpecialityStore = defineStore('specialityStore', () => {
 
   const specialties = ref<Speciality[]>([]);
   const speciality = ref<Speciality>();
-
-  const count = computed(() => specialties.value.length || 0);
 
   const getRouteParams = (): ApiSearchParams => {
     const routeSearch = route.query.search;
@@ -73,7 +71,6 @@ export const useSpecialityStore = defineStore('specialityStore', () => {
   return {
     speciality,
     specialties,
-    count,
     loadById,
     loadList,
     create,

@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { defineStore } from 'pinia';
 
@@ -14,8 +14,6 @@ export const useDepartmentStore = defineStore('departmentStore', () => {
 
   const departments = ref<Department[]>([]);
   const department = ref<Department>();
-
-  const count = computed(() => departments.value.length || 0);
 
   const getRouteParams = (): ApiSearchParams => {
     const routeSearch = route.query.search;
@@ -72,7 +70,6 @@ export const useDepartmentStore = defineStore('departmentStore', () => {
   return {
     department,
     departments,
-    count,
     loadById,
     loadList,
     create,

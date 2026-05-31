@@ -19,4 +19,11 @@ pytest_plugins = [
     "tests.fixtures.fixture_db",
     "tests.fixtures.fixture_clients",
     "tests.fixtures.fixture_users",
+    "tests.fixtures.fixture_doctors",
+    "tests.fixtures.fixture_inspections",
+    "tests.fixtures.fixture_equipments",
+    "tests.fixtures.fixture_specialties",
+    "tests.fixtures.fixture_departments",
+    "tests.fixtures.fixture_equipment_types",
+    "tests.fixtures.fixture_image",
 ]

@@ -18,12 +18,16 @@ async def engine():
 async def session(engine):
     connection = await engine.connect()
     transaction = await connection.begin()
+
     session = AsyncSession(
         bind=connection,
         expire_on_commit=False,
+        join_transaction_mode="create_savepoint",
     )
 
-    yield session
-    await transaction.rollback()
-    await session.close()
-    await connection.close()
+    try:
+        yield session
+    finally:
+        await session.close()
+        await transaction.rollback()
+        await connection.close()
