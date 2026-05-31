@@ -3,7 +3,7 @@
     <div class="filters">
       <SearchField title="Поиск обследований" />
     </div>
-    <PaginatedPage :count="inspectionStore.count" :limit="inspectionStore.limit">
+    <PaginatedPage :count="inspectionStore.count">
       <div class="err-handler" v-for="err in errors" v-if="errCondition">
         {{ err.message }}
       </div>

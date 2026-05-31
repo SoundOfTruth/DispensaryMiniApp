@@ -5,7 +5,7 @@
       <FilterButton @on-click="filterOpen = !filterOpen" />
     </div>
     <div class="pt">
-      <PaginatedPage :count="doctorStore.count" :limit="doctorStore.limit">
+      <PaginatedPage :count="doctorStore.count">
         <div class="err-handler" v-for="err in errors" v-if="errCondition">
           {{ err.message }}
         </div>
@@ -64,7 +64,7 @@ onMounted(async () => {
 });
 
 watch(
-  () => [route.query, doctorStore.limit],
+  () => [route.query],
   async () => {
     await doctorStore.loadList();
     afterLoad();
