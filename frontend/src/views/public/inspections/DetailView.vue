@@ -8,7 +8,7 @@
       {{ err.message }}
     </div>
     <div v-else>
-      <div class="information">
+      <div class="inspection-card">
         <div class="title">{{ inspection?.title }}</div>
         <div class="sub-title" v-if="inspection?.description">Описание:</div>
         <div class="text">{{ inspection?.description }}</div>
@@ -17,7 +17,7 @@
         <div class="sub-title" v-if="inspection?.doctors.length">Проводят исследование:</div>
         <div>
           <div v-for="doctor in inspection?.doctors">
-            <RouterLink :to="`/doctors/${doctor.id}`">{{
+            <RouterLink :to="`/doctors/${doctor.id}`" class="doctor-link">{{
               `${doctor.lastname} ${doctor.firstname} ${doctor.middlename}`
             }}</RouterLink>
           </div>
@@ -59,10 +59,14 @@ onMounted(async () => {
   font-size: 110%;
   text-align: center;
 }
-.information {
+.inspection-card {
   display: flex;
   gap: 10px;
   flex-direction: column;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   .title {
     font-weight: 500;
     font-size: 150%;
@@ -75,5 +79,8 @@ onMounted(async () => {
   .text {
     white-space: pre-wrap;
   }
+}
+.doctor-link {
+  color: #0d9ce3;
 }
 </style>

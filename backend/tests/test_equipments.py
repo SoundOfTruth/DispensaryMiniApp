@@ -90,7 +90,9 @@ class TestEquipmentApi:
         response = await superuser_client.post("/api/equipments/", json=payload)
         assert response.status_code == 201
 
-    async def test_delete_equipment_unauth_(self, client: AsyncClient, equipment: Equipment):
+    async def test_delete_equipment_unauth_(
+        self, client: AsyncClient, equipment: Equipment
+    ):
         response = await client.delete(f"/api/equipments/{equipment.id}/")
         assert response.status_code == 401
 

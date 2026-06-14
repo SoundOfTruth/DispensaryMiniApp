@@ -57,17 +57,28 @@ const handleSearch = debounce(() => {
   box-sizing: border-box;
   width: 100%;
   display: flex;
-  border: 1px solid #bababa;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 3px;
+  background: white;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+
+  &:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
   .input-field {
     width: 100%;
     border: transparent;
     background: transparent;
     outline: none;
     box-sizing: border-box;
-    color: #bababa;
     font-size: 90%;
+    &::placeholder {
+      color: #94a3b8;
+      letter-spacing: 0.01em;
+    }
   }
 }
 </style>

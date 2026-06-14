@@ -94,7 +94,8 @@ $primary: #0d9ce3;
 $text-secondary: #6c757d;
 .doctor-page {
   overflow-y: auto;
-  padding: 15px;
+  padding-inline: 15px;
+  padding-bottom: 15px;
   .err-handler {
     display: flex;
     justify-content: center;
@@ -108,9 +109,12 @@ $text-secondary: #6c757d;
 .doctor-header {
   display: flex;
   flex-direction: column;
-  border-radius: 8px;
   padding: 20px;
   background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-top: 20px;
   @media (min-width: 600px) {
     padding: 8px;
     gap: 26px;
@@ -136,7 +140,6 @@ $text-secondary: #6c757d;
 }
 
 .doctor-header-info {
-  max-width: 400px;
   padding-top: 20px;
   display: flex;
   flex-direction: column;
@@ -168,13 +171,16 @@ $text-secondary: #6c757d;
 }
 
 .doctor-extra-info {
-  padding: 0 4px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  max-width: 460px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-top: 20px;
 
   .title {
-    padding: 20px 0;
     font-size: 1.25rem;
     font-weight: 500;
     padding-bottom: 8px;

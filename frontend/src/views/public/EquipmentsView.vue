@@ -45,9 +45,12 @@ onMounted(async () => {
   padding-left: 15px;
 }
 .err-handler {
+  padding-top: 20px;
   display: flex;
   justify-content: center;
   font-size: 16px;
+  font-weight: 500;
+  color: #ef4444;
 }
 .equipments-list {
   display: flex;

@@ -81,10 +81,12 @@ watch(
 .err-handler {
   display: flex;
   justify-content: center;
+  font-weight: 500;
+  color: #ef4444;
 }
 .filters {
   padding-top: 20px;
-  padding-inline: 25px;
+  padding-inline: 14px;
   padding-bottom: 20px;
   display: flex;
   gap: 10px;

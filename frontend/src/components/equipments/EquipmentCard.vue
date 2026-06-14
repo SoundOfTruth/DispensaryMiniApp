@@ -22,15 +22,16 @@ defineProps<{ equipment: EquipmentItem }>();
   gap: 20px;
   background: #ffffff;
   border: 1px solid #e0e0e0;
-  border-radius: 16px;
   padding: 16px;
-  transition: all 0.2s ease;
-
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   &:hover {
-    border-color: #b0b0b0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #3b82f6;
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+    transform: translateY(2px);
   }
-
   .image-container {
     flex-shrink: 0;
     width: 80px;

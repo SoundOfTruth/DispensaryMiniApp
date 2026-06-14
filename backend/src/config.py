@@ -32,10 +32,13 @@ class Settings(BaseSettings):
     ALLOWED_HOSTS: list[str] = [
         "localhost",
         "localhost:5173",
+        "localhost:5174",
         "127.0.0.1",
         "127.0.0.1:5173",
+        "127.0.0.1:5174",
         "192.168.0.11",
         "192.168.0.11:5173",
+        "192.168.0.11:5174",
     ]
 
     SECRET: str

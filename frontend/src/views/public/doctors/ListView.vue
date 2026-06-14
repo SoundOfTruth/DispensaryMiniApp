@@ -2,7 +2,7 @@
   <div class="container">
     <div class="filters">
       <SearchField title="Поиск врачей" />
-      <FilterButton @on-click="filterOpen = !filterOpen" />
+      <div class="filter-btn-wrapper"><FilterButton @on-click="filterOpen = !filterOpen" /></div>
     </div>
     <div class="pt">
       <PaginatedPage :count="doctorStore.count">
@@ -74,10 +74,15 @@ watch(
 </script>
 
 <style scoped lang="scss">
+.filter-btn-wrapper {
+  padding-right: 4px;
+}
 .err-handler {
   display: flex;
   justify-content: center;
   font-size: 16px;
+  font-weight: 500;
+  color: #ef4444;
 }
 .container {
   height: 100%;
@@ -96,7 +101,7 @@ watch(
   position: sticky;
   top: 0px;
   padding-top: 20px;
-  padding-inline: 25px;
+  padding-inline: 14px;
   padding-bottom: 20px;
   display: flex;
   gap: 10px;

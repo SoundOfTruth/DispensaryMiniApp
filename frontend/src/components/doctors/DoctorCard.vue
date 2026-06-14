@@ -44,8 +44,15 @@ a {
   min-height: 110px;
   background: white;
   display: flex;
-  border-radius: 16px;
-  border: 1px solid transparent;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  &:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+    transform: translateY(2px);
+  }
   .avatar-container {
     display: grid;
     place-content: center;

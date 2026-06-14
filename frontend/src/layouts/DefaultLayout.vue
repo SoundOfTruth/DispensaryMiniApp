@@ -58,7 +58,7 @@ const links: Link[] = [
   overflow-y: auto;
 }
 .content {
-  padding-top: 87px;
+  padding-top: 95px;
   display: flex;
   flex-direction: column;
   flex: 1;
