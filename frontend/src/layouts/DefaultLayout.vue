@@ -1,11 +1,7 @@
 <template>
   <div class="mini-app">
-    <TheHeader :index-link="indexLink" :links="links" />
-    <div
-      class="content"
-      :class="route.name !== 'index' ? 'content-media' : ''"
-      id="content"
-    >
+    <TheHeader :index-link="indexLink" :links="links"/>
+    <div class="content" :class="route.name !== 'index' ? 'content-media' : ''" id="content">
       <RouterView v-slot="{ Component }">
         <TheTransition>
           <Component :is="Component" />
@@ -16,10 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import TheTransition from "@/components/TheTransition.vue";
-import TheHeader from "../components/TheHeader.vue";
+import TheTransition from '@/components/TheTransition.vue';
+import TheHeader from '../components/TheHeader.vue';
 
-import { useRoute } from "vue-router";
+import { useRoute } from 'vue-router';
 
 const route = useRoute();
 
@@ -28,25 +24,25 @@ interface Link {
   routeName: string;
 }
 const indexLink = {
-  title: "Клинический онкологический диспансер",
-  routeName: "index",
+  title: 'Клинический онкологический диспансер',
+  routeName: 'index',
 };
 const links: Link[] = [
   {
-    title: "О нас",
-    routeName: "index",
+    title: 'О нас',
+    routeName: 'index',
   },
   {
-    title: "Врачи",
-    routeName: "doctors",
+    title: 'Врачи',
+    routeName: 'doctors',
   },
   {
-    title: "Обследования",
-    routeName: "inspections",
+    title: 'Обследования',
+    routeName: 'inspections',
   },
   {
-    title: "Оборудование",
-    routeName: "equipments",
+    title: 'Оборудование',
+    routeName: 'equipments',
   },
 ];
 </script>

@@ -30,7 +30,7 @@ const menuOpen = ref<boolean>(true);
 .menu-open {
   padding-top: 16px;
   padding-left: 16px;
-  @media (min-width: 800px) {
+  @media (min-width: 950px) {
     display: none;
   }
 }
@@ -57,7 +57,7 @@ const menuOpen = ref<boolean>(true);
     flex-direction: column;
     gap: 8px;
   }
-  @media (max-width: 800px) {
+  @media (max-width: 950px) {
     display: none;
   }
 }

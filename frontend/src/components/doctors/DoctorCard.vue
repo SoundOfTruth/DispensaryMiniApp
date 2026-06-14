@@ -39,6 +39,7 @@ a {
   text-decoration: none;
   color: black;
 }
+
 .doctor-card {
   min-height: 110px;
   background: white;

@@ -70,12 +70,12 @@ const isAdmin = computed(() => userStore.isAdmin);
 <style scoped lang="scss">
 .admin-page {
   margin-left: 15rem;
-  @media (max-width: 800px) {
+  @media (max-width: 950px) {
     margin-left: 0px;
   }
 }
 .mobile-nav {
-  @media (min-width: 800px) {
+  @media (min-width: 950px) {
     display: none;
   }
 }
@@ -87,7 +87,7 @@ const isAdmin = computed(() => userStore.isAdmin);
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  @media (min-width: 800px) {
+  @media (min-width: 950px) {
     padding-top: 0px;
   }
 }
