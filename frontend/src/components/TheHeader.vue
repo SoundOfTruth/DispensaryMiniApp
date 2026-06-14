@@ -61,7 +61,7 @@ const toggleMenu = () => {
 header {
   box-sizing: border-box;
   width: 100%;
-  max-width: 1000px;
+  max-width: 1100px;
   border-bottom: 1px solid #d8dee4;
   padding: 20px;
   position: fixed;

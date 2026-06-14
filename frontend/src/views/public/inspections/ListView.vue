@@ -50,7 +50,7 @@ const afterLoad = () => {
 };
 
 onMounted(async () => {
-  paginationStore.setLimit(10);
+  paginationStore.setLimit(5);
   await inspectionStore.loadPublicList();
   afterLoad();
 });
@@ -74,7 +74,6 @@ watch(
     display: flex;
     flex-direction: column;
     gap: 10px;
-    overflow-y: auto;
     padding: 0px 15px;
   }
 }

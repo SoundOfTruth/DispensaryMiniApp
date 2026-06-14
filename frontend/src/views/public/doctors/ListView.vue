@@ -14,9 +14,7 @@
         </div>
       </PaginatedPage>
     </div>
-    <Teleport to="#modals">
-      <FilterModal :open="filterOpen" @close="filterOpen = false" />
-    </Teleport>
+    <FilterModal :open="filterOpen" @close="filterOpen = false" />
   </div>
 </template>
 

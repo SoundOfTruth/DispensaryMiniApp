@@ -1,6 +1,6 @@
 <template>
   <div class="mini-app">
-    <TheHeader :index-link="indexLink" :links="links"/>
+    <TheHeader :index-link="indexLink" :links="links" />
     <div class="content" :class="route.name !== 'index' ? 'content-media' : ''" id="content">
       <RouterView v-slot="{ Component }">
         <TheTransition>
@@ -49,7 +49,8 @@ const links: Link[] = [
 
 <style scoped lang="scss">
 .mini-app {
-  max-width: 1000px;
+  position: relative;
+  max-width: 1100px;
   margin: 0 auto;
   min-height: 100vh;
   min-height: 100dvh;
@@ -66,9 +67,9 @@ const links: Link[] = [
   overflow-y: auto;
 }
 .content-media {
-  @media (min-width: 800px) {
-    width: 70%;
-    padding-left: 5%;
+  @media (min-width: 900px) {
+    width: 65%;
+    padding-left: 5px;
   }
 }
 </style>

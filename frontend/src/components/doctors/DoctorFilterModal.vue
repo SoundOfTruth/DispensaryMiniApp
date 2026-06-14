@@ -79,13 +79,12 @@ const handleConfirm = () => {
 </script>
 
 <style lang="scss" scoped>
+$content-padding: 20px;
 .modal {
-  max-width: 1110px;
-  margin: 0 auto;
-  z-index: 99;
+  box-sizing: border-box;
+  z-index: 1200;
   position: fixed;
   padding: 20px;
-  z-index: 100;
   top: 0;
   left: 0;
   right: 0;
@@ -93,8 +92,25 @@ const handleConfirm = () => {
   background: #f5f7fa;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  @media (min-width: 900px) {
+    position: absolute;
+    left: calc(65% + 5px);
+    top: 116px;
+    z-index: 1300;
+    width: clamp(260px, calc(35% - $content-padding), 400px);
+    max-height: 72vh;
+    background: white;
+    border-radius: 8px;
+    border: none;
+    padding: 16px;
+  }
+
   .container {
-    flex: 1;
     .header {
       display: flex;
       justify-content: space-between;

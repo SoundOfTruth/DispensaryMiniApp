@@ -40,12 +40,13 @@
 </template>
 
 <style scoped lang="scss">
+$desctop-start: 720px;
 .about {
   display: flex;
   gap: 10px;
   flex-direction: column;
   padding: 20px 15px;
-  @media (min-width: 720px) {
+  @media (min-width: $desctop-start) {
     flex-direction: row;
     padding-top: 30px;
     gap: 5px;
@@ -76,11 +77,14 @@
   border-radius: 16px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  @media (min-width: 720px) {
+  @media (min-width: $desctop-start) {
     margin-left: 10px;
-    max-width: 300px;
+    max-width: 270px;
   }
-  max-width: 320px;
+  @media (min-width: 800px) {
+    margin-left: 10px;
+    max-width: 320px;
+  }
 }
 .map {
   min-height: 380px;
