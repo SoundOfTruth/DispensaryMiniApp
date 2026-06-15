@@ -72,7 +72,7 @@ $desctop-start: 720px;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  background: white;
+  background: var(--bg-secondary);
   padding: 20px;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
@@ -93,17 +93,18 @@ $desctop-start: 720px;
   padding: 1px;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid #e2e8f0;
   .iframe-wraper {
     position: relative;
     width: 100%;
     max-width: 860px;
     margin: 0 auto;
     aspect-ratio: 16 / 9;
+    border-radius: 16px;
     background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    background: white;
     overflow: hidden;
     display: block;
+    border: 1px solid var(--border-primary);
 
     &.loaded .iframe-placeholder {
       display: none;

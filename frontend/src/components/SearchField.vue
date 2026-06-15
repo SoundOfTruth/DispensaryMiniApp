@@ -60,7 +60,7 @@ const handleSearch = debounce(() => {
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 3px;
-  background: white;
+  background: var(--bg-secondary);
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 

@@ -598,7 +598,8 @@ textarea.field {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #e7f3ff;
+    background: var(--bg-primary);
+    color: var(--text-primary);
     text-indent: 12px;
     border-radius: 8px;
     font-size: 13px;
@@ -640,6 +641,9 @@ textarea.field {
 }
 
 .selection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   max-height: 300px;
   overflow-y: auto;
   border: 1px solid #ddd;
@@ -648,15 +652,14 @@ textarea.field {
 }
 
 .selection-item {
+  background: var(--bg-primary);
   box-sizing: border-box;
   display: flex;
   width: 100%;
   padding: 12px;
+  border: none;
   border-bottom: 1px solid #eee;
   cursor: pointer;
   transition: background-color 0.2s;
-  &:hover {
-    background-color: #f8f9fa;
-  }
 }
 </style>

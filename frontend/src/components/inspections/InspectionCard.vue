@@ -28,6 +28,7 @@ a {
 }
 
 .inspection-card {
+  background: var(--bg-secondary);
   min-height: 110px;
   box-sizing: border-box;
   width: 100%;
@@ -35,7 +36,6 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 18px 20px;
-  background: #ffffff;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
@@ -85,7 +85,7 @@ a {
     font-size: 1.05rem;
     font-weight: 600;
     line-height: 1.4;
-    color: #0f172a;
+    color: var(--text-primary);
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;

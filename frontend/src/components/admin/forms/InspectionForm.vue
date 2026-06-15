@@ -103,8 +103,8 @@ const getPatchPayload = (): Partial<CreateInspection> | null => {
   };
 
   entries.forEach(([key, val]) => {
-    if (inspection[key] === val) {
-      payload[key] = undefined;
+    if (inspection[key] !== val) {
+      payload[key] = val;
     }
   });
 

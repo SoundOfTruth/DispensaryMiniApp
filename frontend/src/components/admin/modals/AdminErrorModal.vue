@@ -40,7 +40,7 @@ const emits = defineEmits(['close']);
   border-bottom: 1px solid #e0e0e0;
   h3 {
     margin: 0;
-    color: #333;
+    color: var(--text-primary);
     font-size: 1.25rem;
   }
 }

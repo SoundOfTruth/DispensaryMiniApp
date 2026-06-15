@@ -161,6 +161,7 @@ tr {
     align-items: center;
     background: transparent;
     padding: 0;
+    border: none;
     &:hover {
       border-color: transparent !important;
     }

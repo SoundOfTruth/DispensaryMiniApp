@@ -37,12 +37,12 @@ const doctor = computed(() => props.doctor);
 <style scoped lang="scss">
 a {
   text-decoration: none;
-  color: black;
+  color: var(--text-primary);
 }
 
 .doctor-card {
   min-height: 110px;
-  background: white;
+  background: var(--bg-secondary);
   display: flex;
   border-radius: 14px;
   border: 1px solid #e2e8f0;

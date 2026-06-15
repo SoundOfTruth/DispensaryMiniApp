@@ -3,14 +3,14 @@
     <g filter="url(#filter0_d_139_95)">
       <path
         d="M18 6L6 18"
-        stroke="black"
+      stroke="var(--icon-color)"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M6 6L18 18"
-        stroke="black"
+      stroke="var(--icon-color)"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"

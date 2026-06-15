@@ -42,7 +42,7 @@ import { computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { calcPages } from '@/utils/pagination';
-import { usePaginationStore } from '@/stores/paginationStore.ts';
+import { usePaginationStore } from '@/stores/paginationStore';
 
 interface Props {
   count: number;
@@ -119,6 +119,7 @@ watch(
 }
 
 .pagination__btn {
+  color: var(--text-primary);
   cursor: pointer;
   padding: 0px;
   width: 40px;
@@ -133,10 +134,10 @@ watch(
   font-size: 16px;
   border: 2px solid transparent;
   &.active {
-    border: 2px solid #1e1e1e;
+    border: 2px solid var(--border-primary);
   }
   &:hover {
-    background-color: #f3f3f7;
+    background-color: var(--bg-secondary);
   }
   @media (max-width: 350px) {
     width: 30px;
@@ -147,6 +148,12 @@ watch(
   fill: #39393d;
   &.disabled {
     fill: #dfdee2;
+  }
+  @media (prefers-color-scheme: dark) {
+    fill: #dfdee2;
+    &.disabled {
+      fill: #39393d;
+    }
   }
 }
 </style>

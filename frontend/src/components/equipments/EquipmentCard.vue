@@ -20,7 +20,7 @@ defineProps<{ equipment: EquipmentItem }>();
   display: flex;
   align-items: center;
   gap: 20px;
-  background: #ffffff;
+  background: var(--bg-secondary);
   border: 1px solid #e0e0e0;
   padding-inline: 15px;
   border-radius: 14px;

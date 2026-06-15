@@ -5,7 +5,7 @@
         <div class="header">
           <div class="title">{{ props.title }}</div>
           <div class="actions">
-            <ExportButton />
+            <!-- <ExportButton /> -->
             <RouterLink :to="{ name: String(route.name) + '.create' }" class="add-btn">
               {{ props.addButtonName }}</RouterLink
             >
@@ -50,7 +50,7 @@ import AdminDeteleModal from './modals/AdminDeteleModal.vue';
 import AdminErrorModal from './modals/AdminErrorModal.vue';
 import AdminTable from './AdminTable.vue';
 import SearchField from '../SearchField.vue';
-import ExportButton from './buttons/ExportButton.vue';
+// import ExportButton from './buttons/ExportButton.vue';
 
 import type { BaseStore } from '@/stores/base';
 
@@ -58,7 +58,7 @@ import { onMounted, watch, ref, computed, onUnmounted } from 'vue';
 import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 import { useUserStore } from '@/stores/users';
 import { useErrorStore } from '@/stores/errors';
-import { usePaginationStore } from '@/stores/paginationStore.ts';
+import { usePaginationStore } from '@/stores/paginationStore';
 
 const errorStore = useErrorStore();
 const userStore = useUserStore();
@@ -165,7 +165,7 @@ watch(
 }
 
 .card {
-  background: white;
+  background: var(--bg-secondary);
   display: flex;
   flex-direction: column;
   border: 1px solid #e6e7e9;

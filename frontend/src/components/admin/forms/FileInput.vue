@@ -103,7 +103,6 @@ watch(
     border-radius: 6px;
     font-size: 14px;
     transition: border-color 0.2s;
-    border: 1px solid black;
     width: 140px;
   }
 }

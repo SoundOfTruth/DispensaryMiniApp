@@ -103,6 +103,5 @@ watch(
   padding-bottom: 20px;
   display: flex;
   gap: 10px;
-  background: #f5f7fa;
 }
 </style>

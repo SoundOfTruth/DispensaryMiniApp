@@ -59,20 +59,19 @@ const toggleMenu = () => {
 }
 
 header {
+  z-index: 100;
+  background: var(--bg-secondary);
   box-sizing: border-box;
   width: 100%;
   max-width: 1100px;
   border-bottom: 1px solid #d8dee4;
   padding: 20px;
-  position: fixed;
-    border: 1px solid #e5e7eb;
   border-radius: 16px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.06);
+  position: fixed;
   top: 0;
-  z-index: 100;
-  background: #f5f7fa;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -84,7 +83,7 @@ header {
   }
 
   .title {
-    color: #222;
+    color: var(--text-primary);
     font-size: 140%;
     font-weight: 500;
     margin: 0;
@@ -100,8 +99,10 @@ header {
   top: 100%;
   left: 0;
   right: 0;
-  background: white;
+  background: var(--bg-secondary);
   border-bottom: 1px solid #e0e0e0;
+  border-radius: 16px;
+  margin: 10px;
   z-index: 101;
 
   &.active {
@@ -122,7 +123,7 @@ header {
     display: block;
     padding: 16px;
     text-decoration: none;
-    color: black;
+    color: var(--text-primary);
     font-size: 16px;
     transition: background 0.2s ease;
 
@@ -147,7 +148,7 @@ header {
     display: block;
     padding: 16px;
     text-decoration: none;
-    color: black;
+    color: var(--text-primary);
     font-size: 110%;
     transition: background 0.2s ease;
 

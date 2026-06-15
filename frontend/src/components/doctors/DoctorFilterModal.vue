@@ -89,7 +89,7 @@ $content-padding: 20px;
   left: 0;
   right: 0;
   bottom: 0;
-  background: #f5f7fa;
+  background: var(--bg-primary);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -104,7 +104,7 @@ $content-padding: 20px;
     z-index: 1300;
     width: clamp(260px, calc(35% - $content-padding), 400px);
     max-height: 72vh;
-    background: white;
+    background: var(--bg-secondary);
     border-radius: 8px;
     border: none;
     padding: 16px;
@@ -117,6 +117,7 @@ $content-padding: 20px;
       align-items: center;
     }
     .close {
+      border: none;
       padding: 0px;
       background-color: transparent;
       display: flex;

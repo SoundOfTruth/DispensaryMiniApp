@@ -33,6 +33,7 @@ const deleteItems = () => {
 .drowdown {
   z-index: 100;
   background: #f8fafc;
+  color: black;
   &:hover {
     border-color: transparent !important;
   }
@@ -42,12 +43,13 @@ const deleteItems = () => {
   }
 }
 .btn {
+  color: black;
   padding-inline: 14px;
   background: white;
   border: 1px solid gray;
   border-radius: 4px;
   position: absolute;
   box-sizing: border-box;
-  z-index: 100;
+  z-index: 100; 
 }
 </style>

@@ -76,7 +76,7 @@ const closeChangePasswordModal = () => {
 .profile-card {
   max-width: 800px;
   width: 100%;
-  background: white;
+  background: var(--bg-secondary);
   border-radius: 20px;
 }
 .profile-info {
@@ -85,7 +85,7 @@ const closeChangePasswordModal = () => {
 
 .info-title {
   font-size: 1.5rem;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
   border-bottom: 2px solid #e0e0e0;
@@ -100,14 +100,14 @@ const closeChangePasswordModal = () => {
   flex-direction: column;
   label {
     font-size: 0.85rem;
-    color: #888;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 0.5rem;
   }
   p {
     font-size: 1rem;
-    color: #333;
+    color: var(--text-tertiary);
     font-weight: 500;
     margin: 0;
     padding: 0.5rem 0;

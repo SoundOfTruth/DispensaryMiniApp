@@ -19,7 +19,7 @@
   span {
     width: 24px;
     height: 2px;
-    background: #222;
+    background: var(--text-primary);
     display: block;
     transition: all 0.3s black;
   }

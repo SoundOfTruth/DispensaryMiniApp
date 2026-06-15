@@ -20,7 +20,7 @@ import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import ThePagination from '../ThePagination.vue';
 import type { BaseStore } from '@/stores/base';
-import { usePaginationStore } from '@/stores/paginationStore.ts';
+import { usePaginationStore } from '@/stores/paginationStore';
 
 const route = useRoute();
 

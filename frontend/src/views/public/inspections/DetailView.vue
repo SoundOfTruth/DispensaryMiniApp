@@ -50,8 +50,9 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .inspection-page {
+  background: var(--bg-secondary);
   overflow-y: auto;
-  padding: 15px;
+  margin: 15px;
 }
 .err-handler {
   display: flex;

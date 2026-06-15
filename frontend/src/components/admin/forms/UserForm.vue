@@ -203,7 +203,7 @@ onMounted(async () => {
 
     <div class="group">
       <label for="name">Роль </label>
-      <select v-model="formData.role" class="field">
+      <select v-model="formData.role" class="field" :disabled="mode === 'detail'">
         <option :value="role" v-for="role in roles">
           {{ role }}
         </option>
