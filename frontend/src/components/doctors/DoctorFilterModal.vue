@@ -72,7 +72,7 @@ const handleReset = () => {
 const handleConfirm = () => {
   router.push({
     path: '/doctors',
-    query: { ...route.query, ...filtersData.value },
+    query: { ...route.query, ...filtersData.value, page: '1' },
   });
   emit('close');
 };
