@@ -48,7 +48,6 @@ $desctop-start: 720px;
   padding: 20px 15px;
   @media (min-width: $desctop-start) {
     flex-direction: row;
-    padding-top: 30px;
     gap: 5px;
   }
 }

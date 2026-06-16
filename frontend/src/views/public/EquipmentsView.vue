@@ -1,13 +1,17 @@
 <template>
-  <div class="equipments">
+  <div>
+    <AdaptivePage>
+      <div>
+        <div v-for="type in types">
+          <div class="equipment-type">{{ type.name }}</div>
+          <div class="equipments-list">
+            <EquipmentCard :equipment="equipment" v-for="equipment in type.equipments" />
+          </div>
+        </div>
+      </div>
+    </AdaptivePage>
     <div class="err-handler" v-for="err in errors">
       {{ err.message }}
-    </div>
-    <div v-for="type in types">
-      <div class="equipment-type">{{ type.name }}</div>
-      <div class="equipments-list">
-        <EquipmentCard :equipment="equipment" v-for="equipment in type.equipments" />
-      </div>
     </div>
   </div>
 </template>
@@ -18,6 +22,7 @@ import { computed, onMounted } from 'vue';
 
 import { useEquipmentTypeStore } from '@/stores/equipmentTypes';
 import { useErrorStore } from '@/stores/errors';
+import AdaptivePage from '@/components/AdaptivePage.vue';
 
 const typeStore = useEquipmentTypeStore();
 const errorStore = useErrorStore();
@@ -34,9 +39,6 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.equipments {
-  padding: 10px 15px;
-}
 .equipment-type {
   font-weight: 600;
   font-size: 150%;
@@ -45,7 +47,6 @@ onMounted(async () => {
   padding-left: 15px;
 }
 .err-handler {
-  padding-top: 20px;
   display: flex;
   justify-content: center;
   font-size: 16px;

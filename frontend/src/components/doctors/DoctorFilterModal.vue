@@ -98,16 +98,12 @@ $content-padding: 20px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   @media (min-width: 900px) {
-    position: absolute;
-    left: calc(65% + 5px);
-    top: 116px;
+    position: static;
     z-index: 1300;
-    width: clamp(260px, calc(35% - $content-padding), 400px);
-    max-height: 72vh;
+    height: calc(100% - 115px);
     background: var(--bg-secondary);
     border-radius: 8px;
     border: none;
-    padding: 16px;
   }
 
   .container {

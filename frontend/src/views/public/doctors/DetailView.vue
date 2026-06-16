@@ -1,62 +1,68 @@
 <template>
-  <div class="doctor-page">
-    <div class="err-handler" v-for="err in errors" v-if="!doctor || doctor.id !== doctorId">
-      {{ err.message }}
-    </div>
-    <div class="doctor-container" v-else>
-      <div class="doctor-header">
-        <div class="doctor-img-container">
-          <img
-            :src="
-              !doctor.photo || !doctor.photo.includes('http') ? '/static/doctor.png' : doctor.photo
-            "
-            class="doctor-img"
-          />
-        </div>
-        <div class="doctor-header-info">
-          <div class="doctor-fullname">
-            <div>{{ doctor?.lastname }}</div>
-            <div>{{ doctor?.firstname }} {{ doctor?.middlename }}</div>
-          </div>
-          <div class="doctor-speciality">
-            {{ doctor?.speciality.name }}
-          </div>
-          <div class="doctor-department">{{ doctor?.department.name }}</div>
-        </div>
+  <AdaptivePage>
+    <div class="doctor-page">
+      <div class="err-handler" v-for="err in errors" v-if="!doctor || doctor.id !== doctorId">
+        {{ err.message }}
       </div>
-      <div class="doctor-extra-info">
-        <div class="title" v-if="infoExists">Информация</div>
-        <div class="expirience" v-if="doctor?.experience.length !== 0">
-          <span>Опыт работы: </span>
-          <span>{{ doctor?.experience }}</span>
+      <div class="doctor-container" v-else>
+        <div class="doctor-header">
+          <div class="doctor-img-container">
+            <img
+              :src="
+                !doctor.photo || !doctor.photo.includes('http')
+                  ? '/static/doctor.png'
+                  : doctor.photo
+              "
+              class="doctor-img"
+            />
+          </div>
+          <div class="doctor-header-info">
+            <div class="doctor-fullname">
+              <div>{{ doctor?.lastname }}</div>
+              <div>{{ doctor?.firstname }} {{ doctor?.middlename }}</div>
+            </div>
+            <div class="doctor-speciality">
+              {{ doctor?.speciality.name }}
+            </div>
+            <div class="doctor-department">{{ doctor?.department.name }}</div>
+          </div>
         </div>
-        <div v-if="doctor?.qualification">
-          <div class="sub-title">Квалификация</div>
-          <span>{{ doctor?.qualification }}</span>
-        </div>
-        <div v-if="doctor?.education?.length">
-          <div class="sub-title">Образование</div>
-          <div class="education-list">
-            <div v-for="education in doctor?.education">
-              <div class="education-title">{{ education }}</div>
+        <div class="doctor-extra-info">
+          <div class="title" v-if="infoExists">Информация</div>
+          <div class="expirience" v-if="doctor?.experience.length !== 0">
+            <span>Опыт работы: </span>
+            <span>{{ doctor?.experience }}</span>
+          </div>
+          <div v-if="doctor?.qualification">
+            <div class="sub-title">Квалификация</div>
+            <span>{{ doctor?.qualification }}</span>
+          </div>
+          <div v-if="doctor?.education?.length">
+            <div class="sub-title">Образование</div>
+            <div class="education-list">
+              <div v-for="education in doctor?.education">
+                <div class="education-title">{{ education }}</div>
+              </div>
             </div>
           </div>
-        </div>
-        <div v-if="doctor?.extra_education?.length">
-          <div class="sub-title">Доп. образование</div>
-          <div class="education-list">
-            <div v-for="education in doctor?.extra_education">
-              <div class="education-title">{{ education }}</div>
+          <div v-if="doctor?.extra_education?.length">
+            <div class="sub-title">Доп. образование</div>
+            <div class="education-list">
+              <div v-for="education in doctor?.extra_education">
+                <div class="education-title">{{ education }}</div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="sub-title" v-if="doctor?.inspections?.length > 0">Проводит обследования:</div>
-        <div v-for="inspection in doctor?.inspections">
-          <RouterLink :to="`/inspections/${inspection.id}`">{{ `${inspection.title}` }}</RouterLink>
+          <div class="sub-title" v-if="doctor?.inspections?.length > 0">Проводит обследования:</div>
+          <div v-for="inspection in doctor?.inspections">
+            <RouterLink :to="`/inspections/${inspection.id}`">{{
+              `${inspection.title}`
+            }}</RouterLink>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </AdaptivePage>
 </template>
 
 <script setup lang="ts">
@@ -65,6 +71,7 @@ import { useRoute } from 'vue-router';
 
 import { useDoctorStore } from '@/stores/doctors';
 import { useErrorStore } from '@/stores/errors';
+import AdaptivePage from '@/components/AdaptivePage.vue';
 
 const route = useRoute();
 const doctorId: number = Number(route.params.doctorId);

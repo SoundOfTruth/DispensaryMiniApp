@@ -1,24 +1,27 @@
 <template>
-  <div class="container">
-    <div class="filters">
-      <SearchField title="Поиск врачей" />
-      <div class="filter-btn-wrapper"><FilterButton @on-click="filterOpen = !filterOpen" /></div>
-    </div>
-    <div class="pt">
-      <PaginatedPage :count="doctorStore.count">
-        <div class="err-handler" v-for="err in errors" v-if="errCondition">
-          {{ err.message }}
-        </div>
-        <div class="doctors-list">
-          <DoctorCard :doctor="doctor" v-for="doctor in doctors" />
-        </div>
-      </PaginatedPage>
+  <AdaptivePage>
+    <div class="doctor-page">
+      <div class="filters">
+        <SearchField title="Поиск врачей" />
+        <div class="filter-btn-wrapper"><FilterButton @on-click="filterOpen = !filterOpen" /></div>
+      </div>
+      <div class="pt">
+        <PaginatedPage :count="doctorStore.count">
+          <div class="err-handler" v-for="err in errors" v-if="errCondition">
+            {{ err.message }}
+          </div>
+          <div class="doctors-list">
+            <DoctorCard :doctor="doctor" v-for="doctor in doctors" />
+          </div>
+        </PaginatedPage>
+      </div>
     </div>
     <FilterModal :open="filterOpen" @close="filterOpen = false" />
-  </div>
+  </AdaptivePage>
 </template>
 
 <script setup lang="ts">
+import AdaptivePage from '@/components/AdaptivePage.vue';
 import FilterModal from '@/components/doctors/DoctorFilterModal.vue';
 import SearchField from '@/components/SearchField.vue';
 import FilterButton from '@/components/FilterButton.vue';
@@ -82,24 +85,22 @@ watch(
   font-weight: 500;
   color: #ef4444;
 }
-.container {
+
+.doctor-page {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
 
-  .doctors-list {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    padding: 0px 15px;
-  }
+.doctors-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 .filters {
   position: sticky;
   top: 0px;
-  padding-top: 20px;
-  padding-inline: 14px;
   padding-bottom: 20px;
   display: flex;
   gap: 10px;

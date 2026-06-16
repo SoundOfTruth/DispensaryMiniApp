@@ -1,20 +1,23 @@
 <template>
-  <div id="scroll-container" class="container">
-    <div class="filters">
-      <SearchField title="Поиск обследований" />
+  <AdaptivePage>
+    <div class="inspections-page">
+      <div class="filters">
+        <SearchField title="Поиск обследований" />
+      </div>
+      <PaginatedPage :count="inspectionStore.count">
+        <div class="err-handler" v-for="err in errors" v-if="errCondition">
+          {{ err.message }}
+        </div>
+        <div class="inspections-list">
+          <InspectionCard :inspection="inspection" v-for="inspection in inspections" />
+        </div>
+      </PaginatedPage>
     </div>
-    <PaginatedPage :count="inspectionStore.count">
-      <div class="err-handler" v-for="err in errors" v-if="errCondition">
-        {{ err.message }}
-      </div>
-      <div class="inspections-list">
-        <InspectionCard :inspection="inspection" v-for="inspection in inspections" />
-      </div>
-    </PaginatedPage>
-  </div>
+  </AdaptivePage>
 </template>
 
 <script setup lang="ts">
+import AdaptivePage from '@/components/AdaptivePage.vue';
 import SearchField from '@/components/SearchField.vue';
 import PaginatedPage from '@/components/PaginatedPage.vue';
 import InspectionCard from '@/components/inspections/InspectionCard.vue';
@@ -65,7 +68,7 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-.container {
+.inspections-page {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -74,7 +77,6 @@ watch(
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 0px 15px;
   }
 }
 .err-handler {
@@ -84,8 +86,6 @@ watch(
   color: #ef4444;
 }
 .filters {
-  padding-top: 20px;
-  padding-inline: 14px;
   padding-bottom: 20px;
   display: flex;
   gap: 10px;

@@ -1,33 +1,36 @@
 <template>
-  <div class="inspection-page">
-    <div
-      class="err-handler"
-      v-for="err in errors"
-      v-if="!inspection || inspection.id !== inspectionId"
-    >
-      {{ err.message }}
-    </div>
-    <div v-else>
-      <div class="inspection-card">
-        <div class="title">{{ inspection?.title }}</div>
-        <div class="sub-title" v-if="inspection?.description">Описание:</div>
-        <div class="text">{{ inspection?.description }}</div>
-        <div class="sub-title" v-if="inspection?.preparation">Подготовка к иследованию:</div>
-        <div class="text">{{ inspection?.preparation }}</div>
-        <div class="sub-title" v-if="inspection?.doctors.length">Проводят исследование:</div>
-        <div>
-          <div v-for="doctor in inspection?.doctors">
-            <RouterLink :to="`/doctors/${doctor.id}`" class="doctor-link">{{
-              `${doctor.lastname} ${doctor.firstname} ${doctor.middlename}`
-            }}</RouterLink>
+  <AdaptivePage>
+    <div class="inspection-page">
+      <div
+        class="err-handler"
+        v-for="err in errors"
+        v-if="!inspection || inspection.id !== inspectionId"
+      >
+        {{ err.message }}
+      </div>
+      <div v-else>
+        <div class="inspection-card">
+          <div class="title">{{ inspection?.title }}</div>
+          <div class="sub-title" v-if="inspection?.description">Описание:</div>
+          <div class="text">{{ inspection?.description }}</div>
+          <div class="sub-title" v-if="inspection?.preparation">Подготовка к иследованию:</div>
+          <div class="text">{{ inspection?.preparation }}</div>
+          <div class="sub-title" v-if="inspection?.doctors.length">Проводят исследование:</div>
+          <div>
+            <div v-for="doctor in inspection?.doctors">
+              <RouterLink :to="`/doctors/${doctor.id}`" class="doctor-link">{{
+                `${doctor.lastname} ${doctor.firstname} ${doctor.middlename}`
+              }}</RouterLink>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </AdaptivePage>
 </template>
 
 <script setup lang="ts">
+import AdaptivePage from '@/components/AdaptivePage.vue';
 import { onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 

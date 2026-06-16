@@ -66,10 +66,4 @@ const links: Link[] = [
   min-height: 0;
   overflow-y: auto;
 }
-.content-media {
-  @media (min-width: 900px) {
-    width: 65%;
-    padding-left: 5px;
-  }
-}
 </style>
