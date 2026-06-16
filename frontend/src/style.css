@@ -1,18 +1,21 @@
 :root {
   --bg-primary: #f5f7fa;
   --bg-secondary: white;
-  --border-primary: black;
+  --border-primary: #e2e8f0;
+  --border-secondary: black;
   --text-primary: #213547;
   --text-secondary: #888;
   --text-tertiary: #333;
   --icon-color: black;
+  --hover-primary: #3b82f6;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --bg-primary: #0d1b24;
     --bg-secondary: #102634;
-    --border-primary: white;
+    --border-primary: #e2e8f0;
+    --border-secondary: white;
     --text-primary: #dfe3e6;
     --text-secondary: white;
     --text-tertiary: gray;
@@ -39,7 +42,7 @@ a {
 }
 
 input {
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   color: var(--text-primary);
   &::placeholder {
     color: var(--text-primary);
@@ -57,7 +60,7 @@ input:-webkit-autofill:active {
   color: var(--text-primary) !important;
 }
 textarea {
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   color: var(--text-primary);
   &::placeholder {
     color: var(--text-primary);
@@ -65,7 +68,7 @@ textarea {
 }
 
 select {
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   color: var(--text-primary);
   appearance: none;
   -webkit-appearance: none;

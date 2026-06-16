@@ -168,8 +168,8 @@ watch(
   background: var(--bg-secondary);
   display: flex;
   flex-direction: column;
-  border: 1px solid #e6e7e9;
-  border-radius: 4px;
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
   .hat {
     display: flex;
     flex-direction: column;

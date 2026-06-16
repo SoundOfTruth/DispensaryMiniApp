@@ -94,6 +94,7 @@ watch(
 
 <style lang="scss" scoped>
 .file-input {
+  box-sizing: border-box;
   height: 60px;
   display: flex;
   align-items: center;

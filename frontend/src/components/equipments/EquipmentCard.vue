@@ -28,7 +28,7 @@ defineProps<{ equipment: EquipmentItem }>();
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   &:hover {
-    border-color: #3b82f6;
+    border-color: var(--hover-primary);
     box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
     transform: translateY(2px);
   }

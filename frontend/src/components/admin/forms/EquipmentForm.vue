@@ -203,6 +203,7 @@ onMounted(async () => {
 }
 
 .field {
+  box-sizing: border-box;
   width: 100%;
   padding: 10px 0;
   text-indent: 12px;

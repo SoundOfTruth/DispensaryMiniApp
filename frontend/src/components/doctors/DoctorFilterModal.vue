@@ -94,16 +94,15 @@ $content-padding: 20px;
   flex-direction: column;
   justify-content: space-between;
   border-radius: 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   @media (min-width: 900px) {
     position: static;
     z-index: 1300;
-    height: calc(100% - 115px);
+    height: calc(100% - 100px);
     background: var(--bg-secondary);
     border-radius: 8px;
-    border: none;
   }
 
   .container {

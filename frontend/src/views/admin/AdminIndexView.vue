@@ -77,6 +77,7 @@ const closeChangePasswordModal = () => {
   max-width: 800px;
   width: 100%;
   background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
   border-radius: 20px;
 }
 .profile-info {

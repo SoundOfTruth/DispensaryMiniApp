@@ -74,7 +74,7 @@ $desctop-start: 720px;
   background: var(--bg-secondary);
   padding: 20px;
   border-radius: 16px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-primary);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   @media (min-width: $desctop-start) {
     margin-left: 10px;
@@ -92,6 +92,7 @@ $desctop-start: 720px;
   padding: 1px;
   border-radius: 16px;
   overflow: hidden;
+  background: var(--border-primary);
   .iframe-wraper {
     position: relative;
     width: 100%;

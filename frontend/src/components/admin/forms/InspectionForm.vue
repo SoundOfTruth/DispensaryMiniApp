@@ -226,10 +226,11 @@ onMounted(async () => {
     <div class="group">
       <label for="selectedDoctors">Проводят обследование</label>
       <div class="selection" id="selectedDoctors">
-        <div
+        <button
           v-for="doctor in formData.doctors"
           :key="doctor.id"
           class="selection-item"
+          :disabled="mode === 'detail'"
           @click="removeDoctor(doctor.id)"
         >
           <div class="item-info">
@@ -242,7 +243,7 @@ onMounted(async () => {
             </div>
             <div class="department">Отделение: {{ doctor.department.name }}</div>
           </div>
-        </div>
+        </button>
       </div>
 
       <div v-if="mode !== 'detail'">
@@ -292,6 +293,7 @@ onMounted(async () => {
   }
 }
 .field {
+  box-sizing: border-box;
   display: inline-block;
   width: 100%;
   padding: 10px 0;
@@ -308,6 +310,7 @@ onMounted(async () => {
 }
 
 textarea.field {
+  box-sizing: border-box;
   padding-left: 12px;
   resize: vertical;
   min-height: 100px;
@@ -323,11 +326,15 @@ textarea.field {
   max-height: 300px;
   overflow-y: auto;
   border: 1px solid #ddd;
-  border-radius: 6px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
   margin-bottom: 16px;
 }
 
 .selection-item {
+  width: 100%;
+  font-weight: 400;
+  text-align: start;
   padding: 12px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
@@ -363,7 +370,6 @@ textarea.field {
 .selected-doctors {
   margin-top: 16px;
   padding: 16px;
-  background-color: #f8f9fa;
   border-radius: 6px;
   h4 {
     margin: 0 0 12px 0;

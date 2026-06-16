@@ -50,7 +50,7 @@ a {
   }
 
   &:hover {
-    border-color: #3b82f6;
+    border-color: var(--hover-primary);
     box-shadow: 0 16px 36px rgba(59, 130, 246, 0.14);
     transform: translateY(2px);
   }

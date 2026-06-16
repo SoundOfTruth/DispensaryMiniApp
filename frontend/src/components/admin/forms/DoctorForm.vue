@@ -546,10 +546,11 @@ textarea.field {
 }
 
 .field {
+  box-sizing: border-box;
   width: 100%;
   padding: 10px 0;
   text-indent: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.2s;
@@ -598,12 +599,12 @@ textarea.field {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: var(--bg-primary);
+    background: var(--bg-secondary);
     color: var(--text-primary);
     text-indent: 12px;
     border-radius: 8px;
     font-size: 13px;
-    border: 1px solid #b3d7ff;
+    border: 1px solid var(--border-primary);
     font-family: sans-serif;
     min-width: 0;
     overflow: hidden;
@@ -646,13 +647,13 @@ textarea.field {
   gap: 2px;
   max-height: 300px;
   overflow-y: auto;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   margin-bottom: 16px;
 }
 
 .selection-item {
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   box-sizing: border-box;
   display: flex;
   width: 100%;

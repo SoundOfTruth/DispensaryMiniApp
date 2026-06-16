@@ -134,7 +134,7 @@ watch(
   font-size: 16px;
   border: 2px solid transparent;
   &.active {
-    border: 2px solid var(--border-primary);
+    border: 2px solid var(--border-secondary);
   }
   &:hover {
     background-color: var(--bg-secondary);
