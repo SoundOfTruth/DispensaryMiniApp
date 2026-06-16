@@ -56,10 +56,9 @@ defineProps<{ equipment: EquipmentItem }>();
   }
 
   .name {
-    font-size: 110%;
+    font-size: 90%;
     font-weight: 500;
-    margin: 0 0 4px 0;
-    line-height: 1.4;
+    line-height: 1.2;
   }
 
   @media (min-width: 768px) {
@@ -72,7 +71,7 @@ defineProps<{ equipment: EquipmentItem }>();
     }
 
     .name {
-      font-size: 125%;
+      font-size: 100%;
     }
   }
 
