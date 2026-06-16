@@ -57,7 +57,7 @@ $desctop-start: 720px;
 }
 .text {
   font-size: 100%;
-  color: #475569;
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 .sub-title {

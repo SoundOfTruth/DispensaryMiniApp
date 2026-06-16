@@ -17,12 +17,11 @@
     --border-primary: #e2e8f0;
     --border-secondary: white;
     --text-primary: #dfe3e6;
-    --text-secondary: white;
-    --text-tertiary: gray;
+    --text-secondary: #b0b0b0;
+    --text-tertiary: #888888;
     --icon-color: white;
   }
 }
-
 body {
   font-family: system-ui, Arial, sans-serif;
   background: var(--bg-primary);

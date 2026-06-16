@@ -76,7 +76,7 @@ onMounted(async () => {
   }
   .sub-title {
     font-size: 110%;
-    color: #b1b2b4;
+    color: var(--text-secondary);
     line-height: 1;
   }
   .text {

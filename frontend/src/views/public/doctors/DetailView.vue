@@ -98,7 +98,6 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 $primary: #0d9ce3;
-$text-secondary: #6c757d;
 .doctor-page {
   overflow-y: auto;
   .err-handler {
@@ -170,7 +169,7 @@ $text-secondary: #6c757d;
   .doctor-department {
     font-size: 0.95rem;
     font-weight: 500;
-    color: $text-secondary;
+    color: var(--text-secondary);
   }
 }
 
@@ -195,7 +194,7 @@ $text-secondary: #6c757d;
     padding-bottom: 4px;
     font-size: 0.85rem;
     font-weight: 600;
-    color: $text-secondary;
+    color: var(--text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
