@@ -101,8 +101,6 @@ $primary: #0d9ce3;
 $text-secondary: #6c757d;
 .doctor-page {
   overflow-y: auto;
-  padding-inline: 15px;
-  padding-bottom: 15px;
   .err-handler {
     display: flex;
     justify-content: center;
@@ -121,7 +119,6 @@ $text-secondary: #6c757d;
   border-radius: 16px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  margin-top: 20px;
   @media (min-width: 600px) {
     padding: 8px;
     gap: 26px;

@@ -53,9 +53,7 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .inspection-page {
-  background: var(--bg-secondary);
   overflow-y: auto;
-  margin: 15px;
 }
 .err-handler {
   display: flex;
@@ -64,6 +62,7 @@ onMounted(async () => {
   text-align: center;
 }
 .inspection-card {
+  background: var(--bg-secondary);
   display: flex;
   gap: 10px;
   flex-direction: column;
