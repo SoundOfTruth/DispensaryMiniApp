@@ -100,7 +100,7 @@ const handleConfirm = () => {
     border: 1px solid var(--border-primary);
     position: static;
     z-index: 1300;
-    height: calc(100% - 100px);
+    height: clamp(380px, calc(100% - 100px), 100%);
     background: var(--bg-secondary);
     border-radius: 8px;
   }
