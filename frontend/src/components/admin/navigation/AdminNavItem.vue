@@ -21,4 +21,9 @@ const props = defineProps<{ title: string; routeName: string }>();
   height: 20px;
   width: 20px;
 }
+a {
+  @media (prefers-color-scheme: dark) {
+    color: var(--text-primary);
+  }
+}
 </style>

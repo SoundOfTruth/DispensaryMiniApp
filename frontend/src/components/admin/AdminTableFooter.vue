@@ -63,13 +63,18 @@ const passedCount = computed(() => {
   position: absolute;
   left: 0;
   bottom: 0;
-  border: 1px solid gray;
+  border: 1px solid var(--border-secondary);
+  border-bottom: none;
   border-radius: 4px;
   padding: 4px;
-  background: white;
+  background: var(--bg-secondary);
   .item {
+    border: none;
     font-weight: 400;
     padding: 4px;
+    &:hover {
+      background: var(--bg-primary);
+    }
   }
 }
 .limit {
@@ -77,7 +82,7 @@ const passedCount = computed(() => {
   font-size: 90%;
   font-weight: 500;
   cursor: pointer;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid var(--border-secondary);
   @media (max-width: 500px) {
     display: none;
   }

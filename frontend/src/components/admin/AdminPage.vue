@@ -153,7 +153,7 @@ watch(
 <style lang="scss" scoped>
 .container {
   padding-top: 20px;
-  padding-left: 10px;
+  padding-left: 20px;
   padding-right: 30px;
   padding-bottom: 20px;
   @media (min-width: 800px) {

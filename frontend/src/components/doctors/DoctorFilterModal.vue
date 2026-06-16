@@ -79,12 +79,10 @@ const handleConfirm = () => {
 </script>
 
 <style lang="scss" scoped>
-$content-padding: 20px;
 .modal {
   box-sizing: border-box;
   z-index: 1200;
   position: fixed;
-  padding: 20px;
   top: 0;
   left: 0;
   right: 0;
@@ -93,11 +91,13 @@ $content-padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-radius: 14px;
-  border: 1px solid var(--border-primary);
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border-radius: 0px;
+  border: 0px;
   @media (min-width: 900px) {
+    border-radius: 14px;
+    border: 1px solid var(--border-primary);
     position: static;
     z-index: 1300;
     height: calc(100% - 100px);
@@ -106,6 +106,7 @@ $content-padding: 20px;
   }
 
   .container {
+    padding: 20px;
     .header {
       display: flex;
       justify-content: space-between;
@@ -146,11 +147,13 @@ $content-padding: 20px;
 }
 
 .actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   justify-content: center;
-  gap: 40px;
+  gap: 15px;
+  padding: 20px;
   .btn {
-    padding: 10px 24px;
+    padding: 10px 0px;
     border: none;
     border-radius: 6px;
     font-size: 14px;

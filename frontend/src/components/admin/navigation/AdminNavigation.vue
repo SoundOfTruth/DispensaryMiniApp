@@ -45,6 +45,10 @@ const menuOpen = ref<boolean>(true);
   color: #ffffffb3;
   display: flex;
   flex-direction: column;
+  border-radius: 12px;
+  @media (prefers-color-scheme: dark) {
+    background: #102634;
+  }
   .title {
     padding: 15px;
     font-size: 110%;
