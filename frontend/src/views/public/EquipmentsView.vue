@@ -42,9 +42,14 @@ onMounted(async () => {
 .equipment-type {
   font-weight: 600;
   font-size: 150%;
-  padding-top: 10px;
   padding-bottom: 20px;
   padding-left: 15px;
+}
+.equipments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 10px;
 }
 .err-handler {
   display: flex;
@@ -52,10 +57,5 @@ onMounted(async () => {
   font-size: 16px;
   font-weight: 500;
   color: #ef4444;
-}
-.equipments-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 </style>
