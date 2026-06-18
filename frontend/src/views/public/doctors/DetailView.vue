@@ -27,8 +27,8 @@
             <div class="doctor-department">{{ doctor?.department.name }}</div>
           </div>
         </div>
-        <div class="doctor-extra-info">
-          <div class="title" v-if="infoExists">Информация</div>
+        <div class="doctor-extra-info" v-if="hasExtraInfo">
+          <div class="title">Информация</div>
           <div class="expirience" v-if="doctor?.experience.length !== 0">
             <span>Опыт работы: </span>
             <span>{{ doctor?.experience }}</span>
@@ -81,7 +81,7 @@ const doctorStore = useDoctorStore();
 const doctor = computed(() => doctorStore.doctor);
 const errors = computed(() => errorStore.errors);
 
-const infoExists = computed(() =>
+const hasExtraInfo = computed(() =>
   Boolean(
     doctor.value?.experience ||
     doctor.value?.qualification ||
