@@ -36,7 +36,6 @@ onUnmounted(() => paginationStore.setLimit(10));
   flex-direction: column;
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
 }
 .pagination-container {
   display: flex;
