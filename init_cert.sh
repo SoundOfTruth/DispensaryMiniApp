@@ -3,13 +3,13 @@
 if [ -f .env.certbot ]; then
     export $(grep -v '^#' .env.certbot | xargs)
 else
-    echo "Ошибка: файл .env не найден!"
+    echo "Ошибка: файл .env.certbot не найден!"
     exit 1
 fi
 
 
 if [ -z "$DOMAIN" ] || [ -z "$EMAIL" ]; then
-    echo "Ошибка: переменные DOMAIN и EMAIL должны быть определены в .env файле"
+    echo "Ошибка: переменные DOMAIN и EMAIL должны быть определены в .env.certbot файле"
     exit 1
 fi
 
