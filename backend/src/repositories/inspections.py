@@ -59,7 +59,13 @@ class InspectionRepository(DeleteOnlyRepository[Inspection]):
         filled: bool = False,
     ) -> Sequence[Inspection]:
         expressions = self.get_expressions(search, filled)
-        statement = select(self.model).where(*expressions).limit(limit).offset(offset).order_by(self.model.id)
+        statement = (
+            select(self.model)
+            .where(*expressions)
+            .limit(limit)
+            .offset(offset)
+            .order_by(self.model.id)
+        )
         res = await self.session.execute(statement)
         return res.scalars().all()
 

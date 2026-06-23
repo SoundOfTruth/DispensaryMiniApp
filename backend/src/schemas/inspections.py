@@ -9,8 +9,8 @@ class CreateDoctorInspectionSchema(BaseModel):
 
 class CreateInspectionSchema(BaseModel):
     title: str = Field(max_length=255)
-    description: str = Field("", min_length=0)
-    preparation: str = Field("", min_length=0)
+    description: str = Field(min_length=0)
+    preparation: str = Field(min_length=0)
 
     doctors: list[CreateDoctorInspectionSchema] = Field(examples=[[]])
 

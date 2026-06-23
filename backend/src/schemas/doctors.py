@@ -47,8 +47,8 @@ class CreateDoctorSchema(BaseModel):
     lastname: str = Field(max_length=50)
     middlename: str = Field(max_length=50)
     qualification: str | None = Field(max_length=255)
-    experience_start: int | None = Field(None, examples=[2000])
-    photo: HttpUrl | None = None
+    experience_start: int | None = Field(examples=[2000])
+    photo: HttpUrl | None
 
     speciality_id: int = Field(examples=[1])
     department_id: int = Field(examples=[1])

@@ -38,7 +38,8 @@ async def update_equipment(
     schema: UpdateEquipmentSchema,
     base_url: BaseUrlDep,
 ):
-    if base_url not in str(schema.image):
+    image_is_set = "image" in schema.model_fields_set
+    if image_is_set and base_url not in str(schema.image):
         raise InvalidImageUrlError
     return await service.update(id, schema)
 
