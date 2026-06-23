@@ -246,7 +246,6 @@ class TestDoctorApi:
         doctor_speciality: Speciality,
         doctor_department: Department,
     ):
-        print(payload)
         if payload and type(payload) is dict:
             payload["speciality_id"] = doctor_speciality.id
             payload["department_id"] = doctor_department.id

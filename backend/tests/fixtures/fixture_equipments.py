@@ -22,11 +22,8 @@ def gen_equipment_payload(image_url: str, faker):
 def create_equipment_instance(gen_equipment_payload):
     def wrapper(equipment_type_id: int):
         payload = gen_equipment_payload(equipment_type_id)
-        try:
-            schema = CreateEquipmentSchema(**payload)
-            return Equipment(**schema.model_dump(mode="json"))
-        except Exception as ex:
-            print(ex)
+        schema = CreateEquipmentSchema(**payload)
+        return Equipment(**schema.model_dump(mode="json"))
 
     return wrapper
 
