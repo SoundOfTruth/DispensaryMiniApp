@@ -3,6 +3,8 @@ import io
 import pytest
 from PIL import Image
 
+from tests.utils import image_link
+
 
 @pytest.fixture
 def image() -> bytes:
@@ -14,4 +16,4 @@ def image() -> bytes:
 
 @pytest.fixture
 def image_url():
-    return "http://test/media/9c6e6a46-8586-437b-ac0b-5014048f3b6c.jpeg/"
+    return image_link

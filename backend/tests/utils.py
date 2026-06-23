@@ -1,6 +1,10 @@
+from faker import Faker
 from pydantic import ValidationError
 
 from src.config import settings
+
+image_link = "http://test/media/9c6e6a46-8586-437b-ac0b-5014048f3b6c.jpeg/"
+other_image_link = "http://test/media/9c6e6a46-1516-437b-ac0b-5014041f3b6c.jpeg/"
 
 
 def validate_response_schema(data: dict | list, schema, many: bool = False):
@@ -45,3 +49,12 @@ def validate_pagination(
         and offset_is_valid
         and schema_is_valid
     )
+
+
+class FakerSingleton:
+    _instance: Faker | None = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = Faker()
+        return cls._instance

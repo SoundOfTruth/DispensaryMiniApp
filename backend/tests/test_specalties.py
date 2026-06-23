@@ -13,35 +13,43 @@ class TestSpecailityApi:
         response = await client.get("/api/specialties/")
         assert response.status_code == 200
 
-    async def test_get_specialties(self, client: AsyncClient, specialties):
+    async def test_get_specialties_unauth(self, client: AsyncClient, specialties):
         response = await client.get("/api/specialties/")
         data = response.json()
         assert response.status_code == 200
         assert len(data) >= len(specialties)
         validate_response_schema(data, schema=SpecialitySchema, many=True)
 
-    @pytest.mark.usefixtures("specialties")
-    async def test_get_specialties_user_role(self, user_client: AsyncClient):
+    async def test_get_specialties_user_role(
+        self, user_client: AsyncClient, specialties
+    ):
         response = await user_client.get("/api/specialties/")
         data = response.json()
         assert response.status_code == 200
-        assert len(data) != 0
+        assert len(data) >= len(specialties)
+        validate_response_schema(data, schema=SpecialitySchema, many=True)
 
-    @pytest.mark.usefixtures("specialties")
-    async def test_get_specialties_admin_role(self, admin_client: AsyncClient):
+    async def test_get_specialties_admin_role(
+        self, admin_client: AsyncClient, specialties
+    ):
         response = await admin_client.get("/api/specialties/")
         data = response.json()
         assert response.status_code == 200
-        assert len(data) != 0
+        assert len(data) >= len(specialties)
+        validate_response_schema(data, schema=SpecialitySchema, many=True)
 
-    @pytest.mark.usefixtures("specialties")
-    async def test_get_specialties_superuser_role(self, superuser_client: AsyncClient):
+    async def test_get_specialties_superuser_role(
+        self, superuser_client: AsyncClient, specialties
+    ):
         response = await superuser_client.get("/api/specialties/")
         data = response.json()
         assert response.status_code == 200
-        assert len(data) != 0
+        assert len(data) >= len(specialties)
+        validate_response_schema(data, schema=SpecialitySchema, many=True)
 
-    async def test_get_speciality(self, client: AsyncClient, speciality: Speciality):
+    async def test_get_speciality_unauth(
+        self, client: AsyncClient, speciality: Speciality
+    ):
         response = await client.get(f"/api/specialties/{speciality.id}/")
         data = response.json()
         assert response.status_code == 200
@@ -103,12 +111,11 @@ class TestSpecailityApi:
         response = await superuser_client.post("/api/specialties/", json={})
         assert response.status_code == 422
 
-    async def test_update_specialty_empty_json(
-        self, superuser_client: AsyncClient, speciality: Speciality
+    async def test_create_specialty_invalid_payload(
+        self, superuser_client: AsyncClient
     ):
-        response = await superuser_client.put(
-            f"/api/specialties/{speciality.id}/", json={}
-        )
+        payload = {"name": ""}
+        response = await superuser_client.post("/api/specialties/", json=payload)
         assert response.status_code == 422
 
     async def test_update_specialty_superuser_role(
@@ -140,6 +147,23 @@ class TestSpecailityApi:
             f"/api/specialties/{speciality.id}/", json=payload
         )
         assert response.status_code == 403
+
+    async def test_update_specialty_empty_json(
+        self, superuser_client: AsyncClient, speciality: Speciality
+    ):
+        response = await superuser_client.put(
+            f"/api/specialties/{speciality.id}/", json={}
+        )
+        assert response.status_code == 422
+
+    async def test_update_specialty_ivalid_payload(
+        self, superuser_client: AsyncClient, speciality: Speciality
+    ):
+        payload = {"name": ""}
+        response = await superuser_client.put(
+            f"/api/specialties/{speciality.id}/", json=payload
+        )
+        assert response.status_code == 422
 
     async def test_delete_specialty_superuser_role(
         self, superuser_client: AsyncClient, speciality: Speciality

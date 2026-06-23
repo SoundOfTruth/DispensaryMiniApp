@@ -3,13 +3,83 @@ from httpx import AsyncClient
 
 from src.models.doctors import Department, Doctor, Speciality
 from src.models.inspections import Inspection
-from src.schemas.doctors import DoctorSchema, SimpleDoctorSchema
-from tests.utils import validate_pagination, validate_response_schema
+from src.schemas.doctors import SimpleDoctorSchema, SimpleInspectionSchema
+from tests.utils import (
+    FakerSingleton,
+    other_image_link,
+    validate_pagination,
+    validate_response_schema,
+)
+
+faker = FakerSingleton()
+
+
+class DoctorSchema(SimpleDoctorSchema):
+    experience_start: int | None
+    experience_years: int | None
+
+    education: list[str]
+    extra_education: list[str]
+    inspections: list[SimpleInspectionSchema]
+
+
+payload = {
+    "photo": None,
+    "firstname": "test",
+    "lastname": "test",
+    "middlename": "test",
+    "qualification": "test",
+    "experience_start": 2000,
+    "education": [],
+    "extra_education": [],
+    "inspections": [],
+}
+
+
+def gen_invalid_payload():
+    yield {}
+    yield []
+    yield None
+    yield ""
+    fields = payload.keys()
+    for field in fields:
+        new_payload = payload.copy()
+        new_payload[field] = ""
+        yield new_payload
+    new_payload = payload.copy()
+    new_payload["photo"] = "http://invalid.com"
+    yield new_payload
+
+
+def gen_invalid_create_payload():
+    for data in gen_invalid_payload():
+        yield data
+    fields = payload.keys()
+    for field in fields:
+        new_payload = payload.copy()
+        new_payload.pop(field, None)
+        yield new_payload
+
 
 pytestmark = pytest.mark.asyncio
 
 
 class TestDoctorApi:
+    patch_payload = [
+        {"photo": other_image_link},
+        {"firstname": faker.first_name()},
+        {"lastname": faker.last_name()},
+        {"middlename": faker.last_name()},
+        {"qualification": faker.name()},
+        {"experience_start": faker.random_int(min=1921, max=2026)},
+        {"education": ["test1", "test2", "test3"]},
+        {"extra_education": ["test1", "test2", "test3"]},
+        {
+            "education": ["test1", "test2", "test3"],
+            "extra_education": ["test1", "test2", "test3"],
+        },
+    ]
+
     async def test_get_doctors_empty(self, client: AsyncClient):
         response = await client.get("/api/doctors/")
         assert response.status_code == 200
@@ -168,8 +238,20 @@ class TestDoctorApi:
         response = await superuser_client.post("/api/doctors/", json=payload)
         assert response.status_code == 400
 
-    async def test_create_doctor_incorrect_payload(self):
-        pass
+    @pytest.mark.parametrize("payload", list(gen_invalid_create_payload()))
+    async def test_create_doctor_invalid_payload(
+        self,
+        superuser_client: AsyncClient,
+        payload,
+        doctor_speciality: Speciality,
+        doctor_department: Department,
+    ):
+        print(payload)
+        if payload and type(payload) is dict:
+            payload["speciality_id"] = doctor_speciality.id
+            payload["department_id"] = doctor_department.id
+        response = await superuser_client.post("/api/doctors/", json=payload)
+        assert response.status_code == 422 or response.status_code == 400
 
     async def test_update_doctor_unauth(
         self,
@@ -267,8 +349,43 @@ class TestDoctorApi:
         )
         assert response.status_code == 400
 
-    async def test_update_doctor_incorrect_payload(self):
-        pass
+    @pytest.mark.parametrize("payload", list(gen_invalid_payload()))
+    async def test_update_doctor_invalid_payload(
+        self, superuser_client: AsyncClient, doctor: Doctor, payload
+    ):
+        response = await superuser_client.patch(
+            f"/api/doctors/{doctor.id}/", json=payload
+        )
+        assert response.status_code == 422 or response.status_code == 400
+
+    @pytest.mark.parametrize("payload", patch_payload)
+    async def test_patch_doctor(
+        self, superuser_client: AsyncClient, doctor: Doctor, payload
+    ):
+        response = await superuser_client.patch(
+            f"/api/doctors/{doctor.id}/", json=payload
+        )
+        assert response.status_code == 200
+
+    async def test_patch_doctor_photo(
+        self, superuser_client: AsyncClient, doctor: Doctor
+    ):
+        payload = {"photo": other_image_link}
+        response = await superuser_client.patch(
+            f"/api/doctors/{doctor.id}/", json=payload
+        )
+        data = response.json()
+        assert response.status_code == 200
+        assert data["photo"] == payload["photo"]
+
+    async def test_patch_doctor_invalid_photo(
+        self, superuser_client: AsyncClient, doctor: Doctor
+    ):
+        payload = {"photo": "http://invalid.com"}
+        response = await superuser_client.patch(
+            f"/api/doctors/{doctor.id}/", json=payload
+        )
+        assert response.status_code == 400
 
     async def test_delete_doctor_unauth_(self, client: AsyncClient, doctor: Doctor):
         response = await client.delete(f"/api/doctors/{doctor.id}/")

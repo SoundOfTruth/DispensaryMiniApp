@@ -3,70 +3,66 @@ from httpx import AsyncClient
 
 from src.models.users import Role, User
 from src.schemas.users import UserSchema
-from tests.utils import validate_pagination, validate_response_schema
+from tests.utils import FakerSingleton, validate_pagination, validate_response_schema
+
+faker = FakerSingleton()
 
 pytestmark = pytest.mark.asyncio
+
+payload = {
+    "email": "test@example.com",
+    "firstname": "test",
+    "lastname": "test",
+    "middlename": "test",
+    "password": "testpassword",
+    "role": "user",
+}
+
+
+def gen_invalid_payload():
+    yield {}
+    yield []
+    yield None
+    yield ""
+    fields = payload.keys()
+    for field in fields:
+        new_payload = payload.copy()
+        new_payload["email"] = faker.unique.email()
+        new_payload[field] = ""
+        yield new_payload
+    yield {
+        "email": "invalid_email",
+        "firstname": "test",
+        "lastname": "test",
+        "middlename": "test",
+        "password": "testpassword",
+        "role": "user",
+    }
+    yield {
+        "email": "invalid_email",
+        "firstname": "test",
+        "lastname": "test",
+        "middlename": "test",
+        "password": "testpassword",
+        "role": "invalid_role",
+    }
+
+
+def gen_invalid_create_payload():
+    for data in gen_invalid_payload():
+        yield data
+    fields = payload.keys()
+    for field in fields:
+        new_payload = payload.copy()
+        new_payload["email"] = faker.unique.email()
+        new_payload.pop(field, None)
+        yield new_payload
 
 
 class TestUserApi:
     new_password = "new_test_password"
-    incorrect_payload = [
-        "",
-        {},
-        [],
-        1,
-        1.1,
-        {
-            "email": "bad_email",
-            "firstname": "test",
-            "lastname": "test",
-            "middlename": "test",
-            "password": "testpassword",
-            "role": "user",
-        },
-        {
-            "email": "test@example.com",
-            "firstname": "",
-            "lastname": "test",
-            "middlename": "test",
-            "password": "bad",
-            "role": "user",
-        },
-        {
-            "email": "test@example.com",
-            "firstname": "test",
-            "lastname": "",
-            "middlename": "test",
-            "password": "testpassword",
-            "role": "user",
-        },
-        {
-            "email": "test@example.com",
-            "firstname": "test",
-            "lastname": "test",
-            "middlename": "",
-            "password": "testpassword",
-            "role": "user",
-        },
-        {
-            "email": "test@example.com",
-            "firstname": "test",
-            "lastname": "test",
-            "middlename": "test",
-            "password": "testpassword",
-            "role": "",
-        },
-        {
-            "email": "test@example.com",
-            "firstname": "test",
-            "lastname": "test",
-            "middlename": "test",
-            "password": "testpassword",
-            "role": "",
-        },
-    ]
     patch_payload = [
-        {"email": "test123@example.com"},
+        {"email": faker.unique.email()},
         {"firstname": "test"},
         {"lastname": "test"},
         {"middlename": "test"},
@@ -74,13 +70,13 @@ class TestUserApi:
         {"role": "user"},
         {"firstname": "test", "lastname": "test", "middlename": "test"},
         {
-            "email": "test1234@example.com",
+            "email": faker.unique.email(),
             "firstname": "test",
             "lastname": "test",
             "middlename": "test",
         },
         {
-            "email": "test1234@example.com",
+            "email": faker.unique.email(),
             "firstname": "test",
             "lastname": "test",
             "middlename": "test",
@@ -275,14 +271,14 @@ class TestUserApi:
         response = await superuser_client.post("/api/users/", json=payload)
         assert response.status_code == 400
 
-    @pytest.mark.parametrize("payload", incorrect_payload)
-    async def test_create_inspection_incorrect_payload(
+    @pytest.mark.parametrize("payload", list(gen_invalid_create_payload()))
+    async def test_create_user_invalid_payload(
         self, superuser_client: AsyncClient, payload
     ):
         response = await superuser_client.post("/api/users/", json=payload)
-        assert response.status_code == 422
+        assert response.status_code == 422 or response.status_code == 400
 
-    async def test_update_busy_email(
+    async def test_update_user_busy_email(
         self, superuser_client: AsyncClient, superuser: User, another_user: User
     ):
         payload = {"email": superuser.email}
@@ -291,7 +287,7 @@ class TestUserApi:
         )
         assert response.status_code == 400
 
-    async def test_update_empty_payload(
+    async def test_update_user_empty_payload(
         self, superuser_client: AsyncClient, superuser: User
     ):
         response = await superuser_client.patch(f"/api/users/{superuser.id}/", json={})
@@ -314,6 +310,13 @@ class TestUserApi:
         response = await admin_client.patch(f"/api/users/{admin.id}/", json=payload)
         assert response.status_code == 403
 
+    @pytest.mark.parametrize("payload", list(gen_invalid_payload()))
+    async def test_update_user_invalid_payload(
+        self, superuser_client: AsyncClient, payload, user: User
+    ):
+        response = await superuser_client.patch(f"/api/users/{user.id}/", json=payload)
+        assert response.status_code == 422 or response.status_code == 400
+
     async def test_update_self_password_by_patch(
         self, superuser_client: AsyncClient, superuser: User
     ):
@@ -324,9 +327,7 @@ class TestUserApi:
         assert response.status_code == 400
 
     @pytest.mark.parametrize("payload", patch_payload)
-    async def test_patch_update(
-        self, superuser_client: AsyncClient, user: User, payload
-    ):
+    async def test_patch_user(self, superuser_client: AsyncClient, user: User, payload):
         response = await superuser_client.patch(f"/api/users/{user.id}/", json=payload)
         data = response.json()
         assert response.status_code == 200

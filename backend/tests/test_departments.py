@@ -13,8 +13,35 @@ class TestDepartmentApi:
         response = await client.get("/api/departments/")
         assert response.status_code == 200
 
-    async def test_get_departments(self, client: AsyncClient, departments):
+    async def test_get_departments_unauth(self, client: AsyncClient, departments):
         response = await client.get("/api/departments/")
+        data = response.json()
+        assert response.status_code == 200
+        assert len(data) >= len(departments)
+        validate_response_schema(data, schema=DepartmentSchema, many=True)
+
+    async def test_get_departments_user_role(
+        self, user_client: AsyncClient, departments
+    ):
+        response = await user_client.get("/api/departments/")
+        data = response.json()
+        assert response.status_code == 200
+        assert len(data) >= len(departments)
+        validate_response_schema(data, schema=DepartmentSchema, many=True)
+
+    async def test_get_departments_admin_role(
+        self, admin_client: AsyncClient, departments
+    ):
+        response = await admin_client.get("/api/departments/")
+        data = response.json()
+        assert response.status_code == 200
+        assert len(data) >= len(departments)
+        validate_response_schema(data, schema=DepartmentSchema, many=True)
+
+    async def test_get_departments_superuser_role(
+        self, superuser_client: AsyncClient, departments
+    ):
+        response = await superuser_client.get("/api/departments/")
         data = response.json()
         assert response.status_code == 200
         assert len(data) >= len(departments)
@@ -50,27 +77,6 @@ class TestDepartmentApi:
         assert response.status_code == 200
         validate_response_schema(data, schema=DepartmentSchema, many=True)
 
-    @pytest.mark.usefixtures("departments")
-    async def test_get_departments_user_role(self, user_client: AsyncClient):
-        response = await user_client.get("/api/departments/")
-        data = response.json()
-        assert response.status_code == 200
-        assert len(data) != 0
-
-    @pytest.mark.usefixtures("departments")
-    async def test_get_departments_admin_role(self, admin_client: AsyncClient):
-        response = await admin_client.get("/api/departments/")
-        data = response.json()
-        assert response.status_code == 200
-        assert len(data) != 0
-
-    @pytest.mark.usefixtures("departments")
-    async def test_get_departments_superuser_role(self, superuser_client: AsyncClient):
-        response = await superuser_client.get("/api/departments/")
-        data = response.json()
-        assert response.status_code == 200
-        assert len(data) != 0
-
     async def test_create_department_unauth(
         self, client: AsyncClient, gen_department_payload
     ):
@@ -101,6 +107,13 @@ class TestDepartmentApi:
 
     async def test_create_department_empty_json(self, superuser_client: AsyncClient):
         response = await superuser_client.post("/api/departments/", json={})
+        assert response.status_code == 422
+
+    async def test_create_department_invalid_payload(
+        self, superuser_client: AsyncClient
+    ):
+        payload = {"name": ""}
+        response = await superuser_client.post("/api/departments/", json=payload)
         assert response.status_code == 422
 
     async def test_update_department_empty_json(
@@ -141,6 +154,15 @@ class TestDepartmentApi:
         )
         assert response.status_code == 403
 
+    async def test_update_department_ivalid_payload(
+        self, superuser_client: AsyncClient, department: Department
+    ):
+        payload = {"name": ""}
+        response = await superuser_client.put(
+            f"/api/departments/{department.id}/", json=payload
+        )
+        assert response.status_code == 422
+
     async def test_delete_department_superuser_role(
         self, superuser_client: AsyncClient, department: Department
     ):
@@ -159,7 +181,7 @@ class TestDepartmentApi:
         response = await user_client.delete(f"/api/departments/{department.id}/")
         assert response.status_code == 403
 
-    async def test_delete_related_Department(
+    async def test_delete_related_department(
         self, superuser_client: AsyncClient, doctor: Doctor
     ):
         response = await superuser_client.delete(

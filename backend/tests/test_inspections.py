@@ -4,84 +4,57 @@ from httpx import AsyncClient
 from src.models.doctors import Doctor
 from src.models.inspections import Inspection
 from src.schemas.inspections import InspectionSchema, SimpleInspectionSchema
-from tests.utils import validate_pagination, validate_response_schema
+from tests.utils import FakerSingleton, validate_pagination, validate_response_schema
+
+faker = FakerSingleton()
 
 pytestmark = pytest.mark.asyncio
 
+payload = {
+    "title": "test",
+    "description": "test",
+    "preparation": "test",
+    "doctors": [],
+}
+
+
+def gen_invalid_payload():
+    yield {}
+    yield []
+    yield None
+    yield ""
+    fields = ["title", "doctors"]
+    for field in fields:
+        new_payload = payload.copy()
+        new_payload["title"] = faker.unique.name()
+        new_payload[field] = ""
+        yield new_payload
+
+
+def gen_invalid_create_payload():
+    for data in gen_invalid_payload():
+        yield data
+    fields = payload.keys()
+    for field in fields:
+        new_payload = payload.copy()
+        new_payload["title"] = faker.unique.name()
+        new_payload.pop(field, None)
+        yield new_payload
+
 
 class TestInspectionApi:
-    incorrect_payload = [
-        "",
-        {},
-        [],
-        1,
-        1.1,
-        {
-            "title": "",
-            "description": "",
-            "preparation": "",
-            "doctors": [],
-        },
-        {
-            "title": "",
-            "description": "",
-            "preparation": "",
-            "doctors": "",
-        },
-        {
-            "title": "qwe15123",
-            "preparation": "",
-        },
-        {
-            "title": "",
-            "description": "",
-        },
-        {
-            "title": "",
-            "description": "",
-            "preparation": "",
-        },
-    ]
-    incorrect_update_payload = [
-        "",
-        {},
-        [],
-        1,
-        1.1,
-        {
-            "title": "",
-            "description": "",
-            "preparation": "",
-            "doctors": [],
-        },
-        {
-            "title": "",
-            "description": "",
-            "preparation": "",
-            "doctors": "",
-        },
-        {
-            "title": "",
-            "description": "",
-        },
-        {
-            "title": "",
-            "description": "",
-            "preparation": "",
-        },
-    ]
     patch_payload = [
-        {"title": "qwe1234"},
+        {"title": faker.unique.name()},
         {"description": ""},
         {"preparation": ""},
         {"doctors": []},
         {
-            "title": "qwe123",
+            "title": faker.unique.name(),
             "description": "",
             "preparation": "",
         },
         {
-            "title": "qwe123",
+            "title": faker.unique.name(),
             "description": "",
             "preparation": "",
             "doctors": [],
@@ -195,6 +168,17 @@ class TestInspectionApi:
         assert response.status_code == 201
         assert len(data["doctors"]) == len(doctors)
 
+    async def test_create_inspection_existing_title(
+        self,
+        superuser_client: AsyncClient,
+        gen_inspection_payload,
+        inspection: Inspection,
+    ):
+        payload = gen_inspection_payload()
+        payload["title"] = inspection.title
+        response = await superuser_client.post("/api/inspections/", json=payload)
+        assert response.status_code == 400
+
     async def test_create_inspection_with_unexist_doctors(
         self, superuser_client: AsyncClient, gen_inspection_payload, doctor: Doctor
     ):
@@ -203,7 +187,7 @@ class TestInspectionApi:
         response = await superuser_client.post("/api/inspections/", json=payload)
         assert response.status_code == 400
 
-    @pytest.mark.parametrize("payload", incorrect_payload)
+    @pytest.mark.parametrize("payload", list(gen_invalid_create_payload()))
     async def test_create_inspection_incorrect_payload(
         self, superuser_client: AsyncClient, payload
     ):
@@ -237,17 +221,31 @@ class TestInspectionApi:
         )
         assert response.status_code == 200
 
+    async def test_update_inspection_with_existing_title(
+        self,
+        superuser_client: AsyncClient,
+        gen_inspection_payload,
+        inspection: Inspection,
+        other_inspection: Inspection,
+    ):
+        payload = gen_inspection_payload()
+        payload["title"] = other_inspection.title
+        response = await superuser_client.patch(
+            f"/api/inspections/{inspection.id}/", json=payload
+        )
+        assert response.status_code == 400
+
     async def test_update_inspection_with_doctors(
         self,
         superuser_client: AsyncClient,
-        inspection: Inspection,
+        inspection_with_doctors: Inspection,
         gen_inspection_payload,
         doctors: list[Doctor],
     ):
         payload = gen_inspection_payload()
         payload["doctors"] = [{"id": doctor.id} for doctor in doctors]
         response = await superuser_client.patch(
-            f"/api/inspections/{inspection.id}/", json=payload
+            f"/api/inspections/{inspection_with_doctors.id}/", json=payload
         )
         data = response.json()
         assert response.status_code == 200
@@ -267,7 +265,7 @@ class TestInspectionApi:
         )
         assert response.status_code == 400
 
-    @pytest.mark.parametrize("payload", incorrect_update_payload)
+    @pytest.mark.parametrize("payload", list(gen_invalid_payload()))
     async def test_update_inspection_incorrect_payload(
         self, admin_client: AsyncClient, inspection: Inspection, payload
     ):
@@ -277,11 +275,14 @@ class TestInspectionApi:
         assert response.status_code in [400, 422]
 
     @pytest.mark.parametrize("payload", patch_payload)
-    async def test_patch_update(
-        self, superuser_client: AsyncClient, inspection: Inspection, payload
+    async def test_patch_inspections(
+        self,
+        superuser_client: AsyncClient,
+        inspection_with_doctors: Inspection,
+        payload,
     ):
         response = await superuser_client.patch(
-            f"/api/inspections/{inspection.id}/", json=payload
+            f"/api/inspections/{inspection_with_doctors.id}/", json=payload
         )
         data = response.json()
         assert response.status_code == 200
@@ -289,7 +290,7 @@ class TestInspectionApi:
         for key in payload:
             assert data[key] == payload[key]
 
-    async def test_delete_inspection_unauth_(
+    async def test_delete_inspection_unauth(
         self, client: AsyncClient, inspection: Inspection
     ):
         response = await client.delete(f"/api/inspections/{inspection.id}/")

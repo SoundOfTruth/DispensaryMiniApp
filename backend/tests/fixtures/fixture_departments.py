@@ -1,18 +1,15 @@
 import pytest
 import pytest_asyncio
-from faker import Faker
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.doctors import Department
 from src.schemas.departments import CreateDepartmentSchema
 
-faker = Faker()
-
 
 @pytest.fixture
-def gen_department_payload():
+def gen_department_payload(faker):
     def wrapper():
-        return {"name": faker.name()}
+        return {"name": faker.unique.name()}
 
     return wrapper
 

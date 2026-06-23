@@ -1,19 +1,16 @@
 import pytest
 import pytest_asyncio
-from faker import Faker
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.doctors import Department, Doctor, Speciality
 
-faker = Faker()
-
 
 @pytest.fixture
-def gen_doctor_payload():
+def gen_doctor_payload(faker):
     def wrapper(specality_id: int, department_id: int):
         return {
-            "firstname": faker.first_name(),
             "photo": None,
+            "firstname": faker.first_name(),
             "lastname": faker.last_name(),
             "middlename": faker.first_name(),
             "qualification": faker.name(),

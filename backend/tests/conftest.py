@@ -1,7 +1,9 @@
+import pytest
 from alembic import command
 from alembic.config import Config
 
 from src.config import settings
+from tests.utils import FakerSingleton
 
 alembic_config = Config("alembic.ini")
 alembic_config.set_main_option("sqlalchemy.url", settings.DATABASE.URL_TEST_ASYNCPG)
@@ -13,6 +15,11 @@ def pytest_configure():
 
 def pytest_unconfigure():
     command.downgrade(alembic_config, "base")
+
+
+@pytest.fixture(scope="session")
+def faker():
+    return FakerSingleton()
 
 
 pytest_plugins = [

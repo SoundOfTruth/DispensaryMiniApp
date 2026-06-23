@@ -1,13 +1,10 @@
 import pytest
 import pytest_asyncio
-from faker import Faker
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.users import Role, User
 from src.schemas.users import CreateUserSchema
 from src.utils.auth import hash_password
-
-faker = Faker()
 
 
 @pytest.fixture(scope="session")
@@ -16,13 +13,13 @@ def password():
 
 
 @pytest.fixture(scope="session")
-def gen_user_payload(password):
+def gen_user_payload(password, faker):
     def wrapper(role: str):
         user_payload = {
             "email": faker.unique.email(),
             "firstname": faker.first_name(),
             "lastname": faker.last_name(),
-            "middlename": faker.unique.user_name(),
+            "middlename": faker.last_name(),
             "password": password,
             "role": role,
         }

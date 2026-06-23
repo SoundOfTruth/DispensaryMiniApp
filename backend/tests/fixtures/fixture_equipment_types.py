@@ -1,18 +1,15 @@
 import pytest
 import pytest_asyncio
-from faker import Faker
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.equipments import EquipmentType
 from src.schemas.equipments import CreateEquipmentTypeSchema
 
-faker = Faker()
-
 
 @pytest.fixture
-def gen_equipment_type_payload():
+def gen_equipment_type_payload(faker):
     def wrapper():
-        return {"name": faker.name()}
+        return {"name": faker.unique.name()}
 
     return wrapper
 
@@ -28,6 +25,14 @@ def create_equipment_type_instance(gen_equipment_type_payload):
 
 @pytest_asyncio.fixture
 async def equipment_type(session: AsyncSession, create_equipment_type_instance):
+    instance = create_equipment_type_instance()
+    session.add(instance)
+    await session.commit()
+    return instance
+
+
+@pytest_asyncio.fixture
+async def other_equipment_type(session: AsyncSession, create_equipment_type_instance):
     instance = create_equipment_type_instance()
     session.add(instance)
     await session.commit()

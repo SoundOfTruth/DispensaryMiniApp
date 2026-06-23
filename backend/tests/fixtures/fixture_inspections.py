@@ -1,19 +1,16 @@
 import pytest
 import pytest_asyncio
-from faker import Faker
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.doctors import Doctor, DoctorInspection
 from src.models.inspections import Inspection
 
-faker = Faker()
-
 
 @pytest.fixture
-def gen_inspection_payload():
+def gen_inspection_payload(faker):
     def wrapper():
         return {
-            "title": faker.name(),
+            "title": faker.unique.name(),
             "description": faker.text(),
             "preparation": faker.text(),
             "doctors": [],
@@ -34,6 +31,17 @@ def create_inspection_instance(gen_inspection_payload):
 
 @pytest_asyncio.fixture
 async def inspection(
+    session: AsyncSession,
+    create_inspection_instance,
+):
+    instance = create_inspection_instance()
+    session.add(instance)
+    await session.commit()
+    return instance
+
+
+@pytest_asyncio.fixture
+async def other_inspection(
     session: AsyncSession,
     create_inspection_instance,
 ):
