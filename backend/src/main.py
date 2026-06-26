@@ -35,4 +35,11 @@ add_exception_handlers(app)
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=settings.DEBUG)
+    uvicorn.run(
+        app="main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=settings.DEBUG,
+        proxy_headers=True,
+        forwarded_allow_ips="172.18.0.0/16",
+    )
