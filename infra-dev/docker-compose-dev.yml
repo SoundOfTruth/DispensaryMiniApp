@@ -1,0 +1,57 @@
+volumes:
+  pg_data:
+  media:
+  static:
+
+services:
+  db:
+    container_name: KOD-dev-db
+    image: postgres:17
+    env_file: .env.dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    container_name: KOD-dev-backend
+    build:
+      context: ../backend/
+    env_file: .env.dev
+    command:
+      - sh
+      - -c
+      - |
+        uv run alembic upgrade head
+        uv run src/main.py
+    volumes:
+      - media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    container_name: KOD-dev-frontend
+    build:
+      context: ../frontend/
+    volumes:
+      - static:/app/static
+      - ./frontend/:/app/result_build/
+
+  nginx:
+    container_name: KOD-dev-proxy
+    build:
+      context: ../nginx/
+      dockerfile: Dockerfile.dev
+    env_file: .env.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html
+      - media:/usr/share/nginx/media/
+      - static:/usr/share/nginx/static/
+    depends_on:
+      - backend

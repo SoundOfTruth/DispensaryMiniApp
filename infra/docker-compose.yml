@@ -1,0 +1,68 @@
+volumes:
+  pg_data:
+  media:
+  static:
+
+services:
+  db:
+    container_name: KOD-db
+    image: postgres:17
+    env_file: ../.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    container_name: KOD-backend
+    build:
+      context: ../backend/
+    env_file: ../.env
+    command:
+      - sh
+      - -c
+      - |
+        uv run alembic upgrade head
+        uv run src/main.py
+    volumes:
+      - media:/app/media
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    container_name: KOD-frontend
+    build:
+      context: ../frontend/
+    volumes:
+      - static:/app/static
+      - ./frontend/:/app/result_build/
+
+  nginx:
+    container_name: KOD-proxy
+    build:
+      context: ../nginx/
+    env_file: ../.env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html
+      - media:/usr/share/nginx/media/
+      - static:/usr/share/nginx/static/
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - backend
+      - certbot
+
+  certbot:
+    container_name: KOD-certbot
+    image: certbot/certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
