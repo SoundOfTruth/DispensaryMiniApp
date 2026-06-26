@@ -1,6 +1,5 @@
 # Environments
-.env
-.env.certbot
+.env*
 .venv
 .venv/
 .env/
