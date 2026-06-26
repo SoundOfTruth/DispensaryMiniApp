@@ -1,3 +1,5 @@
+from logging.config import dictConfig
+
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -57,6 +59,48 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env", env_nested_delimiter="_", frozen=True
     )
+
+
+LOGGING_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "()": "uvicorn.logging.DefaultFormatter",
+            "fmt": "%(levelprefix)s %(name)s %(message)s",
+            "use_colors": False,
+        },
+    },
+    "handlers": {
+        "default": {
+            "class": "logging.StreamHandler",
+            "formatter": "default",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": "error.log",
+            "formatter": "default",
+            "level": "ERROR",
+            "mode": "a",
+            "encoding": "utf-8",
+        },
+    },
+    "loggers": {
+        "root": {
+            "handlers": ["default"],
+            "level": "INFO",
+        },
+        "error_handler": {
+            "handlers": ["file"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+}
+
+
+def configure_logging():
+    dictConfig(LOGGING_CONFIG)
 
 
 settings = Settings()  # type: ignore

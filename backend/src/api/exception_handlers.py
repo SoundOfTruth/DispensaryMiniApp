@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
@@ -36,10 +38,13 @@ from src.services.exceptions import (
 )
 from src.utils.exceptions import InvalidTokenSchemaError
 
+log = logging.getLogger("error_handler")
+
 
 def add_exception_handlers(app: FastAPI):
     @app.exception_handler(Exception)
     def handle_unexpected_err(request: Request, exc: Exception) -> JSONResponse:
+        log.exception("Unexpected error", exc_info=exc)
         return JSONResponse(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             content={

@@ -7,7 +7,9 @@ from fastapi.staticfiles import StaticFiles
 
 from src.api.exception_handlers import add_exception_handlers
 from src.api.routes import api_router
-from src.config import settings
+from src.config import configure_logging, settings
+
+configure_logging()
 
 
 @asynccontextmanager
