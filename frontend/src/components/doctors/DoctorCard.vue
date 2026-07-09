@@ -8,9 +8,7 @@
     <div class="doctor-card">
       <div class="avatar-container">
         <img
-          :src="
-            !doctor.photo || !doctor.photo.includes('http') ? 'static/doctor.png' : doctor.photo
-          "
+          :src="photoUrl"
           class="img"
           loading="lazy"
         />
@@ -29,9 +27,15 @@
 import { computed } from 'vue';
 
 import type { SimpleDoctor } from '@/types/doctors';
+import { baseMediaUrl } from '@/api/base';
 
 const props = defineProps<{ doctor: SimpleDoctor }>();
 const doctor = computed(() => props.doctor);
+const photoUrl = computed(() => {
+  return !doctor.value.photo || !doctor.value.photo.includes('/')
+    ? '/static/doctor.png'
+    : baseMediaUrl + doctor.value.photo;
+});
 </script>
 
 <style scoped lang="scss">

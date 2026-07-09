@@ -1,4 +1,8 @@
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl
+from uuid import uuid4
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from src.schemas.base import FileField
 
 
 class CreateEquipmentTypeSchema(BaseModel):
@@ -16,7 +20,7 @@ class UpdateEquipmentTypeSchema(BaseModel):
 class CreateEquipmentSchema(BaseModel):
     name: str = Field(max_length=255)
     type_id: int
-    image: HttpUrl
+    image: FileField
 
     model_config = ConfigDict(str_min_length=1)
 
@@ -24,7 +28,7 @@ class CreateEquipmentSchema(BaseModel):
 class UpdateEquipmentSchema(BaseModel):
     name: str = Field(default="", max_length=255)
     type_id: int = Field(default=0, gt=0)
-    image: HttpUrl = HttpUrl("http://localhost/err.png")
+    image: FileField = Field(default_factory=lambda: f"/media/{uuid4()}")
 
     model_config = ConfigDict(str_min_length=1)
 

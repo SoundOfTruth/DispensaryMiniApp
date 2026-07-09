@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { baseMediaUrl } from '@/api/base';
 import DeleteSvg from '@/components/svg/DeleteSvg.vue';
 import { useErrorStore } from '@/stores/errors';
 
 import { useFilesStore } from '@/stores/files';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 const emits = defineEmits<{
   (e: 'on-select', url: string): void;
@@ -16,11 +17,18 @@ const filesStore = useFilesStore();
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
 const fileTypes = ['image/png', 'image/jpeg', 'image/webp'];
-const previewUrl = ref<string | null>();
+const previewRef = ref<string | null>();
+const previewUrl = computed(() => {
+  console.log(previewRef.value);
+  if (!previewRef.value) {
+    return null;
+  }
+  return baseMediaUrl + previewRef.value;
+});
 
 const clearPreview = () => {
   if (!props.hidden) {
-    previewUrl.value = undefined;
+    previewRef.value = undefined;
     emits('on-delete');
   }
 };
@@ -47,18 +55,18 @@ const handleFileSelect = async (event: Event) => {
   const created = await filesStore.create(file);
   if (created) {
     emits('on-select', created.url);
-    previewUrl.value = created.url;
+    previewRef.value = created.url;
   }
 };
 
 onMounted(() => {
-  previewUrl.value = props.initUrl;
+  previewRef.value = props.initUrl;
 });
 
 watch(
   () => [props.initUrl],
   () => {
-    previewUrl.value = props.initUrl;
+    previewRef.value = props.initUrl;
   }
 );
 </script>

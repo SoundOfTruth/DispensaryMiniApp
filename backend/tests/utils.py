@@ -3,8 +3,8 @@ from pydantic import ValidationError
 
 from src.config import settings
 
-image_link = "http://test/media/9c6e6a46-8586-437b-ac0b-5014048f3b6c.jpeg/"
-other_image_link = "http://test/media/9c6e6a46-1516-437b-ac0b-5014041f3b6c.jpeg/"
+image_link = "/media/9c6e6a46-8586-437b-ac0b-5014048f3b6c.jpeg"
+other_image_link = "/media/9c6e6a46-1516-437b-ac0b-5014041f3b6c.jpeg"
 
 
 def validate_response_schema(data: dict | list, schema, many: bool = False):

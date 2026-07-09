@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, UploadFile
 
-from src.api.dependencies import BaseUrlDep, has_admin_permissions
+from src.api.dependencies import has_admin_permissions
 from src.services.files import FileServiceDep
 
 router = APIRouter(prefix="/upload", tags=["File Upload"])
@@ -10,6 +10,5 @@ router = APIRouter(prefix="/upload", tags=["File Upload"])
 async def upload_file(
     service: FileServiceDep,
     file: UploadFile,
-    base_url: BaseUrlDep,
 ):
-    return await service.create(base_url, file)
+    return await service.create(file)

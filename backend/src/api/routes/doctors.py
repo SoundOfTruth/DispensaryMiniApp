@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from src.api.dependencies import BaseUrlDep, has_admin_permissions
+from src.api.dependencies import has_admin_permissions
 from src.api.params import PaginationParams, QueryIds
 from src.schemas.doctors import (
     CreateDoctorSchema,
@@ -10,7 +10,6 @@ from src.schemas.doctors import (
     UpdateDoctorSchema,
 )
 from src.services.doctors import DoctorServiceDep
-from src.services.exceptions import InvalidImageUrlError
 
 router = APIRouter(prefix="/doctors", tags=["Doctors"])
 
@@ -31,20 +30,12 @@ async def get_doctor(service: DoctorServiceDep, id: int):
 
 
 @router.post("/", status_code=201, dependencies=[Depends(has_admin_permissions)])
-async def create_doctor(
-    service: DoctorServiceDep, schema: CreateDoctorSchema, base_url: BaseUrlDep
-):
-    if schema.photo and base_url not in str(schema.photo):
-        raise InvalidImageUrlError
+async def create_doctor(service: DoctorServiceDep, schema: CreateDoctorSchema):
     return await service.create(schema)
 
 
 @router.patch("/{id}/", dependencies=[Depends(has_admin_permissions)])
-async def update_doctor(
-    service: DoctorServiceDep, id: int, schema: UpdateDoctorSchema, base_url: BaseUrlDep
-):
-    if schema.photo and base_url not in str(schema.photo):
-        raise InvalidImageUrlError
+async def update_doctor(service: DoctorServiceDep, id: int, schema: UpdateDoctorSchema):
     return await service.update(id, schema)
 
 

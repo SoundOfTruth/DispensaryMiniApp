@@ -15,6 +15,7 @@ cd DispensaryMiniApp
 
 ### 2. Enviroment
 Для запуска проекта необходимо создать и заполнить .env файл по примеру .env.example в папке infra-dev
+при этом для dev желательно оставить debug True, иначе jwt refresh работать не будет при отсутствии сертификатов
 При запуске проекта для production, нужно заполнить в папке infra .env и .env.cerbot по примеру .env.cerbot.example и выполнить скрипт
 ```bash
 bash init_cert.sh

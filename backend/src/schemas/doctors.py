@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_serializer
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
-from src.schemas.base import BaseSchema
+from src.schemas.base import BaseSchema, FileField
 
 EducationField = Annotated[str, Field(max_length=712)]
 
@@ -48,7 +48,7 @@ class CreateDoctorSchema(BaseModel):
     middlename: str = Field(max_length=50)
     qualification: str | None = Field(max_length=255)
     experience_start: int | None = Field(examples=[2000])
-    photo: HttpUrl | None
+    photo: FileField | None
 
     speciality_id: int = Field(examples=[1])
     department_id: int = Field(examples=[1])
@@ -66,7 +66,7 @@ class UpdateDoctorSchema(BaseModel):
     middlename: str = Field("", max_length=50)
     qualification: str | None = Field(None, max_length=255)
     experience_start: int | None = Field(None, gt=1920, le=datetime.now().year)
-    photo: HttpUrl | None = None
+    photo: FileField | None = None
 
     speciality_id: int = Field(1)
     department_id: int = Field(1)

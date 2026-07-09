@@ -7,14 +7,7 @@
       <div class="doctor-container" v-else>
         <div class="doctor-header">
           <div class="doctor-img-container">
-            <img
-              :src="
-                !doctor.photo || !doctor.photo.includes('http')
-                  ? '/static/doctor.png'
-                  : doctor.photo
-              "
-              class="doctor-img"
-            />
+            <img :src="photoUrl" class="doctor-img" />
           </div>
           <div class="doctor-header-info">
             <div class="doctor-fullname">
@@ -72,6 +65,7 @@ import { useRoute } from 'vue-router';
 import { useDoctorStore } from '@/stores/doctors';
 import { useErrorStore } from '@/stores/errors';
 import AdaptivePage from '@/components/AdaptivePage.vue';
+import { baseMediaUrl } from '@/api/base';
 
 const route = useRoute();
 const doctorId: number = Number(route.params.doctorId);
@@ -80,6 +74,11 @@ const errorStore = useErrorStore();
 const doctorStore = useDoctorStore();
 const doctor = computed(() => doctorStore.doctor);
 const errors = computed(() => errorStore.errors);
+const photoUrl = computed(() => {
+  return !doctor.value || !doctor.value.photo || !doctor.value.photo.includes('/')
+    ? '/static/doctor.png'
+    : baseMediaUrl + doctor.value.photo;
+});
 
 const hasExtraInfo = computed(() =>
   Boolean(

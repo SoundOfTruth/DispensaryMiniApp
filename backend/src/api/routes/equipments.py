@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends
 
-from src.api.dependencies import BaseUrlDep, has_admin_permissions
+from src.api.dependencies import has_admin_permissions
 from src.api.params import QueryIds
 from src.schemas.equipments import CreateEquipmentSchema, UpdateEquipmentSchema
 from src.services.equipments import EquipmentServiceDep
-from src.services.exceptions import InvalidImageUrlError
 
 router = APIRouter(
     prefix="/equipments",
@@ -23,11 +22,7 @@ async def get_equipment(service: EquipmentServiceDep, id: int):
 
 
 @router.post("/", status_code=201, dependencies=[Depends(has_admin_permissions)])
-async def create_equipment(
-    service: EquipmentServiceDep, schema: CreateEquipmentSchema, base_url: BaseUrlDep
-):
-    if base_url not in str(schema.image):
-        raise InvalidImageUrlError
+async def create_equipment(service: EquipmentServiceDep, schema: CreateEquipmentSchema):
     return await service.create(schema)
 
 
@@ -36,11 +31,7 @@ async def update_equipment(
     service: EquipmentServiceDep,
     id: int,
     schema: UpdateEquipmentSchema,
-    base_url: BaseUrlDep,
 ):
-    image_is_set = "image" in schema.model_fields_set
-    if image_is_set and base_url not in str(schema.image):
-        raise InvalidImageUrlError
     return await service.update(id, schema)
 
 

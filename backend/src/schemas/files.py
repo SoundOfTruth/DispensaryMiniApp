@@ -1,5 +1,7 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
+
+from src.schemas.base import FileField
 
 
 class UploadResponse(BaseModel):
-    url: HttpUrl
+    url: FileField

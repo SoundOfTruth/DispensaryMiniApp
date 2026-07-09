@@ -37,6 +37,9 @@ services:
     container_name: KOD-dev-frontend
     build:
       context: ../frontend/
+      args:
+        - VITE_API_URL=/api/
+        - VITE_MEDIA_URL=http://localhost:5173
     volumes:
       - static:/app/static
       - ./frontend/:/app/result_build/

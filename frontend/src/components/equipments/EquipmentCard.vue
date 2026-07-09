@@ -1,7 +1,7 @@
 <template>
   <div class="equipment-card">
     <div class="image-container">
-      <img :src="equipment.image" :alt="equipment.name" loading="lazy" />
+      <img :src="photoUrl" :alt="equipment.name" loading="lazy" />
     </div>
     <div class="content">
       <div class="name">{{ equipment.name }}</div>
@@ -10,9 +10,15 @@
 </template>
 
 <script lang="ts" setup>
+import { baseMediaUrl } from '@/api/base';
 import type { EquipmentItem } from '@/types/equipments';
+import { computed } from 'vue';
 
-defineProps<{ equipment: EquipmentItem }>();
+const props = defineProps<{ equipment: EquipmentItem }>();
+
+const photoUrl = computed(() => {
+  return baseMediaUrl + props.equipment.image;
+});
 </script>
 
 <style lang="scss" scoped>
