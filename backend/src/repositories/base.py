@@ -68,14 +68,6 @@ class DeleteOnlyRepository(BaseRepository[Table]):
             await self.handle_error(ex)
         await self.session.commit()
 
-    async def bulk_delete(self, ids: list[int]):
-        statement = delete(self.model).where(self.model.id.in_(ids))
-        try:
-            await self.session.execute(statement)
-        except IntegrityError as ex:
-            await self.handle_error(ex)
-        await self.session.commit()
-
 
 class DefaultRepository(ReadOnlyRepository[Table], DeleteOnlyRepository[Table]):
     pass

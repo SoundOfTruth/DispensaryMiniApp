@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from src.api.dependencies import has_admin_permissions
-from src.api.params import PaginationParams, QueryIds
+from src.api.params import PaginationParams
 from src.schemas.inspections import CreateInspectionSchema, UpdateInspectionSchema
 from src.services.inspections import InspectionServiceDep
 
@@ -39,12 +39,6 @@ async def update_inspection(
     service: InspectionServiceDep, id: int, schema: UpdateInspectionSchema
 ):
     return await service.update(id, schema)
-
-
-@router.delete("/bulk/", status_code=204, dependencies=[Depends(has_admin_permissions)])
-async def delete_inspections(service: InspectionServiceDep, ids: QueryIds):
-    return await service.bulk_delete(ids)
-
 
 @router.delete("/{id}/", status_code=204, dependencies=[Depends(has_admin_permissions)])
 async def delete_inspection(service: InspectionServiceDep, id: int):

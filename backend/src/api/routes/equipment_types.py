@@ -3,7 +3,6 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 
 from src.api.dependencies import has_admin_permissions
-from src.api.params import QueryIds
 from src.schemas.equipments import CreateEquipmentTypeSchema, UpdateEquipmentTypeSchema
 from src.services.equipment_types import EquipmentTypeServiceDep
 
@@ -41,12 +40,6 @@ async def update_equipment_type(
     schema: UpdateEquipmentTypeSchema,
 ):
     return await service.update(id, schema)
-
-
-@router.delete("/bulk/", status_code=204, dependencies=[Depends(has_admin_permissions)])
-async def delete_equipment_types(service: EquipmentTypeServiceDep, ids: QueryIds):
-    return await service.bulk_delete(ids)
-
 
 @router.delete("/{id}/", status_code=204, dependencies=[Depends(has_admin_permissions)])
 async def delete_equipment_type(service: EquipmentTypeServiceDep, id: int):

@@ -12,7 +12,7 @@
           </div>
         </div>
         <div class="filters">
-          <ActionsButton @delete="openDelete()" />
+          <!-- <ActionsButton @delete="openDelete()" /> -->
           <div class="search">
             <SearchField title="Поиск" />
           </div>
@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import ActionsButton from './buttons/ActionsButton.vue';
+// import ActionsButton from './buttons/ActionsButton.vue';
 import AdminDeteleModal from './modals/AdminDeteleModal.vue';
 import AdminErrorModal from './modals/AdminErrorModal.vue';
 import AdminTable from './AdminTable.vue';
@@ -228,7 +228,7 @@ watch(
       padding-inline: 10px;
       border-bottom: 1px solid #e6e7e9;
       .search {
-        margin-left: auto;
+        min-width: clamp(320px,30%, 500px);
         @media (max-width: 500px) {
           margin-left: 0px;
         }

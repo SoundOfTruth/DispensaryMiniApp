@@ -13,7 +13,7 @@ from src.api.exceptions import (
     UpdateSelfPasswordError,
     UserSelfDeleteError,
 )
-from src.api.params import PaginationParams, QueryIds
+from src.api.params import PaginationParams
 from src.models.users import Role
 from src.schemas.users import CreateUserSchema, PasswordChangeSchema, UpdateUserSchema
 from src.services.users import UserServiceDep
@@ -65,16 +65,6 @@ async def change_password(
     await service.change_password(
         token.sub, schema.current_password, schema.new_password
     )
-
-
-@router.delete("/bulk/", status_code=204)
-async def delete_users(
-    service: UserServiceDep, ids: QueryIds, token: SuperuserTokenDep
-):
-    if token.sub in ids:
-        raise UserSelfDeleteError
-    return await service.bulk_delete(ids)
-
 
 @router.delete("/{id}/", status_code=204)
 async def delete_user(service: UserServiceDep, id: int, token: SuperuserTokenDep):

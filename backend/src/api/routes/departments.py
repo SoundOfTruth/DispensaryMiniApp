@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 
 from src.api.dependencies import has_admin_permissions
-from src.api.params import QueryIds
 from src.schemas.departments import CreateDepartmentSchema
 from src.services.departments import DepartmentServiceDep
 
@@ -33,12 +32,6 @@ async def update_department(
     service: DepartmentServiceDep, id: int, schema: CreateDepartmentSchema
 ):
     return await service.update(id, schema)
-
-
-@router.delete("/bulk/", status_code=204, dependencies=[Depends(has_admin_permissions)])
-async def delete_departments(service: DepartmentServiceDep, ids: QueryIds):
-    return await service.bulk_delete(ids)
-
 
 @router.delete("/{id}/", status_code=204, dependencies=[Depends(has_admin_permissions)])
 async def delete_department(service: DepartmentServiceDep, id: int):
