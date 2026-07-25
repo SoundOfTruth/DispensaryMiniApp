@@ -64,7 +64,7 @@ def get_token_data(token: str) -> TokenDataSchema:
 
 
 def create_access_token(schema: UserSchema) -> str:
-    expire_timedelta = timedelta(minutes=settings.ACCESS_EXPIRE_MINUTER)
+    expire_timedelta = timedelta(minutes=settings.ACCESS_EXPIRE_MINUTES)
     return create_jwt_token(schema, TokenType.access, expire_timedelta)
 
 
