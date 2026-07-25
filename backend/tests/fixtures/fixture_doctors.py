@@ -7,9 +7,9 @@ from src.models.doctors import Department, Doctor, Speciality
 
 @pytest.fixture
 def gen_doctor_payload(faker):
-    def wrapper(specality_id: int, department_id: int):
+    def wrapper(specality_id: int, department_id: int, photo: str | None = None):
         return {
-            "photo": None,
+            "photo": photo,
             "firstname": faker.first_name(),
             "lastname": faker.last_name(),
             "middlename": faker.first_name(),
@@ -27,8 +27,8 @@ def gen_doctor_payload(faker):
 
 @pytest.fixture
 def create_doctor_instance(gen_doctor_payload):
-    def wrapper(specality_id: int, department_id: int):
-        payload = gen_doctor_payload(specality_id, department_id)
+    def wrapper(specality_id: int, department_id: int, photo: str | None = None):
+        payload = gen_doctor_payload(specality_id, department_id, photo)
         payload.pop("education")
         payload.pop("extra_education")
         payload.pop("inspections")
@@ -60,6 +60,24 @@ async def doctors(
     instances = [
         create_doctor_instance(doctor_speciality.id, doctor_department.id)
         for _ in range(10)
+    ]
+    session.add_all(instances)
+    await session.commit()
+    return instances
+
+
+@pytest_asyncio.fixture
+async def doctors_real_photo(
+    session: AsyncSession,
+    create_doctor_instance,
+    doctor_speciality: Speciality,
+    doctor_department: Department,
+    create_temp_files,
+):
+    files = create_temp_files(10)
+    instances = [
+        create_doctor_instance(doctor_speciality.id, doctor_department.id, file)
+        for file in files
     ]
     session.add_all(instances)
     await session.commit()

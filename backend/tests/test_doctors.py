@@ -6,7 +6,7 @@ from src.models.inspections import Inspection
 from src.schemas.doctors import SimpleDoctorSchema, SimpleInspectionSchema
 from tests.utils import (
     FakerSingleton,
-    other_image_link,
+    gen_image_url,
     validate_pagination,
     validate_response_schema,
 )
@@ -66,7 +66,7 @@ pytestmark = pytest.mark.asyncio
 
 class TestDoctorApi:
     patch_payload = [
-        {"photo": other_image_link},
+        {"photo": gen_image_url()},
         {"firstname": faker.first_name()},
         {"lastname": faker.last_name()},
         {"middlename": faker.last_name()},
@@ -369,7 +369,7 @@ class TestDoctorApi:
     async def test_patch_doctor_photo(
         self, superuser_client: AsyncClient, doctor: Doctor
     ):
-        payload = {"photo": other_image_link}
+        payload = {"photo": gen_image_url()}
         response = await superuser_client.patch(
             f"/api/doctors/{doctor.id}/", json=payload
         )

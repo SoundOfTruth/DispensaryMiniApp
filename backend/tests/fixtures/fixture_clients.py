@@ -1,8 +1,11 @@
 from contextlib import asynccontextmanager
 
+import fakeredis.aioredis as aioredis
+import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient, Auth
 
+from src.cache.manager import CacheManager
 from src.database.core import async_session_scoped_gen
 from src.main import app
 from src.schemas.users import UserSchema
@@ -16,6 +19,14 @@ class TokenAuth(Auth):
     def auth_flow(self, request):
         request.headers["Authorization"] = self.token
         yield request
+
+
+@pytest.fixture
+def init_cache():
+    redis = aioredis.FakeRedis(decode_responses=True)
+    CacheManager.init(redis, prefix="pytest")
+    yield
+    CacheManager.backend = None
 
 
 @pytest_asyncio.fixture

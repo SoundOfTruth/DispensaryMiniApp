@@ -1,5 +1,6 @@
 import pytest
 from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models.users import Role, User
 from src.schemas.users import UserSchema
@@ -278,6 +279,24 @@ class TestUserApi:
         response = await superuser_client.post("/api/users/", json=payload)
         assert response.status_code == 422 or response.status_code == 400
 
+    async def test_create_user_password_hashhed(
+        self,
+        superuser_client: AsyncClient,
+        session: AsyncSession,
+        password: str,
+        gen_user_payload,
+    ):
+        payload = gen_user_payload(Role.USER.value)
+        response = await superuser_client.post("/api/users/", json=payload)
+        try:
+            user_id = response.json()["id"]
+            user_db = await session.get(User, user_id)
+        except KeyError:
+            user_db = None
+        assert response.status_code == 201
+        assert user_db
+        assert user_db.password != password
+
     async def test_update_user_busy_email(
         self, superuser_client: AsyncClient, superuser: User, another_user: User
     ):
@@ -336,6 +355,18 @@ class TestUserApi:
             if key != "password":
                 assert data[key] == payload[key]
 
+    async def test_patch_user_password_hashhed(
+        self,
+        superuser_client: AsyncClient,
+        user: User,
+        session: AsyncSession,
+    ):
+        payload = {"password": "testpassword"}
+        response = await superuser_client.patch(f"/api/users/{user.id}/", json=payload)
+        await session.refresh(user)
+        assert response.status_code == 200
+        assert user.password != payload["password"]
+
     async def test_change_password_unauth(self, client: AsyncClient, password: str):
         payload = {"current_password": password, "new_password": self.new_password}
         response = await client.post("/api/users/change-password/", json=payload)
@@ -346,11 +377,11 @@ class TestUserApi:
             "current_password": "fake_password",
             "new_password": self.new_password,
         }
-        response = await user_client.post("/api/users/change-password/", json=payload)
         atfter_payload = {
             "current_password": self.new_password,
             "new_password": "fake_password",
         }
+        response = await user_client.post("/api/users/change-password/", json=payload)
         after_response = await user_client.post(
             "/api/users/change-password/", json=atfter_payload
         )
@@ -359,16 +390,34 @@ class TestUserApi:
 
     async def test_change_password(self, user_client: AsyncClient, password: str):
         payload = {"current_password": password, "new_password": self.new_password}
-        response = await user_client.post("/api/users/change-password/", json=payload)
         atfter_payload = {
             "current_password": self.new_password,
             "new_password": "fake_password",
         }
+        response = await user_client.post("/api/users/change-password/", json=payload)
         after_response = await user_client.post(
             "/api/users/change-password/", json=atfter_payload
         )
         assert response.status_code == 201
         assert after_response.status_code == 201
+
+    async def test_change_password_is_hashhed(
+        self,
+        superuser_client: AsyncClient,
+        superuser: User,
+        password: str,
+        session: AsyncSession,
+    ):
+        payload = {
+            "current_password": password,
+            "new_password": "new_password",
+        }
+        response = await superuser_client.post(
+            "/api/users/change-password/", json=payload
+        )
+        await session.refresh(superuser)
+        assert response.status_code == 201
+        assert superuser.password != payload["new_password"]
 
     async def test_delete_user_role(self, user_client: AsyncClient, superuser: User):
         response = await user_client.delete(f"/api/users/{superuser.id}/")

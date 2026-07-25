@@ -3,7 +3,7 @@ from httpx import AsyncClient
 
 from src.models.equipments import Equipment, EquipmentType
 from src.schemas.equipments import SimpleEquipmentSchema
-from tests.utils import FakerSingleton, other_image_link, validate_response_schema
+from tests.utils import FakerSingleton, gen_image_url, validate_response_schema
 
 faker = FakerSingleton()
 
@@ -11,7 +11,7 @@ pytestmark = pytest.mark.asyncio
 
 payload = {
     "name": "test",
-    "image": other_image_link,
+    "image": gen_image_url(),
 }
 
 
@@ -41,9 +41,9 @@ def gen_invalid_create_payload():
 
 class TestEquipmentApi:
     patch_payload = [
-        {"name": faker.unique.name(), "image": other_image_link},
+        {"name": faker.unique.name(), "image": gen_image_url()},
         {"name": faker.unique.name()},
-        {"image": other_image_link},
+        {"image": gen_image_url()},
     ]
 
     async def test_get_equipment_empty(self, client: AsyncClient):
