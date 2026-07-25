@@ -3,12 +3,13 @@ from typing import Annotated
 
 from pydantic import AfterValidator, BaseModel, ConfigDict
 
+from src.config import settings
 from src.services.exceptions import InvalidImageUrlError
 
 allowed_types = "|".join(["jpeg", "png", "webp", "avif", "apng"])
 
 pattern = re.compile(
-    rf"^/media/[0-9a-f]{{8}}-[0-9a-f]{{4}}-4[0-9a-f]{{3}}-[89ab][0-9a-f]{{3}}-[0-9a-f]{{12}}\.(?:{allowed_types})$"
+    rf"^/{settings.MEDIA_URL}/[0-9a-f]{{8}}-[0-9a-f]{{4}}-4[0-9a-f]{{3}}-[89ab][0-9a-f]{{3}}-[0-9a-f]{{12}}\.(?:{allowed_types})$"
 )
 
 
@@ -24,5 +25,5 @@ FileField = Annotated[str, AfterValidator(validate_file)]
 class BaseSchema(BaseModel):
     model_config = ConfigDict(
         str_min_length=1,
-        str_max_length=10_000,
+        str_max_length=1_000,
     )
