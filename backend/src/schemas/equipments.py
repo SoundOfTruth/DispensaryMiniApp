@@ -2,35 +2,27 @@ from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.schemas.base import FileField
+from src.schemas.base import BaseSchema, FileField
 
 
-class CreateEquipmentTypeSchema(BaseModel):
+class CreateEquipmentTypeSchema(BaseSchema):
     name: str = Field(max_length=255)
 
-    model_config = ConfigDict(str_min_length=1)
 
-
-class UpdateEquipmentTypeSchema(BaseModel):
+class UpdateEquipmentTypeSchema(BaseSchema):
     name: str = Field(max_length=255)
 
-    model_config = ConfigDict(str_min_length=1)
 
-
-class CreateEquipmentSchema(BaseModel):
+class CreateEquipmentSchema(BaseSchema):
     name: str = Field(max_length=255)
     type_id: int
     image: FileField
 
-    model_config = ConfigDict(str_min_length=1)
 
-
-class UpdateEquipmentSchema(BaseModel):
+class UpdateEquipmentSchema(BaseSchema):
     name: str = Field(default="", max_length=255)
     type_id: int = Field(default=0, gt=0)
     image: FileField = Field(default_factory=lambda: f"/media/{uuid4()}")
-
-    model_config = ConfigDict(str_min_length=1)
 
 
 class SimpleEquipmentSchema(CreateEquipmentSchema):

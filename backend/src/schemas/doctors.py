@@ -9,11 +9,11 @@ EducationField = Annotated[str, Field(max_length=712)]
 
 
 class CreateEducationSchema(BaseModel):
-    title: str
+    title: str = Field(min_length=1, max_length=712)
 
 
 class CreateExtraEducationSchema(BaseModel):
-    title: str
+    title: str = Field(min_length=1, max_length=712)
 
 
 class EducationSchema(CreateEducationSchema):
@@ -28,14 +28,14 @@ class CreateDoctorInspectionSchema(BaseModel):
     inspection_id: int = Field(alias="id")
 
 
-class SpecialitySchema(BaseSchema):
+class SpecialitySchema(BaseModel):
     id: int
     name: str
 
     model_config = ConfigDict(from_attributes=True)
 
 
-class DepartmentSchema(BaseSchema):
+class DepartmentSchema(BaseModel):
     id: int
     name: str
 
@@ -54,13 +54,13 @@ class CreateDoctorSchema(BaseModel):
     department_id: int = Field(examples=[1])
 
     inspections: list[CreateDoctorInspectionSchema] = Field(examples=[[]])
-    education: list[EducationField]
-    extra_education: list[EducationField]
+    education: list[EducationField] = Field(examples=[[]])
+    extra_education: list[EducationField] = Field(examples=[[]])
 
     model_config = ConfigDict(str_min_length=1)
 
 
-class UpdateDoctorSchema(BaseModel):
+class UpdateDoctorSchema(BaseSchema):
     firstname: str = Field("", max_length=50)
     lastname: str = Field("", max_length=50)
     middlename: str = Field("", max_length=50)
@@ -74,8 +74,6 @@ class UpdateDoctorSchema(BaseModel):
     inspections: list[CreateDoctorInspectionSchema] = Field([], examples=[[]])
     education: list[EducationField] = Field([])
     extra_education: list[EducationField] | None = Field([])
-
-    model_config = ConfigDict(str_min_length=1)
 
 
 class SimpleDoctorSchema(BaseModel):
@@ -91,7 +89,7 @@ class SimpleDoctorSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class SimpleInspectionSchema(BaseSchema):
+class SimpleInspectionSchema(BaseModel):
     id: int
     title: str
 

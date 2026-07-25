@@ -1,5 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.schemas.base import BaseSchema
 from src.schemas.doctors import SimpleDoctorSchema
 
 
@@ -7,24 +8,20 @@ class CreateDoctorInspectionSchema(BaseModel):
     doctor_id: int = Field(alias="id")
 
 
-class CreateInspectionSchema(BaseModel):
+class CreateInspectionSchema(BaseSchema):
     title: str = Field(max_length=255)
-    description: str = Field(min_length=0)
-    preparation: str = Field(min_length=0)
+    description: str = Field(min_length=0, max_length=200_000)
+    preparation: str = Field(min_length=0, max_length=200_000)
 
     doctors: list[CreateDoctorInspectionSchema] = Field(examples=[[]])
 
-    model_config = ConfigDict(str_min_length=1, str_max_length=1_000_000)
 
-
-class UpdateInspectionSchema(BaseModel):
+class UpdateInspectionSchema(BaseSchema):
     title: str = Field("", max_length=255, examples=["s"])
-    description: str = Field("", examples=["s"], min_length=0)
-    preparation: str = Field("", examples=["s"], min_length=0)
+    description: str = Field("", examples=["s"], min_length=0, max_length=200_000)
+    preparation: str = Field("", examples=["s"], min_length=0, max_length=200_000)
 
     doctors: list[CreateDoctorInspectionSchema] = []
-
-    model_config = ConfigDict(str_min_length=1, str_max_length=1_000_000)
 
 
 class SimpleInspectionSchema(BaseModel):
