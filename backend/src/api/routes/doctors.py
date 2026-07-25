@@ -38,6 +38,7 @@ async def create_doctor(service: DoctorServiceDep, schema: CreateDoctorSchema):
 async def update_doctor(service: DoctorServiceDep, id: int, schema: UpdateDoctorSchema):
     return await service.update(id, schema)
 
+
 @router.delete("/{id}/", status_code=204, dependencies=[Depends(has_admin_permissions)])
 async def delete_doctor(service: DoctorServiceDep, id: int):
     return await service.delete(id)

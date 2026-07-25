@@ -3,9 +3,7 @@ from celery.schedules import crontab
 
 from src.config import settings
 
-app = Celery(
-    "tasks", broker=settings.REDIS.URL, backend=settings.REDIS.URL
-)
+app = Celery("tasks", broker=settings.REDIS.URL, backend=settings.REDIS.URL)
 app.conf.update(
     timezone="Asia/Omsk",
     enable_utc=True,

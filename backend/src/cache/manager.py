@@ -1,7 +1,7 @@
 import json
 from functools import wraps
 from inspect import iscoroutinefunction
-from typing import Any, Awaitable, Callable, overload, Sequence
+from typing import Any, Awaitable, Callable, Sequence, overload
 
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel

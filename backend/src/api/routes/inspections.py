@@ -40,6 +40,7 @@ async def update_inspection(
 ):
     return await service.update(id, schema)
 
+
 @router.delete("/{id}/", status_code=204, dependencies=[Depends(has_admin_permissions)])
 async def delete_inspection(service: InspectionServiceDep, id: int):
     return await service.delete(id)

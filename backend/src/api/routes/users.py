@@ -66,6 +66,7 @@ async def change_password(
         token.sub, schema.current_password, schema.new_password
     )
 
+
 @router.delete("/{id}/", status_code=204)
 async def delete_user(service: UserServiceDep, id: int, token: SuperuserTokenDep):
     if token.sub == id:
