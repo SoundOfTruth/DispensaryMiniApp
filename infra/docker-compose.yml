@@ -19,6 +19,7 @@ services:
 
   backend:
     container_name: KOD-backend
+    image: kod-backend
     build:
       context: ../backend/
     env_file: .env
@@ -32,6 +33,8 @@ services:
       - media:/app/media
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     restart: unless-stopped
 
@@ -71,3 +74,36 @@ services:
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     restart: unless-stopped
+
+  redis:
+    container_name: KOD-redis
+    build:
+      context: ../redis/
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  celery_worker:
+    image: kod-backend
+    build:
+      context: ../backend/
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: uv run celery -A src.tasks worker --loglevel=INFO
+    depends_on:
+      - backend
+  celery_beat:
+    image: kod-backend
+    build:
+      context: ../backend/
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: uv run celery -A src.tasks beat --loglevel=INFO
+    depends_on:
+      - backend

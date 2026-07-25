@@ -18,6 +18,7 @@ services:
 
   backend:
     container_name: KOD-dev-backend
+    image: kod-dev-backend
     build:
       context: ../backend/
     env_file: .env.dev
@@ -56,5 +57,33 @@ services:
       - ./frontend/dist:/usr/share/nginx/html
       - media:/usr/share/nginx/media/
       - static:/usr/share/nginx/static/
+    depends_on:
+      - backend
+
+  redis:
+    container_name: KOD-dev-redis
+    build:
+      context: ../redis/
+    env_file: .env.dev
+
+  celery_worker:
+    image: kod-dev-backend
+    build:
+      context: ../backend/
+    restart: unless-stopped
+    env_file:
+      - .env.dev
+    command: uv run celery -A src.tasks worker --loglevel=INFO
+    depends_on:
+      - backend
+      
+  celery_beat:
+    image: kod-dev-backend
+    build:
+      context: ../backend/
+    restart: unless-stopped
+    env_file:
+      - .env.dev
+    command: uv run celery -A src.tasks beat --loglevel=INFO
     depends_on:
       - backend

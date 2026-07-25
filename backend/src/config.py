@@ -30,6 +30,18 @@ class DatabaseSettings(BaseModel):
         )
 
 
+class RedisSettings(BaseModel):
+    HOST: str = "localhost"
+    PORT: int = 6379
+    DB: int = 0
+    USER: str = "default"
+    PASSWORD: str = ""
+
+    @property
+    def URL(self):
+        return f"redis://{self.USER}:{self.PASSWORD}@{self.HOST}:{self.PORT}/{self.DB}"
+
+
 class Settings(BaseSettings):
     ALLOWED_HOSTS: list[str] = [
         "localhost",
@@ -45,16 +57,18 @@ class Settings(BaseSettings):
 
     SECRET: str
     ALGORITM: str = "HS256"
-    ACCESS_EXPIRE_MINUTER: int = 15
+    ACCESS_EXPIRE_MINUTES: int = 15
     REFRESH_EXPIRE_DAYS: int = 30
 
     DEBUG: bool = False
     PAGINATION_SIZE: int = 10
     MEDIA_DIR: str = "media"
+    MEDIA_URL: str = "media"
     MEDIA_MAX_SIZE: int = 1024 * 30
     UV_LINK_MODE: str | None = None
 
     DATABASE: DatabaseSettings = Field(alias="POSTGRES")
+    REDIS: RedisSettings = Field(RedisSettings(), alias="REDIS")
 
     model_config = SettingsConfigDict(
         env_file=".env", env_nested_delimiter="_", frozen=True
