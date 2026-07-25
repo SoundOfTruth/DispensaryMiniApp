@@ -1,8 +1,10 @@
 from celery import Celery
 from celery.schedules import crontab
 
+from src.config import settings
+
 app = Celery(
-    "tasks", broker="redis://localhost:6379/0", backend="redis://localhost:6379/0"
+    "tasks", broker=settings.REDIS.URL, backend=settings.REDIS.URL
 )
 app.conf.update(
     timezone="Asia/Omsk",
@@ -13,7 +15,7 @@ app.conf.update(
 def setup_periodic_tasks(sender: Celery, **kwargs):
     sender.add_periodic_task(
         crontab(hour=23, minute=52, day_of_week=0),
-        sender.signature("src.tasks.test.delete_unlinked_files"),
+        sender.signature("src.tasks.cleanup.delete_unlinked_files"),
     )
 
 
