@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from src.cache.manager import CacheManager
 from src.database.core import AsyncScopedSessionDep
 from src.repositories.inspections import InspectionRepository
 from src.schemas.inspections import (
@@ -13,16 +14,20 @@ from src.schemas.inspections import (
 )
 from src.services.exceptions import EmptyPatchError, NotFoundError
 
+cache = CacheManager("inspection")
+
 
 class InspectionService:
     def __init__(self, session: AsyncScopedSessionDep):
         self.inspetion_rep = InspectionRepository(session)
 
-    async def create(self, schema: CreateInspectionSchema):
+    @cache.expire
+    async def create(self, schema: CreateInspectionSchema) -> InspectionSchema:
         inspection = await self.inspetion_rep.create(schema.model_dump())
         return InspectionSchema.model_validate(inspection)
 
-    async def update(self, id: int, schema: UpdateInspectionSchema):
+    @cache.expire
+    async def update(self, id: int, schema: UpdateInspectionSchema) -> InspectionSchema:
         payload = schema.model_dump(exclude_unset=True)
         if not payload:
             raise EmptyPatchError
@@ -31,7 +36,10 @@ class InspectionService:
             raise NotFoundError
         return InspectionSchema.model_validate(inspection)
 
-    async def get_all(self, limit: int, offset: int, search: str | None, filled: bool):
+    @cache.use
+    async def get_all(
+        self, limit: int, offset: int, search: str | None, filled: bool
+    ) -> PaginatedInspectionSchema:
         count = await self.inspetion_rep.count(search, filled)
         inspections = await self.inspetion_rep.get_all(
             search=search, limit=limit, offset=offset, filled=filled
@@ -42,17 +50,16 @@ class InspectionService:
         ]
         return PaginatedInspectionSchema(count=count, results=results)
 
-    async def get(self, id: int):
+    @cache.use
+    async def get(self, id: int) -> InspectionSchema:
         inspection = await self.inspetion_rep.get_with_relations(id)
         if not inspection:
             raise NotFoundError
         return InspectionSchema.model_validate(inspection)
 
+    @cache.expire
     async def delete(self, id: int):
         return await self.inspetion_rep.delete(id)
-
-    async def bulk_delete(self, ids: list[int]):
-        return await self.inspetion_rep.bulk_delete(ids)
 
 
 InspectionServiceDep = Annotated[InspectionService, Depends()]

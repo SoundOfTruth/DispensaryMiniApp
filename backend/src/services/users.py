@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.api.params import PaginationParams
+from src.cache.manager import CacheManager
 from src.database.core import AsyncScopedSessionDep
 from src.repositories.users import UserRepository
 from src.schemas.users import (
@@ -14,16 +15,20 @@ from src.schemas.users import (
 from src.services.exceptions import EmptyPatchError, InvalidPasswordError, NotFoundError
 from src.utils.auth import hash_password, verify_password
 
+cache = CacheManager("user")
+
 
 class UserService:
     def __init__(self, session: AsyncScopedSessionDep) -> None:
         self.user_rep = UserRepository(session)
 
+    @cache.expire
     async def create(self, schema: CreateUserSchema) -> UserSchema:
         schema.password = hash_password(schema.password)
         user = await self.user_rep.create(schema.model_dump())
         return UserSchema.model_validate(user)
 
+    @cache.expire
     async def update(self, id: int, schema: UpdateUserSchema) -> UserSchema:
         payload = schema.model_dump(exclude_unset=True)
         if not payload:
@@ -36,6 +41,7 @@ class UserService:
             raise NotFoundError
         return UserSchema.model_validate(user)
 
+    @cache.use
     async def get_all(
         self,
         pagination: PaginationParams,
@@ -48,6 +54,7 @@ class UserService:
         results = [UserSchema.model_validate(user) for user in users]
         return PaginatedUserSchema(results=results, count=count)
 
+    @cache.use
     async def get(self, id: int) -> UserSchema:
         user = await self.user_rep.get(id)
         if not user:
@@ -66,18 +73,16 @@ class UserService:
         current_password: str,
         new_password: str,
     ):
-        user = await self.get(user_id)
+        user = await self.user_rep.get(user_id)
         if not user:
-            raise FileNotFoundError
+            raise NotFoundError
         if not verify_password(current_password, user.password):
             raise InvalidPasswordError
         await self.user_rep.change_password(user_id, hash_password(new_password))
 
+    @cache.expire
     async def delete(self, id: int):
         return await self.user_rep.delete(id)
-
-    async def bulk_delete(self, ids: list[int]):
-        return await self.user_rep.bulk_delete(ids)
 
 
 UserServiceDep = Annotated[UserService, Depends()]

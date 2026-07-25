@@ -2,6 +2,7 @@ from typing import Annotated
 
 from fastapi import Depends
 
+from src.cache.manager import CacheManager
 from src.database.core import AsyncScopedSessionDep
 from src.repositories.equipments import EquipmentRepository
 from src.schemas.equipments import (
@@ -12,16 +13,22 @@ from src.schemas.equipments import (
 )
 from src.services.exceptions import EmptyPatchError, NotFoundError
 
+cache = CacheManager("equipment")
+
 
 class EquipmentsService:
     def __init__(self, session: AsyncScopedSessionDep) -> None:
         self.equipment_rep = EquipmentRepository(session=session)
 
-    async def create(self, schema: CreateEquipmentSchema):
+    @cache.expire
+    async def create(self, schema: CreateEquipmentSchema) -> SimpleEquipmentSchema:
         equipment = await self.equipment_rep.create(schema.model_dump(mode="json"))
         return SimpleEquipmentSchema.model_validate(equipment)
 
-    async def update(self, id: int, schema: UpdateEquipmentSchema):
+    @cache.expire
+    async def update(
+        self, id: int, schema: UpdateEquipmentSchema
+    ) -> SimpleEquipmentSchema:
         payload = schema.model_dump(mode="json", exclude_unset=True)
         if not payload:
             raise EmptyPatchError
@@ -30,21 +37,21 @@ class EquipmentsService:
             raise NotFoundError
         return SimpleEquipmentSchema.model_validate(equipment)
 
-    async def get_all(self, search: str | None):
+    @cache.use
+    async def get_all(self, search: str | None) -> list[EquipmentSchema]:
         equipments = await self.equipment_rep.get_all_with_relations(search)
         return [EquipmentSchema.model_validate(equipment) for equipment in equipments]
 
-    async def get(self, id: int):
+    @cache.use
+    async def get(self, id: int) -> SimpleEquipmentSchema:
         equipment = await self.equipment_rep.get_with_relations(id)
         if not equipment:
             raise NotFoundError
         return SimpleEquipmentSchema.model_validate(equipment)
 
+    @cache.expire
     async def delete(self, id: int):
         return await self.equipment_rep.delete(id)
-
-    async def bulk_delete(self, ids: list[int]):
-        return await self.equipment_rep.bulk_delete(ids)
 
 
 EquipmentServiceDep = Annotated[EquipmentsService, Depends()]
