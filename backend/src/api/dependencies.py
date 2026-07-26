@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from src.api.exceptions import PermissionError
+from src.api.exceptions import InsufficientPermissionsError
 from src.models.users import Role
 from src.schemas.auth import TokenDataSchema, TokenType
 from src.services.exceptions import UnauthenticatedError
@@ -24,14 +24,14 @@ def get_access_data(token: TokenDep) -> TokenDataSchema:
 def has_superuser_permissions(token: TokenDep) -> TokenDataSchema:
     token_data = get_access_data(token)
     if token_data.role != Role.SUPERUSER.value:
-        raise PermissionError
+        raise InsufficientPermissionsError
     return token_data
 
 
 def has_admin_permissions(token: TokenDep) -> TokenDataSchema:
     token_data = get_access_data(token)
     if token_data.role != Role.ADMIN.value and token_data.role != Role.SUPERUSER.value:
-        raise PermissionError
+        raise InsufficientPermissionsError
     return token_data
 
 

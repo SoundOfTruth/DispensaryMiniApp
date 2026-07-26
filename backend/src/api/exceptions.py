@@ -2,7 +2,7 @@ class ApiError(Exception):
     pass
 
 
-class PermissionError(ApiError):
+class InsufficientPermissionsError(ApiError):
     pass
 
 
