@@ -1,14 +1,6 @@
-import logging
-
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 
-from src.api.exceptions import (
-    IssuedExcessUserPermissionsError,
-    PermissionError,
-    UpdateSelfPasswordError,
-    UserSelfDeleteError,
-)
 from src.repositories.exceptions import (
     DepartmentIsUsingError,
     DepartmentNameAlreadyExistsError,
@@ -27,52 +19,8 @@ from src.repositories.exceptions import (
     SpecialityNameAlreadyExistsError,
     UserEmailIsUsingError,
 )
-from src.services.exceptions import (
-    EmptyPatchError,
-    InvalidFileExtensionError,
-    InvalidImageUrlError,
-    InvalidPasswordError,
-    LoginError,
-    NotFoundError,
-    UnauthenticatedError,
-)
-from src.utils.exceptions import InvalidTokenSchemaError
 
-log = logging.getLogger("error_handler")
-
-
-def add_exception_handlers(app: FastAPI):
-    @app.exception_handler(Exception)
-    def handle_unexpected_err(request: Request, exc: Exception) -> JSONResponse:
-        log.exception("Unexpected error", exc_info=exc)
-        return JSONResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            content={
-                "detail": "Непредвиденная ошибка.",
-            },
-        )
-
-    @app.exception_handler(NotFoundError)
-    def handle_not_found(request: Request, exc: NotFoundError):
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"detail": "Страница не найдена."},
-        )
-
-    @app.exception_handler(UnauthenticatedError)
-    def handle_authentication(request: Request, exc: UnauthenticatedError):
-        return JSONResponse(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            content={"detail": "Unauthorized."},
-        )
-
-    @app.exception_handler(LoginError)
-    def handle_login(request: Request, exc: LoginError):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"detail": "Неверный логин или пароль."},
-        )
-
+def register_repositories_exception_handlers(app: FastAPI):
     @app.exception_handler(UserEmailIsUsingError)
     def handle_user_email_using(request: Request, exc: UserEmailIsUsingError):
         return JSONResponse(
@@ -219,69 +167,4 @@ def add_exception_handlers(app: FastAPI):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={"detail": "Ошибка сохранения данных."},
-        )
-
-    @app.exception_handler(InvalidTokenSchemaError)
-    def handle_invalid_token_create(request: Request, exc: InvalidTokenSchemaError):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"detail": "Ошибка создания токена авторизации."},
-        )
-
-    @app.exception_handler(InvalidFileExtensionError)
-    def handle_invalid_file_ext(request: Request, exc: InvalidFileExtensionError):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"detail": "Недопустимый формат файла."},
-        )
-
-    @app.exception_handler(EmptyPatchError)
-    def handle_empty_patch(request: Request, exc: EmptyPatchError):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"detail": "Ошибка обновления. Nothing to update."},
-        )
-
-    @app.exception_handler(PermissionError)
-    def handle_permissions(request: Request, exc: PermissionError):
-        return JSONResponse(
-            status_code=status.HTTP_403_FORBIDDEN,
-            content={"detail": "Недостаточно прав."},
-        )
-
-    @app.exception_handler(IssuedExcessUserPermissionsError)
-    def handle_excess_users_permission(
-        request: Request, exc: IssuedExcessUserPermissionsError
-    ):
-        return JSONResponse(
-            status_code=status.HTTP_403_FORBIDDEN,
-            content={"detail": "Вы не можете выдать права, превышающие ваши."},
-        )
-
-    @app.exception_handler(UserSelfDeleteError)
-    def handle_self_delete(request: Request, exc: UserSelfDeleteError):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"detail": "Вы не можете удалить свой аккаунт."},
-        )
-
-    @app.exception_handler(InvalidPasswordError)
-    def handle_invalid_password(request: Request, exc: InvalidPasswordError):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"detail": "Неверный пароль."},
-        )
-
-    @app.exception_handler(InvalidImageUrlError)
-    def handle_invalid_image(request: Request, exc: InvalidImageUrlError):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"detail": "Ресурс данного изображения запрещён."},
-        )
-
-    @app.exception_handler(UpdateSelfPasswordError)
-    def handle_admin_update_password(request: Request, exc: UpdateSelfPasswordError):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={"detail": "Сменить свой пароль вы можете только в профиле."},
         )
